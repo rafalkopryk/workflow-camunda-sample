@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  applications.webapi:
+    image: ${DOCKER_REGISTRY-}applicationswebapi
+    build:
+      context: .
+      dockerfile: Modules/Applications/Applications.WebApi/Dockerfile
+    environment:
+       ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
+       ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
+       ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
