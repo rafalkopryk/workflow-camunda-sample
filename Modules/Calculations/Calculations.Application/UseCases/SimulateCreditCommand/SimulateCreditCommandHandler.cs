@@ -50,7 +50,7 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
 
     private record CreditApplication
     {
-        public Guid ApplicationId { get; init; }
+        public string ApplicationId { get; init; }
 
         public decimal Amount { get; init; }
 

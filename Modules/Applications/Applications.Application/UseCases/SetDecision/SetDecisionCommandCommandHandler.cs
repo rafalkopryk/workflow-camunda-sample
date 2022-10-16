@@ -33,7 +33,7 @@ internal class SetDecisionCommandCommandHandler : IRequestHandler<SetDecisionCom
 
     private record Input
     {
-        public Guid ApplicationId { get; init; }
+        public string ApplicationId { get; init; }
 
         public Decision Decision { get; init; }
     }

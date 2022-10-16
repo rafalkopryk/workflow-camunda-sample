@@ -29,7 +29,7 @@ services:
        otel__url: http://otel:4317
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.0.7}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -51,7 +51,7 @@ services:
       - es01
 
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.0.7}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
     container_name: operate
     ports:
       - "8081:8080"
@@ -66,7 +66,7 @@ services:
       - es01
 
   es01: # https://hub.docker.com/_/elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.0}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.5}
     container_name: es01
     ports:
       - "9200:9200"
@@ -97,7 +97,7 @@ services:
     container_name: kibana
     depends_on:
       - es01
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.0}
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.5}
     ports:
       - ${KIBANA_PORT}:5601
     environment:
@@ -107,7 +107,7 @@ services:
       - camunda-platform
 
   apm:
-    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.17.0}
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.17.5}
     container_name: apm
     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
     cap_drop: ["ALL"]

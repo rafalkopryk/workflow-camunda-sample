@@ -2,4 +2,4 @@
 
 namespace Applications.Application.UseCases.SignContract;
 
-public record SignContractCommand(Guid ApplicationId) : IRequest;
+public record SignContractCommand(string ApplicationId) : IRequest;

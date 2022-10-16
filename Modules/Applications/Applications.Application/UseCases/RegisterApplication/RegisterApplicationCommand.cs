@@ -5,6 +5,6 @@ namespace Applications.Application.UseCases.RegisterApplication;
 
 public record RegisterApplicationCommand : IRequest
 {
-    public Guid ApplicationId { get; init; } 
+    public string ApplicationId { get; init; } 
     public RegisterApplicationCommandCreditApplicationDto CreditApplication { get; init; }
 }

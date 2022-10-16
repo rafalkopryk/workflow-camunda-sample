@@ -6,7 +6,7 @@ public class CreditCalculation
 {
     public Guid CalcualtionId { get; set; }
 
-    public Guid ApplicationId { get; set; }
+    public string ApplicationId { get; set; }
 
     public decimal Amount { get; set; }
 

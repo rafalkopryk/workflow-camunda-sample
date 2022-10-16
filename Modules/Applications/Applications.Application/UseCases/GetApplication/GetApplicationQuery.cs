@@ -2,4 +2,4 @@
 
 namespace Applications.Application.UseCases.GetApplication;
 
-public record GetApplicationQuery(Guid ApplicationId) : IRequest<GetApplicationQueryResponse>;
+public record GetApplicationQuery(string ApplicationId) : IRequest<GetApplicationQueryResponse>;

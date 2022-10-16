@@ -32,6 +32,6 @@ internal class CloseApplicationCommandHandler : IRequestHandler<CloseApplication
 
     private record Input
     {
-        public Guid ApplicationId { get; init; }
+        public string ApplicationId { get; init; }
     }
 }
