@@ -6,16 +6,139 @@ services:
     build:
       context: .
       dockerfile: Modules/Applications/Applications.WebApi/Dockerfile
+    networks:
+      - camunda-platform
     environment:
        ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
        ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
+       ZEEBE__CLOUD: ${ZEEBE_CLOUD}
+       otel__url: http://otel:4317
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
     build:
       context: .
       dockerfile: Modules/Calculations/Calculations.WebApi/Dockerfile
+    networks:
+      - camunda-platform
     environment:
        ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
        ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
+       ZEEBE__CLOUD: ${ZEEBE_CLOUD}
+       otel__url: http://otel:4317
+
+  zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.0.7}
+    container_name: zeebe
+    ports:
+      - "26500:26500"
+      - "9600:9600"
+    environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://es01:9200
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      # allow running with low disk space
+      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+    restart: always
+    volumes:
+      - zeebe:/usr/local/zeebe/data3
+    networks:
+      - camunda-platform
+    depends_on:
+      - es01
+
+  operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.0.7}
+    container_name: operate
+    ports:
+      - "8081:8080"
+    environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
+      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
+      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://es01:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://es01:9200
+    networks:
+      - camunda-platform
+    depends_on:
+      - zeebe
+      - es01
+
+  es01: # https://hub.docker.com/_/elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.0}
+    container_name: es01
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      # allow running with low disk space
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - elastic:/usr/share/elasticsearch/data3
+    networks:
+      - camunda-platform
+
+  kibana:
+    container_name: kibana
+    depends_on:
+      - es01
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.0}
+    ports:
+      - ${KIBANA_PORT}:5601
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+    networks:
+      - camunda-platform
+
+  apm:
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.17.0}
+    container_name: apm
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+      - 8200:8200
+    depends_on:
+        - es01
+        - kibana
+    command: >
+      apm-server -e
+         -E output.elasticsearch.hosts=["es01:9200"]
+    networks:
+      - camunda-platform
+
+  otel:
+    container_name: otel
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4318:4318"
+      - "4317:4317"
+    depends_on:
+      - apm
+    networks:
+      - camunda-platform
+
+volumes:
+  zeebe:
+  elastic:
+
+networks:
+  camunda-platform:

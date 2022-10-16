@@ -2,38 +2,42 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Zeebe.Client;
 using Zeebe.Client.Api.Responses;
 using Zeebe.Client.Api.Worker;
 using Zeebe.Client.Impl.Builder;
 
 namespace Common.Application.Zeebe;
+
 internal class ZeebeWorker : IHostedService, IDisposable
 {
     private CancellationTokenSource _cancellationTokenSource;
     private readonly List<IJobWorker> _workers = new();
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly IConfiguration _configuration;
+    private readonly ZeebeOptions _zeebeOptions;
 
-    public ZeebeWorker(IServiceScopeFactory serviceScopeFactory, IConfiguration configuration)
+    public ZeebeWorker(IServiceScopeFactory serviceScopeFactory, IOptions<ZeebeOptions> zeebeOptions)
     {
         _serviceScopeFactory = serviceScopeFactory;
-        _configuration = configuration;
+        _zeebeOptions = zeebeOptions.Value;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-        var address = _configuration.GetSection("ZEEBE:ADDRESS").Value;
-        var clientId = _configuration.GetSection("ZEEBE:CLIENT:ID").Value;
-        var clientSecret = _configuration.GetSection("ZEEBE:CLIENT:SECRET").Value;
-
-        var client = CamundaCloudClientBuilder
-            .Builder()
-            .UseClientId(clientId)
-            .UseClientSecret(clientSecret)
-            .UseContactPoint(address)
-            .Build();
+        var client = _zeebeOptions.Cloud
+            ? CamundaCloudClientBuilder
+                .Builder()
+                .UseClientId(_zeebeOptions.Client.Id)
+                .UseClientSecret(_zeebeOptions.Client.Secret)
+                .UseContactPoint(_zeebeOptions.Address)
+                .Build()
+            : ZeebeClient.Builder()
+                .UseGatewayAddress(_zeebeOptions.Address)
+                .UsePlainText()
+                .Build();
 
         using var scope = _serviceScopeFactory.CreateScope();
         var zeebeJobHandlerProvider = scope.ServiceProvider.GetRequiredService<IZeebeJobHandlerProvider>();

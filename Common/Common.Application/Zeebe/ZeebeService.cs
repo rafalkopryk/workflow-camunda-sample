@@ -1,6 +1,7 @@
 ﻿using Common.Application.Serializer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Zeebe.Client;
 using Zeebe.Client.Api.Responses;
@@ -8,33 +9,26 @@ using Zeebe.Client.Impl.Builder;
 
 namespace Common.Application.Zeebe;
 
-public interface IZeebeService
-{
-    Task<long> StartProcessInstance(string bpmProcessId, object veriables);
-
-    Task PublishMessage(string messageName, string correlationKey, CancellationToken cancellationToken);
-
-    Task SetVeriables(IJob job, object variables, CancellationToken cancellationToken);
-}
-
 internal class ZeebeService : IZeebeService
 {
     private readonly IZeebeClient _client;
     private readonly ILogger<ZeebeService> _logger;
 
-    public ZeebeService(ILogger<ZeebeService> logger, IConfiguration configuration)
+    public ZeebeService(ILogger<ZeebeService> logger, IOptions<ZeebeOptions> zeebeOptions)
     {
+        var options = zeebeOptions.Value;
         _logger = logger;
-        var address = configuration.GetSection("ZEEBE:ADDRESS").Value;
-        var clientId = configuration.GetSection("ZEEBE:CLIENT:ID").Value;
-        var clientSecret = configuration.GetSection("ZEEBE:CLIENT:SECRET").Value;
-
-        _client = CamundaCloudClientBuilder
-            .Builder()
-            .UseClientId(clientId)
-            .UseClientSecret(clientSecret)
-            .UseContactPoint(address)
-            .Build();
+        _client = options.Cloud
+            ? CamundaCloudClientBuilder
+                .Builder()
+                .UseClientId(options.Client.Id)
+                .UseClientSecret(options.Client.Secret)
+                .UseContactPoint(options.Address)
+                .Build()
+            : ZeebeClient.Builder()
+                .UseGatewayAddress(options.Address)
+                .UsePlainText()
+                .Build();
     }
 
     public async Task PublishMessage(string messageName, string correlationKey, CancellationToken cancellationToken)
