@@ -1,0 +1,5 @@
+﻿using MediatR;
+
+namespace Applications.Application.UseCases.SignContract;
+
+public record SignContractCommand(Guid ApplicationId) : IRequest;

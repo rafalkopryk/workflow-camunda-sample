@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Common.Application.Serializer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Threading;
+using System.Text.Json;
 using Zeebe.Client;
 using Zeebe.Client.Api.Responses;
 using Zeebe.Client.Impl.Builder;
@@ -9,11 +10,11 @@ namespace Common.Application.Zeebe;
 
 public interface IZeebeService
 {
-    Task<ITopology> Status();
+    Task<long> StartProcessInstance(string bpmProcessId, object veriables);
 
-    Task<long> StartProcessInstance(string bpmProcessId);
+    Task PublishMessage(string messageName, string correlationKey, CancellationToken cancellationToken);
 
-    Task CompleteJob(IJob job, CancellationToken cancellationToken);
+    Task SetVeriables(IJob job, object variables, CancellationToken cancellationToken);
 }
 
 internal class ZeebeService : IZeebeService
@@ -36,24 +37,28 @@ internal class ZeebeService : IZeebeService
             .Build();
     }
 
-    public async Task CompleteJob(IJob job, CancellationToken cancellationToken)
+    public async Task PublishMessage(string messageName, string correlationKey, CancellationToken cancellationToken)
     {
-        var completeJobCommand = _client.NewCompleteJobCommand(job.Key);
-        await completeJobCommand.SendWithRetry(TimeSpan.FromSeconds(60), cancellationToken);
+        var publishMessage = _client.NewPublishMessageCommand();
+        await publishMessage.MessageName(messageName).CorrelationKey(correlationKey).SendWithRetry(TimeSpan.FromSeconds(60), cancellationToken);
     }
 
-    public async Task<long> StartProcessInstance(string bpmProcessId)
+    public async Task SetVeriables(IJob job, object veriables, CancellationToken cancellationToken)
     {
+        var veriablesText = JsonSerializer.Serialize(veriables, JsonSerializerCustomOptions.CamelCase);
+        var setVariablesCommand = _client.NewSetVariablesCommand(job.ElementInstanceKey);
+        await setVariablesCommand.Variables(veriablesText).SendWithRetry(TimeSpan.FromSeconds(60), cancellationToken);
+    }
+
+    public async Task<long> StartProcessInstance(string bpmProcessId, object veriables)
+    {
+        var veriablesText = JsonSerializer.Serialize(veriables, JsonSerializerCustomOptions.CamelCase);
         var instance = await _client.NewCreateProcessInstanceCommand()
             .BpmnProcessId(bpmProcessId)
             .LatestVersion()
+            .Variables(veriablesText)
             .Send();
 
         return instance.ProcessInstanceKey;
-    }
-
-    public async Task<ITopology> Status()
-    {
-        return await _client.TopologyRequest().Send();
     }
 }

@@ -43,20 +43,20 @@ internal class ZeebeWorker : IHostedService, IDisposable
             var zeebeJob = jobHandlerInfo.Type.GetZeebeJobAttribute();
             var worker = client.NewWorker()
                 .JobType(zeebeJob.JobType)
-                .Handler((jobClient, job) => HandleJob(job, jobHandlerInfo.Type, _cancellationTokenSource.Token))
+                .Handler((jobClient, job) => HandleJob(jobClient, job, jobHandlerInfo.Type, _cancellationTokenSource.Token))
                 //.FetchVariables(zeebeJob.FetchVariabeles)
-                .MaxJobsActive(zeebeJob.MaxJobsActive ?? 5)
+                .MaxJobsActive(zeebeJob.MaxJobsActive)
                 .Name(zeebeJob.JobType)
-                .PollingTimeout(zeebeJob.PollingTimeout ?? TimeSpan.FromSeconds(60))
-                .PollInterval(zeebeJob.PollInterval ?? TimeSpan.FromSeconds(10))
-                .Timeout(zeebeJob.Timeout ?? TimeSpan.FromSeconds(60))
+                .PollingTimeout(TimeSpan.FromMilliseconds(zeebeJob.PollingTimeoutInMs))
+                .PollInterval(TimeSpan.FromMilliseconds(zeebeJob.PollIntervalInMs))
+                .Timeout(TimeSpan.FromMilliseconds(zeebeJob.TimeoutInMs))
                 .Open();
 
             _workers.Add(worker);
         }
     }
 
-    private async Task HandleJob(IJob job, Type type, CancellationToken cancellationToken)
+    private async Task HandleJob(IJobClient jobClient, IJob job, Type type, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             await Task.FromCanceled(cancellationToken);
@@ -70,6 +70,10 @@ internal class ZeebeWorker : IHostedService, IDisposable
             ((IZeebeJob)instance).Job = job;
 
             await mediator.Send(instance, cancellationToken);
+
+            await jobClient
+                .NewCompleteJobCommand(job)
+                .Send(cancellationToken);
         }
         catch (Exception ex)
         {

@@ -10,3 +10,12 @@ services:
        ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
        ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
+  calculations.webapi:
+    image: ${DOCKER_REGISTRY-}calculationswebapi
+    build:
+      context: .
+      dockerfile: Modules/Calculations/Calculations.WebApi/Dockerfile
+    environment:
+       ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
+       ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
+       ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
