@@ -15,7 +15,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddInfrastructure(builder.Configuration, "Credit.Applications");
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -35,5 +35,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.ConfigureApplication();
 
 app.Run();

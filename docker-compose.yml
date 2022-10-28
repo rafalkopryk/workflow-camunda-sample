@@ -6,30 +6,43 @@ services:
     build:
       context: .
       dockerfile: Modules/Applications/Applications.WebApi/Dockerfile
-    networks:
-      - camunda-platform
+    depends_on:
+      - db
+      - zeebe
     environment:
        ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
        ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
        ZEEBE__CLOUD: ${ZEEBE_CLOUD}
        otel__url: http://otel:4317
+       ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;"
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
     build:
       context: .
       dockerfile: Modules/Calculations/Calculations.WebApi/Dockerfile
-    networks:
-      - camunda-platform
+    depends_on:
+      - db
+      - zeebe
     environment:
        ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
        ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
        ZEEBE__CLOUD: ${ZEEBE_CLOUD}
        otel__url: http://otel:4317
+       ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;"
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: db
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "S3cur3P@ssW0rd!"
+      ACCEPT_EULA: "Y"
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.2}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -44,14 +57,25 @@ services:
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
     restart: always
     volumes:
-      - zeebe:/usr/local/zeebe/data3
-    networks:
-      - camunda-platform
+      - zeebe:/usr/local/zeebe/data10
     depends_on:
       - es01
 
+  tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
+    image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.1.2}
+    container_name: tasklist
+    ports:
+      - "8082:8080"
+    environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
+      - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
+      - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://es01:9200
+      - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://es01:9200
+    depends_on:
+      - zeebe
+      - es01
+
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.2}
     container_name: operate
     ports:
       - "8081:8080"
@@ -59,8 +83,6 @@ services:
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://es01:9200
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://es01:9200
-    networks:
-      - camunda-platform
     depends_on:
       - zeebe
       - es01
@@ -89,9 +111,7 @@ services:
       timeout: 5s
       retries: 3
     volumes:
-      - elastic:/usr/share/elasticsearch/data3
-    networks:
-      - camunda-platform
+      - elastic:/usr/share/elasticsearch/data10
 
   kibana:
     container_name: kibana
@@ -103,8 +123,6 @@ services:
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=http://es01:9200
-    networks:
-      - camunda-platform
 
   apm:
     image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.17.5}
@@ -119,8 +137,6 @@ services:
     command: >
       apm-server -e
          -E output.elasticsearch.hosts=["es01:9200"]
-    networks:
-      - camunda-platform
 
   otel:
     container_name: otel
@@ -133,12 +149,7 @@ services:
       - "4317:4317"
     depends_on:
       - apm
-    networks:
-      - camunda-platform
 
 volumes:
   zeebe:
   elastic:
-
-networks:
-  camunda-platform:

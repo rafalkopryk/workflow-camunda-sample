@@ -1,5 +1,6 @@
 using Calculations.Application.Extensions;
 using Common.Application.Extensions;
+using Google;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration, "Credit.Calculations");
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -33,5 +34,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.ConfigureApplication();
 
 app.Run();

@@ -22,6 +22,12 @@ public static class ServiceCollectionExtensions
                 x.RecordException = true;
             })
             .AddGrpcClientInstrumentation()
+            .AddSqlClientInstrumentation(x=>
+            {
+                x.SetDbStatementForText = true;
+                x.SetDbStatementForStoredProcedure = true;
+                x.RecordException = true;
+            })
             .SetErrorStatusOnException()
             .SetResourceBuilder(ResourceBuilder.CreateDefault()
                     .AddService(serviceName: serviceName, serviceVersion: "1.0.0")

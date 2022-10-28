@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.Infrastructure.Database;
 
-internal class CreditApplicationDbContext : DbContext
+public class CreditApplicationDbContext : DbContext
 {
     public DbSet<CreditApplication> Applications { get; set; }
 

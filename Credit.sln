@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "El
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BPMN", "BPMN", "{9B3C7712-6C9E-427A-BC80-57754734767F}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Downloads\creditapplication.bpmn = ..\..\..\Downloads\creditapplication.bpmn
+		..\..\..\Downloads\credit-application.bpmn = ..\..\..\Downloads\credit-application.bpmn
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calculations", "Calculations", "{5657C541-D5D8-45F2-8F42-99CD0CE9FA66}"
@@ -33,6 +33,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations.WebApi", "Modules\Calculations\Calculations.WebApi\Calculations.WebApi.csproj", "{5289AD69-8844-463B-A99A-BB6EB7A7127E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations.Application", "Modules\Calculations\Calculations.Application\Calculations.Application.csproj", "{418CFE30-1EBC-4F49-8464-765601EF037C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "..\zeebe-client-csharp\Client\Client.csproj", "{2182229E-9368-44B8-B8BE-FFFECE6C4A4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,10 @@ Global
 		{418CFE30-1EBC-4F49-8464-765601EF037C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{418CFE30-1EBC-4F49-8464-765601EF037C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{418CFE30-1EBC-4F49-8464-765601EF037C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2182229E-9368-44B8-B8BE-FFFECE6C4A4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2182229E-9368-44B8-B8BE-FFFECE6C4A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2182229E-9368-44B8-B8BE-FFFECE6C4A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2182229E-9368-44B8-B8BE-FFFECE6C4A4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

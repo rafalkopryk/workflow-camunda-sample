@@ -1,6 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-
-namespace Applications.Application.Domain.Application;
+﻿namespace Applications.Application.Domain.Application;
 
 public record CustomerPersonalData
 {

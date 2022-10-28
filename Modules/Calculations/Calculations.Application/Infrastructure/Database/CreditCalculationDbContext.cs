@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Calculations.Application.Infrastructure.Database;
 
-internal class CreditCalculationDbContext : DbContext
+public class CreditCalculationDbContext : DbContext
 {
     public DbSet<CreditCalculation> Calculations { get; set; }
 
