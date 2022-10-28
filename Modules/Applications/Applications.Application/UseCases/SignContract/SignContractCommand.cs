@@ -1,5 +1,6 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 
 namespace Applications.Application.UseCases.SignContract;
 
-public record SignContractCommand(string ApplicationId) : IRequest;
+public record SignContractCommand(string ApplicationId) : IRequest<Result>;

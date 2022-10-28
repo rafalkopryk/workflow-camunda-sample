@@ -1,12 +1,14 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Common.Application.Errors;
 using Common.Application.Zeebe;
+using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.UseCases.GetApplication;
 
-internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery, GetApplicationQueryResponse>
+internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery, Result<GetApplicationQueryResponse>>
 {
     private readonly IZeebeService _processManager;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
@@ -17,10 +19,13 @@ internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
-    public async Task<GetApplicationQueryResponse> Handle(GetApplicationQuery query, CancellationToken cancellationToken)
+    public async Task<Result<GetApplicationQueryResponse>> Handle(GetApplicationQuery query, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.Applications.AsNoTracking()
-            .FirstAsync(application => application.ApplicationId == query.ApplicationId, cancellationToken);
+            .FirstOrDefaultAsync(application => application.ApplicationId == query.ApplicationId, cancellationToken);
+
+        if (creditApplication is null)
+            return Result.Failure<GetApplicationQueryResponse>(ErrorCode.ResourceNotFound);
 
         return Map(creditApplication);
     }

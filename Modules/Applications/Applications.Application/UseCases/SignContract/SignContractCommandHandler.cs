@@ -1,11 +1,13 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Common.Application.Errors;
 using Common.Application.Zeebe;
+using CSharpFunctionalExtensions;
 using MediatR;
 
 namespace Applications.Application.UseCases.SignContract;
 
-internal class SignContractCommandHandler : IRequestHandler<SignContractCommand>
+internal class SignContractCommandHandler : IRequestHandler<SignContractCommand, Result>
 {
     private readonly IZeebeService _processManager;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
@@ -16,15 +18,18 @@ internal class SignContractCommandHandler : IRequestHandler<SignContractCommand>
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
-    public async Task<Unit> Handle(SignContractCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SignContractCommand command, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(command.ApplicationId);
+        if (creditApplication is null)
+            return Result.Failure(ErrorCode.ResourceNotFound);
+
         creditApplication.ForwardTo(State.ContractSigned(creditApplication.State, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
         await _processManager.PublishMessage("contract-signed", creditApplication.ApplicationId.ToString(), cancellationToken);
 
-        return Unit.Value;
+        return Result.Success();
     }
 }

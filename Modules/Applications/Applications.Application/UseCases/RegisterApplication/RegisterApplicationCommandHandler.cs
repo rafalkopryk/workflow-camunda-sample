@@ -1,11 +1,14 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Common.Application.Errors;
 using Common.Application.Zeebe;
+using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
-internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterApplicationCommand>
+internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterApplicationCommand, Result>
 {
     private readonly IZeebeService _processManager;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
@@ -16,8 +19,13 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
-    public async Task<Unit> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
+        if(await _creditApplicationDbContext.Applications.AnyAsync(x => x.ApplicationId == command.ApplicationId))
+        {
+            return Result.Failure(ErrorCode.ResourceExists);
+        }
+
         var creditApplication = CreateCreditApplication(command);
 
         await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken);
@@ -33,7 +41,7 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
                 creditApplication.Declaration.AverageNetMonthlyIncome,
             });
 
-        return Unit.Value;
+        return Result.Success();
     }
 
     private static CreditApplication CreateCreditApplication(RegisterApplicationCommand request)

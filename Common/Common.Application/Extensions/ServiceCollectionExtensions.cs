@@ -1,6 +1,8 @@
 ﻿namespace Common.Application.Extensions;
 
+using Common.Application.MediatR;
 using Common.Application.Zeebe;
+using global::MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
@@ -10,6 +12,8 @@ public static class ServiceCollectionExtensions
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string serviceName)
     {
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(BusinessRuleValidationExceptionProcessorBehavior<,>));
+
         services.AddOpenTelemetryTracing(builder => builder
             .AddAspNetCoreInstrumentation(x =>
             {

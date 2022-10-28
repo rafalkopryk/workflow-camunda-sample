@@ -78,7 +78,7 @@ public record State
             _state = state;
         }
 
-        public string ErrorCode => "DECISION_SHOULD_BE_POSITIVE";
+        public string ErrorCode => Common.Application.Errors.ErrorCode.OperationNotAllowed;
 
         public bool IsBroken()
         {
@@ -95,7 +95,7 @@ public record State
             _state = state;
         }
 
-        public string ErrorCode => "LEVEL_SHOULD_BE_DECISION_GENERATED";
+        public string ErrorCode => Common.Application.Errors.ErrorCode.OperationNotAllowed;
 
         public bool IsBroken()
         {
