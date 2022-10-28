@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "El
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BPMN", "BPMN", "{9B3C7712-6C9E-427A-BC80-57754734767F}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Downloads\credit-application.bpmn = ..\..\..\Downloads\credit-application.bpmn
+		BPMN\credit-application.bpmn = BPMN\credit-application.bpmn
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calculations", "Calculations", "{5657C541-D5D8-45F2-8F42-99CD0CE9FA66}"
