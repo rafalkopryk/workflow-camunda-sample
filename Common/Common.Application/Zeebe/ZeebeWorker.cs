@@ -37,6 +37,7 @@ internal class ZeebeWorker : IHostedService, IDisposable
             : ZeebeClient.Builder()
                 .UseGatewayAddress(_zeebeOptions.Address)
                 .UsePlainText()
+                .UseKeepAlive(TimeSpan.FromSeconds(60))
                 .Build();
 
         using var scope = _serviceScopeFactory.CreateScope();

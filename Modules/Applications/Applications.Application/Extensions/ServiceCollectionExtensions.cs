@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMediatR(typeof(RegisterApplicationCommand));
-        services.AddDbContext<CreditApplicationDbContext>(
+        services.AddDbContextPool<CreditApplicationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Applications.WebApi")));
     }
 

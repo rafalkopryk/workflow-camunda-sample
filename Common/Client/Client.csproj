@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Version>1.2.1</Version>
+    <Authors>Christopher Zell</Authors>
+    <Company />
+    <Description>
+Client to communicate with a Zeebe broker.
+
+Uses GRPC as protocol for communication.
+For more information about the zeebe project please visit http://zeebe.io</Description>
+    <PackageProjectUrl>https://github.com/zeebe-io/zeebe-client-csharp</PackageProjectUrl>
+    <PackageTags>zeebe, zb, zb-csharp, zb-client, grpc</PackageTags>
+
+    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <FileVersion>1.2.1</FileVersion>
+    <PackageReleaseNotes>
+Features:
+
+Bug Fixes:
+
+  * Return max if exceeding max wait time by @Zelldon in https://github.com/camunda-community-hub/zeebe-client-csharp/pull/381
+
+
+
+Update Dependencies
+
+
+-----
+
+This release is based on the Zeebe 1.3.X release (https://github.com/zeebe-io/zeebe).
+    </PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageId>zb-client</PackageId>
+    <Product>Zeebe C# client</Product>
+    <RepositoryUrl>https://github.com/zeebe-io/zeebe-client-csharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageVersion>1.2.1</PackageVersion>
+    <RootNamespace>Zeebe.Client</RootNamespace>
+    <Title>1.2.1</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" version="3.21.8" />
+    <PackageReference Include="Grpc" version="2.46.5" />
+    <PackageReference Include="Grpc.Auth" Version="2.49.0" />
+    <PackageReference Include="Grpc.Core" version="2.46.5" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
+    <PackageReference Include="Grpc.Tools" version="2.50.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Client.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>
