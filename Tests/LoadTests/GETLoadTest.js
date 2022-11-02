@@ -5,23 +5,22 @@ export const options = {
   insecureSkipTLSVerify: true,
   noConnectionReuse: false,
   stages: [
-    { duration: '10s', target: 100 },
-    { duration: '1m30s', target: 100 },
-    { duration: '30s', target: 0 },
+    { duration: '0s', target: 1 },
+    { duration: '30s', target: 1 },
   ],
   thresholds:{
-    http_req_duration: ['p(99)<250']
+    http_req_duration: ['p(90)<250']
   }
 };
 
 export default function () {
 
-  const url = 'https://localhost:49188/applications';
+  const url = 'https://localhost:49177/applications';
   let guid = generateGuid()
   const payload = JSON.stringify({
     applicationId: guid,
     creditApplication: {
-        amount: 5000,
+        amount: 10000,
         creditPeriodInMonths: 24,
         customerPersonalData: {
         firstName: 'Jan',
@@ -41,7 +40,7 @@ export default function () {
   };
 
   const res = http.post(url, payload, params);
-  check(res, { 'status was 201': (r) => r.status == 200 });
+  check(res, { 'status was 201': (r) => r.status == 201 });
   sleep(1);
 }
 

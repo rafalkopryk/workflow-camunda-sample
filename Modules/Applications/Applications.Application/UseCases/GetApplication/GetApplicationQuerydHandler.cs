@@ -1,7 +1,6 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
-using Common.Application.Zeebe;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,12 +9,10 @@ namespace Applications.Application.UseCases.GetApplication;
 
 internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery, Result<GetApplicationQueryResponse>>
 {
-    private readonly IZeebeService _processManager;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public GetApplicationQuerydHandler(IZeebeService zeebeService, CreditApplicationDbContext creditApplicationDbContext)
+    public GetApplicationQuerydHandler(CreditApplicationDbContext creditApplicationDbContext)
     {
-        _processManager = zeebeService;
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 

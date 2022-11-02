@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMediatR(typeof(SimulateCreditCommand));
-        services.AddDbContext<CreditCalculationDbContext>(
+        services.AddDbContextPool<CreditCalculationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Calculations.WebApi")));
     }
 

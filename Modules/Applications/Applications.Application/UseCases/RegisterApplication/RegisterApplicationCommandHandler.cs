@@ -2,6 +2,7 @@
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
 using Common.Application.Zeebe;
+using Common.Zeebe;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,8 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
 
     public async Task<Result> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
-        if(await _creditApplicationDbContext.Applications.AnyAsync(x => x.ApplicationId == command.ApplicationId))
+        var application = await _creditApplicationDbContext.Applications.FindAsync(command.ApplicationId);
+        if (application is not null)
         {
             return Result.Failure(ErrorCode.ResourceExists);
         }

@@ -2,6 +2,7 @@
 
 using Applications.Application.Infrastructure.Database;
 using Applications.Application.UseCases.RegisterApplication;
+using Applications.Application.UseCases.SetDecision;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +14,8 @@ public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(typeof(RegisterApplicationCommand));
-        services.AddDbContext<CreditApplicationDbContext>(
+        services.AddMediatR(typeof(SetDecisionCommand));
+        services.AddDbContextPool<CreditApplicationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Applications.WebApi")));
     }
 

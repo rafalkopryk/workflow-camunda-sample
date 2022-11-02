@@ -1,4 +1,6 @@
 ﻿namespace Common.Application.Zeebe;
+
+using Common.Zeebe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
