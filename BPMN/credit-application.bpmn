@@ -128,6 +128,9 @@
         <dc:Bounds x="930" y="310" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ap7bvs_di" bpmnElement="Activity_SetDecisionData">
+        <dc:Bounds x="620" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0v8xhir_di" bpmnElement="TextAnnotation_0v8xhir">
         <dc:Bounds x="1020" y="406" width="110" height="62" />
         <bpmndi:BPMNLabel />
@@ -135,9 +138,6 @@
       <bpmndi:BPMNShape id="TextAnnotation_0cwlo0u_di" bpmnElement="TextAnnotation_0cwlo0u">
         <dc:Bounds x="830" y="406" width="100" height="41" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ap7bvs_di" bpmnElement="Activity_SetDecisionData">
-        <dc:Bounds x="620" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_125oqqt_di" bpmnElement="Event_0yurv0o">
         <dc:Bounds x="972" y="372" width="36" height="36" />

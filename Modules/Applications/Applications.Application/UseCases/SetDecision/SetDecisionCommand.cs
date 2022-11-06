@@ -1,11 +1,11 @@
 ﻿using Common.Application.Zeebe;
+using Common.Zeebe;
 using MediatR;
-using Zeebe.Client.Api.Responses;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-[ZeebeJob(JobType = "set-decision-data", MaxJobsActive = 10, PollingTimeoutInMs = 60_000, TimeoutInMs = 60_000)]
-public record SetDecisionCommand : IZeebeJob, IRequest
+[ZeebeTask(Type = "set-decision-data", MaxJobsToActivate = 5, PollingTimeoutInMs = 20_000, PollIntervalInMs = 500)]
+public record SetDecisionCommand : IZeebeTask, IRequest
 {
     public IJob Job { get; set; }
 }

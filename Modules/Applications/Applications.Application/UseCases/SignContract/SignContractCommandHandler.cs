@@ -2,6 +2,7 @@
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
 using Common.Application.Zeebe;
+using Common.Zeebe;
 using CSharpFunctionalExtensions;
 using MediatR;
 

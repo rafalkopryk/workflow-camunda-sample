@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\Client.csproj" />
+    <ProjectReference Include="..\Common.Zeebe\Common.Zeebe.csproj" />
   </ItemGroup>
 
 </Project>

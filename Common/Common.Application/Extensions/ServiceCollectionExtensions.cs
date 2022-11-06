@@ -2,6 +2,7 @@
 
 using Common.Application.MediatR;
 using Common.Application.Zeebe;
+using Common.Zeebe;
 using global::MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,16 +42,6 @@ public static class ServiceCollectionExtensions
             {
                 configure.Endpoint = new Uri(configuration.GetSection("otel:url").Value);
             }));
-
-        services.Configure<ZeebeOptions>(options => configuration.GetSection("ZEEBE").Bind(options));
-        services.AddSingleton<IZeebeService, ZeebeService>();
-
-        var zeebejobProvider = new ZeebeJobHandlerProvider();
-        zeebejobProvider.RegisterZeebeJobs();
-
-        services.AddSingleton<IZeebeJobHandlerProvider>(zeebejobProvider);
-
-        services.AddHostedService<ZeebeWorker>();
     }
 }
 

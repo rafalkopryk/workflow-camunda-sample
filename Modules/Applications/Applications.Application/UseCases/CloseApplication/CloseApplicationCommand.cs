@@ -1,11 +1,11 @@
 ﻿using Common.Application.Zeebe;
+using Common.Zeebe;
 using MediatR;
-using Zeebe.Client.Api.Responses;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[ZeebeJob(JobType = "close-application", MaxJobsActive = 5, PollingTimeoutInMs = 60_000, TimeoutInMs = 60_000)]
-public record CloseApplicationCommand : IZeebeJob, IRequest
+[ZeebeTask(Type = "close-application", MaxJobsToActivate = 5, PollingTimeoutInMs = 20_000, PollIntervalInMs = 5_000)]
+public record CloseApplicationCommand : IZeebeTask, IRequest
 {
     public IJob Job { get; set; }
 }

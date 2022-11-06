@@ -2,7 +2,7 @@
 using Calculations.Application.Infrastructure.Database;
 using Common.Application.Dictionary;
 using Common.Application.Serializer;
-using Common.Application.Zeebe;
+using Common.Zeebe;
 using MediatR;
 using System.Text.Json;
 
@@ -41,7 +41,7 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
 
         await _creditCalculationDbContext.Calculations.AddAsync(calculation, cancellationToken);
 
-        await _zeebeService.SetVeriables(request.Job, new { calculation.Decision, creditApplication.ApplicationId }, cancellationToken);
+        await _zeebeService.SetVeriables(request.Job.ElementInstanceKey, new { calculation.Decision, creditApplication.ApplicationId }, cancellationToken);
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 

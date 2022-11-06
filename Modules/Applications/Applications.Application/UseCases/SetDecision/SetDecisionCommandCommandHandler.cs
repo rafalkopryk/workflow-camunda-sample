@@ -2,7 +2,7 @@
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Dictionary;
 using Common.Application.Serializer;
-using Common.Application.Zeebe;
+using Common.Zeebe;
 using MediatR;
 using System.Text.Json;
 
@@ -21,6 +21,7 @@ internal class SetDecisionCommandCommandHandler : IRequestHandler<SetDecisionCom
 
     public async Task<Unit> Handle(SetDecisionCommand command, CancellationToken cancellationToken)
     {
+
         var input = JsonSerializer.Deserialize<Input>(command.Job.Variables, JsonSerializerCustomOptions.CamelCase);
 
         var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
