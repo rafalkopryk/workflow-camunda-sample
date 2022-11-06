@@ -1,6 +1,6 @@
 ﻿namespace Common.Zeebe;
 
-public interface IZeebeJob
+public interface IZeebeTask
 {
     IJob Job { get; set; }
 }

@@ -18,7 +18,7 @@ internal class ZeebeService : IZeebeService
 
     public async Task CompleteJob(IJob job, CancellationToken cancellationToken)
     {
-        var result = await _client.CompleteJobAsync(new CompleteJobRequest
+        await _client.CompleteJobAsync(new CompleteJobRequest
         {
             JobKey = job.Key,
         }, cancellationToken: cancellationToken);
@@ -26,7 +26,7 @@ internal class ZeebeService : IZeebeService
 
     public async Task PublishMessage(string messageName, string correlationKey, CancellationToken cancellationToken)
     {
-        var result = await _client.PublishMessageAsync(new PublishMessageRequest
+        await _client.PublishMessageAsync(new PublishMessageRequest
         {
             Name = messageName,
             CorrelationKey = correlationKey,
@@ -36,7 +36,7 @@ internal class ZeebeService : IZeebeService
     public async Task SetVeriables(long elementInstanceKey, object veriables, CancellationToken cancellationToken)
     {
         var veriablesText = JsonSerializer.Serialize(veriables, JsonSerializerCustomOptions.CamelCase);
-        var result = await _client.SetVariablesAsync(new SetVariablesRequest
+        await _client.SetVariablesAsync(new SetVariablesRequest
         {
             ElementInstanceKey = elementInstanceKey,
             Variables = veriablesText,

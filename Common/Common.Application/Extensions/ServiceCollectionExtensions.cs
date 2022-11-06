@@ -42,8 +42,6 @@ public static class ServiceCollectionExtensions
             {
                 configure.Endpoint = new Uri(configuration.GetSection("otel:url").Value);
             }));
-
-        services.AddZeebeGateway(configuration);
     }
 }
 

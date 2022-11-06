@@ -1,24 +1,43 @@
 ﻿using Common.Application.Zeebe;
 using GatewayProtocol;
-using Microsoft.Extensions.Configuration;
+using Grpc.Core;
+using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Zeebe;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddZeebeGateway(this IServiceCollection services, IConfiguration configuration)
+    public static void AddZeebe(
+        this IServiceCollection services,
+        Action<ZeebeOptions> options,
+        Action<ZeebeBuilder> configure)
     {
-        services.Configure<ZeebeOptions>(options => configuration.GetSection("ZEEBE").Bind(options));
-        var uri = new Uri(configuration["ZEEBE:ADDRESS"]);
+        var zeebeOptions = new ZeebeOptions();
+        options?.Invoke(zeebeOptions);
 
+        var defaultMethodConfig = new MethodConfig
+        {
+            Names = { MethodName.Default },
+            RetryPolicy = new RetryPolicy
+            {
+                MaxAttempts = 3,
+                InitialBackoff = TimeSpan.FromSeconds(1),
+                MaxBackoff = TimeSpan.FromSeconds(5),
+                BackoffMultiplier = 1.0,
+                RetryableStatusCodes = { StatusCode.Unavailable, StatusCode.ResourceExhausted }
+            }
+        };
         services.AddGrpcClient<Gateway.GatewayClient>(client =>
         {
-            client.Address = uri;
+            client.Address = new Uri(zeebeOptions.Address);
         })
         .ConfigureChannel(configureChannel =>
         {
-            configureChannel.MaxRetryAttempts = 3;
+            configureChannel.ServiceConfig = new ServiceConfig
+            {
+                MethodConfigs = { defaultMethodConfig }
+            };
         })
         .ConfigurePrimaryHttpMessageHandler(() =>
         {
@@ -31,13 +50,7 @@ public static class ServiceCollectionExtensions
             };
         });
 
-        services.AddSingleton<IZeebeService, ZeebeService>();
-
-        var zeebejobProvider = new ZeebeJobHandlerProvider();
-        zeebejobProvider.RegisterZeebeJobs();
-
-        services.AddSingleton<IZeebeJobHandlerProvider>(zeebejobProvider);
-
-        services.AddHostedService<ZeebeWorker>();
+        var zeebeBuilder = new ZeebeBuilder(services);
+        configure?.Invoke(zeebeBuilder);
     }
 }

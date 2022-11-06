@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Calculations.Application.UseCases.SimulateCreditCommand;
 
-[ZeebeJob(JobType = "simulate-credit", MaxJobsToActivate = 10, PollingTimeoutInMs = 60_000)]
-public record SimulateCreditCommand : IZeebeJob, IRequest
+[ZeebeTask(Type = "simulate-credit", MaxJobsToActivate = 5, PollingTimeoutInMs = 20_000, PollIntervalInMs = 500)]
+public record SimulateCreditCommand : IZeebeTask, IRequest
 {
     public IJob Job { get; set; }
 }

@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-[ZeebeJob(JobType = "set-decision-data", MaxJobsToActivate = 10, PollingTimeoutInMs = 60_000)]
-public record SetDecisionCommand : IZeebeJob, IRequest
+[ZeebeTask(Type = "set-decision-data", MaxJobsToActivate = 5, PollingTimeoutInMs = 20_000, PollIntervalInMs = 500)]
+public record SetDecisionCommand : IZeebeTask, IRequest
 {
     public IJob Job { get; set; }
 }

@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[ZeebeJob(JobType = "close-application", MaxJobsToActivate = 20, PollingTimeoutInMs = 60_000, PollIntervalInMs = 10_000)]
-public record CloseApplicationCommand : IZeebeJob, IRequest
+[ZeebeTask(Type = "close-application", MaxJobsToActivate = 5, PollingTimeoutInMs = 20_000, PollIntervalInMs = 5_000)]
+public record CloseApplicationCommand : IZeebeTask, IRequest
 {
     public IJob Job { get; set; }
 }
