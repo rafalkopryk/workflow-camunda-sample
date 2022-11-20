@@ -21,7 +21,10 @@ public class CreditApplicationDbContext : DbContext
 
             entity.OwnsOne(creditApplication => creditApplication.CustomerPersonalData);
             entity.OwnsOne(creditApplication => creditApplication.Declaration);
-            entity.OwnsMany(creditApplication => creditApplication.States);
+            entity.OwnsMany(creditApplication => creditApplication.States, ownedNavigationBuilder  =>
+            {
+                ownedNavigationBuilder .ToJson();
+            });
         });
     }
 }

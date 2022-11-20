@@ -5,7 +5,7 @@ public class CreditApplication
     public string ApplicationId { get; protected set; }
     public decimal Amount { get; protected set; }
     public int CreditPeriodInMonths { get; protected set; }
-    public List<State> States { get; protected set; }
+    public List<State> States { get; protected set; } = new();
     public CustomerPersonalData CustomerPersonalData { get; protected set; }
     public Declaration Declaration { get; protected set; }
     public State State => States?.OrderByDescending(x => x.Date).FirstOrDefault(); 
