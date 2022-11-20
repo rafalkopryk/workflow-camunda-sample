@@ -15,7 +15,7 @@ services:
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
        ZEEBE__CLOUD: ${ZEEBE_CLOUD}
        otel__url: http://otel:4317
-       ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;"
+       ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
 
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
@@ -32,7 +32,7 @@ services:
        ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
        ZEEBE__CLOUD: ${ZEEBE_CLOUD}
        otel__url: http://otel:4317
-       ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;"
+       ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
 
   db:
     image: "mcr.microsoft.com/mssql/server"
@@ -121,7 +121,7 @@ services:
       - es01
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.5}
     ports:
-      - ${KIBANA_PORT}:5601
+      - 5602:5601
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=http://es01:9200

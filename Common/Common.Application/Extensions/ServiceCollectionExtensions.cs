@@ -37,7 +37,6 @@ public static class ServiceCollectionExtensions
             .SetResourceBuilder(ResourceBuilder.CreateDefault()
                     .AddService(serviceName: serviceName, serviceVersion: "1.0.0")
                     .AddTelemetrySdk())
-            .AddConsoleExporter()
             .AddOtlpExporter(configure =>
             {
                 configure.Endpoint = new Uri(configuration.GetSection("otel:url").Value);
