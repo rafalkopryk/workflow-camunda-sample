@@ -22,8 +22,8 @@ public static class ServiceCollectionExtensions
             RetryPolicy = new RetryPolicy
             {
                 MaxAttempts = 3,
-                InitialBackoff = TimeSpan.FromSeconds(1),
-                MaxBackoff = TimeSpan.FromSeconds(5),
+                InitialBackoff = TimeSpan.FromMilliseconds(500),
+                MaxBackoff = TimeSpan.FromSeconds(1),
                 BackoffMultiplier = 1.0,
                 RetryableStatusCodes = { StatusCode.Unavailable, StatusCode.ResourceExhausted }
             }

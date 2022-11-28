@@ -5,8 +5,9 @@ public class ZeebeTaskAttribute : Attribute
 {
     public string Type { get; set; }
     public int MaxJobsToActivate { get; set; } = 5;
-    public int TimeoutInMs { get; set; } = (int)TimeSpan.FromSeconds(60).TotalMilliseconds;
-    public int PollIntervalInMs { get; set; } = (int)TimeSpan.FromMilliseconds(500).TotalMilliseconds;
-    public int PollingTimeoutInMs { get; set; } = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
+    public int TimeoutInMs { get; set; } = 10_000;
+    public int PollIntervalInMs { get; set; } = 500;
+    public int PollingTimeoutInMs { get; set; } = 10_000;
     public string[] FetchVariabeles { get; set; } = Array.Empty<string>();
+    public int[] RetryBackOffInMs { get; set; } = new[] { 1000 };
 }
