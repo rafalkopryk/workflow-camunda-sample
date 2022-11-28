@@ -22,7 +22,6 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
     public async Task<Unit> Handle(SimulateCreditCommand request, CancellationToken cancellationToken)
     {
         var creditApplication = JsonSerializer.Deserialize<CreditApplication>(request.Job.Variables, JsonSerializerCustomOptions.CamelCase);
-
         var decsion = creditApplication switch
         {
             { Amount: < 1000 or > 25000} => Decision.Negative,
@@ -48,14 +47,5 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
         return Unit.Value;
     }
 
-    private record CreditApplication
-    {
-        public string ApplicationId { get; init; }
-
-        public decimal Amount { get; init; }
-
-        public int CreditPeriodInMonths { get; init; }
-
-        public decimal AverageNetMonthlyIncome { get; init; }
-    }
+    private record CreditApplication(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 }

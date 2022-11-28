@@ -14,6 +14,7 @@ internal class ZeebeWorker<T> : BackgroundService
     private readonly Gateway.GatewayClient _client;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger _logger;
+    private static int s_currentJobsActive = 0;
 
     public ZeebeWorker(Gateway.GatewayClient client, IServiceScopeFactory serviceScopeFactory, ILogger<ZeebeWorker<T>> logger)
     {
@@ -32,13 +33,16 @@ internal class ZeebeWorker<T> : BackgroundService
             MaxDegreeOfParallelism = 5,
         };
 
+        var thresholdJobsActivation = zeebeTask!.MaxJobsToActivate * 0.6;
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            var jobCount = zeebeTask.MaxJobsToActivate - s_currentJobsActive;
             var jobType = zeebeTask.Type;
             var request = new ActivateJobsRequest
             {
                 Type = jobType,
-                MaxJobsToActivate = zeebeTask.MaxJobsToActivate,
+                MaxJobsToActivate = jobCount,
                 Timeout = zeebeTask.TimeoutInMs,
                 RequestTimeout = zeebeTask.PollingTimeoutInMs,
             };
@@ -48,24 +52,31 @@ internal class ZeebeWorker<T> : BackgroundService
                 using var call = _client.ActivateJobs(request, cancellationToken: stoppingToken);
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
-                    var activeatedJobs = response.Jobs.ToList();
-                    await Parallel.ForEachAsync(activeatedJobs, parallelOptions, HandleJob);
+                    var source = response.Jobs.Select(x=> (x, zeebeTask.RetryBackOffInMs)).ToList();
+                    await Parallel.ForEachAsync(source, parallelOptions, HandleJob);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
+                await Task.Delay(TimeSpan.FromMilliseconds(zeebeTask.PollIntervalInMs));
             }
 
-            await Task.Delay(TimeSpan.FromMilliseconds(zeebeTask.PollIntervalInMs));
+            if (s_currentJobsActive > thresholdJobsActivation)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(zeebeTask.PollIntervalInMs));
+            }
         }
     }
 
-    private async ValueTask HandleJob(ActivatedJob? activatedJob, CancellationToken cancellationToken)
+    private async ValueTask HandleJob((ActivatedJob? ActivatedJob, int[] RetryBackOffInMs) source, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             await Task.FromCanceled(cancellationToken);
 
+
+        Interlocked.Increment(ref s_currentJobsActive);
+        var activatedJob = source.ActivatedJob;
         try
         {
             var internalJob = new InternalJob
@@ -101,12 +112,18 @@ internal class ZeebeWorker<T> : BackgroundService
         {
             _logger.LogError(ex, "Error during subscribe job {jobType}", activatedJob.Type);
 
+            var retryBackOff = source.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
             await _client.FailJobAsync(new FailJobRequest
             {
                 ErrorMessage = ex.Message,
                 JobKey = activatedJob.Key,
                 Retries = activatedJob.Retries - 1,
+                RetryBackOff = retryBackOff,
             });
+        }
+        finally
+        {
+            Interlocked.Decrement(ref s_currentJobsActive);
         }
     }
 }
