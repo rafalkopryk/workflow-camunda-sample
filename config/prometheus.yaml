@@ -1,0 +1,7 @@
+scrape_configs:
+- job_name: 'zeebe'
+  scrape_interval: 15s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets: ['zeebe:9600']
