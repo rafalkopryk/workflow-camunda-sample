@@ -1,35 +1,32 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Camunda.Client;
 using Common.Application.Dictionary;
 using Common.Application.Serializer;
-using Common.Zeebe;
 using MediatR;
 using System.Text.Json;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-internal class SetDecisionCommandCommandHandler : IRequestHandler<SetDecisionCommand>
+[ZeebeWorker(Type = "set-decision-data", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 1_000, 5_000 })]
+internal class SetDecisionCommandCommandHandler : IJobHandler
 {
-    private readonly IZeebeService _zeebeService;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public SetDecisionCommandCommandHandler(IZeebeService zeebeService, CreditApplicationDbContext creditApplicationDbContext)
+    public SetDecisionCommandCommandHandler(CreditApplicationDbContext creditApplicationDbContext)
     {
-        _zeebeService = zeebeService;
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
-    public async Task<Unit> Handle(SetDecisionCommand command, CancellationToken cancellationToken)
+    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
 
-        var input = JsonSerializer.Deserialize<Input>(command.Job.Variables, JsonSerializerCustomOptions.CamelCase);
+        var input = JsonSerializer.Deserialize<Input>(job.Variables, JsonSerializerCustomOptions.CamelCase);
 
         var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
         creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, input.Decision, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 
     private record Input

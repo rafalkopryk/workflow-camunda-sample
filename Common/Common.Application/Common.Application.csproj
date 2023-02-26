@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Zeebe\Common.Zeebe.csproj" />
+    <ProjectReference Include="..\..\Camunda\Camunda.Client\Camunda.Client.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,33 +1,29 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Camunda.Client;
 using Common.Application.Serializer;
-using Common.Zeebe;
-using MediatR;
 using System.Text.Json;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-internal class CloseApplicationCommandHandler : IRequestHandler<CloseApplicationCommand>
+[ZeebeWorker(Type = "close-application", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 5_000, 15_000 })]
+internal class CloseApplicationCommandHandler : IJobHandler
 {
-    private readonly IZeebeService _zeebeService;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public CloseApplicationCommandHandler(IZeebeService zeebeService, CreditApplicationDbContext creditApplicationDbContext)
+    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext)
     {
-        _zeebeService = zeebeService;
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
-    public async Task<Unit> Handle(CloseApplicationCommand command, CancellationToken cancellationToken)
+    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
-        var input = JsonSerializer.Deserialize<Input>(command.Job.Variables, JsonSerializerCustomOptions.CamelCase);
+        var input = JsonSerializer.Deserialize<Input>(job.Variables, JsonSerializerCustomOptions.CamelCase);
 
         var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
         creditApplication.ForwardTo(State.ApplicationClosed(creditApplication.State, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 
     private record Input

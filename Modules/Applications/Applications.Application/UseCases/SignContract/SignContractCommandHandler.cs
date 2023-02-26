@@ -1,21 +1,20 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
-using Common.Application.Zeebe;
-using Common.Zeebe;
 using CSharpFunctionalExtensions;
+using GatewayProtocol;
 using MediatR;
 
 namespace Applications.Application.UseCases.SignContract;
 
 internal class SignContractCommandHandler : IRequestHandler<SignContractCommand, Result>
 {
-    private readonly IZeebeService _processManager;
+    private readonly Gateway.GatewayClient _client;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public SignContractCommandHandler(IZeebeService zeebeService, CreditApplicationDbContext creditApplicationDbContext)
+    public SignContractCommandHandler(Gateway.GatewayClient client, CreditApplicationDbContext creditApplicationDbContext)
     {
-        _processManager = zeebeService;
+        _client = client;
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
@@ -29,7 +28,11 @@ internal class SignContractCommandHandler : IRequestHandler<SignContractCommand,
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _processManager.PublishMessage("contract-signed", creditApplication.ApplicationId.ToString(), cancellationToken);
+        await _client.PublishMessageAsync(new PublishMessageRequest
+        {
+            Name = "contract-signed",
+            CorrelationKey = creditApplication.ApplicationId.ToString()
+        });
 
         return Result.Success();
     }

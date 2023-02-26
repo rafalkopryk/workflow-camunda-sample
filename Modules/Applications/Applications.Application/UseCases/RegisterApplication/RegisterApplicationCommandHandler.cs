@@ -1,22 +1,22 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
-using Common.Application.Zeebe;
-using Common.Zeebe;
+using Common.Application.Serializer;
 using CSharpFunctionalExtensions;
+using GatewayProtocol;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
 internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterApplicationCommand, Result>
 {
-    private readonly IZeebeService _processManager;
+    private readonly Gateway.GatewayClient _client;
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public RegisterApplicationCommandHandler(IZeebeService zeebeService, CreditApplicationDbContext creditApplicationDbContext)
+    public RegisterApplicationCommandHandler(Gateway.GatewayClient client, CreditApplicationDbContext creditApplicationDbContext)
     {
-        _processManager = zeebeService;
+        _client = client;
         _creditApplicationDbContext = creditApplicationDbContext;
     }
 
@@ -32,15 +32,19 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
         await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken);
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _processManager.StartProcessInstance(
-            "credit-application",
-            new
-            {
-                creditApplication.ApplicationId,
-                creditApplication.Amount,
-                creditApplication.CreditPeriodInMonths,
-                creditApplication.Declaration.AverageNetMonthlyIncome,
-            });
+        await _client.CreateProcessInstanceAsync(new CreateProcessInstanceRequest
+        {
+            BpmnProcessId = "credit-application",
+            Variables = JsonSerializer.Serialize(
+                new
+                {
+                    creditApplication.ApplicationId,
+                    creditApplication.Amount,
+                    creditApplication.CreditPeriodInMonths,
+                    creditApplication.Declaration.AverageNetMonthlyIncome,
+                }, JsonSerializerCustomOptions.CamelCase),
+            Version = -1,
+        });
 
         return Result.Success();
     }

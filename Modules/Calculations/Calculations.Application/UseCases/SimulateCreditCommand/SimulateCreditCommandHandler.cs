@@ -1,27 +1,25 @@
 ﻿using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
+using Camunda.Client;
 using Common.Application.Dictionary;
 using Common.Application.Serializer;
-using Common.Zeebe;
-using MediatR;
 using System.Text.Json;
 
 namespace Calculations.Application.UseCases.SimulateCreditCommand;
 
-internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditCommand>
+[ZeebeWorker(Type = "simulate-credit", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 1_000, 5_000 }, AutoComplate = false)]
+internal class SimulateCreditCommandHandler : IJobHandler
 {
-    private readonly IZeebeService _zeebeService;
     private readonly CreditCalculationDbContext _creditCalculationDbContext;
 
-    public SimulateCreditCommandHandler(IZeebeService zeebeService, CreditCalculationDbContext creditCalculationDbContext)
+    public SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext)
     {
-        _zeebeService = zeebeService;
         _creditCalculationDbContext = creditCalculationDbContext;
     }
 
-    public async Task<Unit> Handle(SimulateCreditCommand request, CancellationToken cancellationToken)
+    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
-        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(request.Job.Variables, JsonSerializerCustomOptions.CamelCase);
+        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(job.Variables, JsonSerializerCustomOptions.CamelCase);
         var decsion = creditApplication switch
         {
             { Amount: < 1000 or > 25000} => Decision.Negative,
@@ -40,11 +38,9 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
 
         await _creditCalculationDbContext.Calculations.AddAsync(calculation, cancellationToken);
 
-        await _zeebeService.SetVeriables(request.Job.ElementInstanceKey, new { calculation.Decision, creditApplication.ApplicationId }, cancellationToken);
-
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        await client.CompleteJobCommand(job, JsonSerializer.Serialize(new { calculation.Decision, creditApplication.ApplicationId }, JsonSerializerCustomOptions.CamelCase));
     }
 
     private record CreditApplication(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);

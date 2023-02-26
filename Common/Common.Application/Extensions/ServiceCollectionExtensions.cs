@@ -1,8 +1,6 @@
 ﻿namespace Common.Application.Extensions;
 
 using Common.Application.MediatR;
-using Common.Application.Zeebe;
-using Common.Zeebe;
 using global::MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

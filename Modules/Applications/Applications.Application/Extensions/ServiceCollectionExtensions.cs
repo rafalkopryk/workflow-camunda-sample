@@ -2,8 +2,9 @@
 
 using Applications.Application.Infrastructure.Database;
 using Applications.Application.UseCases.CloseApplication;
+using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SetDecision;
-using Common.Zeebe;
+using Camunda.Client;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,16 +15,15 @@ public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(typeof(SetDecisionCommand));
+        services.AddMediatR(typeof(RegisterApplicationCommand));
         services.AddDbContextPool<CreditApplicationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Applications.WebApi")));
 
         services.AddZeebe(
             options => configuration.GetSection("ZEEBE").Bind(options),
             builder => builder
-                .AddService()
-                .AddTaskWorker<CloseApplicationCommand>()
-                .AddTaskWorker<SetDecisionCommand>());
+                .AddWorker<CloseApplicationCommandHandler>()
+                .AddWorker<SetDecisionCommandCommandHandler>());
     }
 
     public static void ConfigureApplication(this IHost host)
