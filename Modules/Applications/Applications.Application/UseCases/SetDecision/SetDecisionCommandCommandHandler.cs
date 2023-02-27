@@ -21,7 +21,7 @@ internal class SetDecisionCommandCommandHandler : IJobHandler
     public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
 
-        var input = JsonSerializer.Deserialize<Input>(job.Variables, JsonSerializerCustomOptions.CamelCase);
+        var input = JsonSerializer.Deserialize<Input>(job.Variables, Camunda.Client.JsonSerializerCustomOptions.CamelCase);
 
         var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
         creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, input.Decision, DateTimeOffset.Now));

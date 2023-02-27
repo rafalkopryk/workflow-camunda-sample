@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Camunda\Camunda.Connector.Kafka\Camunda.Connector.Kafka.csproj" />
+    <ProjectReference Include="..\..\..\Camunda\Camunda.Connector.SDK.Runtime.Util\Camunda.Connector.SDK.Runtime.Util.csproj" />
     <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
   </ItemGroup>
 

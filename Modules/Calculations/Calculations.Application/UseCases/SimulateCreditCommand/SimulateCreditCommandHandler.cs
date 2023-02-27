@@ -19,7 +19,7 @@ internal class SimulateCreditCommandHandler : IJobHandler
 
     public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
-        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(job.Variables, JsonSerializerCustomOptions.CamelCase);
+        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(job.Variables, Camunda.Client.JsonSerializerCustomOptions.CamelCase);
         var decsion = creditApplication switch
         {
             { Amount: < 1000 or > 25000} => Decision.Negative,
@@ -40,7 +40,7 @@ internal class SimulateCreditCommandHandler : IJobHandler
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await client.CompleteJobCommand(job, JsonSerializer.Serialize(new { calculation.Decision, creditApplication.ApplicationId }, JsonSerializerCustomOptions.CamelCase));
+        await client.CompleteJobCommand(job, JsonSerializer.Serialize(new { calculation.Decision, creditApplication.ApplicationId }, Camunda.Client.JsonSerializerCustomOptions.CamelCase));
     }
 
     private record CreditApplication(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);

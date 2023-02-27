@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Camunda.Client;
 
-internal static class JsonSerializerCustomOptions
+public static class JsonSerializerCustomOptions
 {
     public static readonly JsonSerializerOptions CamelCase = GetJsonSerializerOptions();
 

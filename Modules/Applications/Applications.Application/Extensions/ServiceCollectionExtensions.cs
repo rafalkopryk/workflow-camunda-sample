@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Camunda.Connector.SDK.Runtime.Util;
+using Camunda.Connector.Kafka.Model;
 
 public static class ServiceCollectionExtensions
 {
@@ -23,7 +25,8 @@ public static class ServiceCollectionExtensions
             options => configuration.GetSection("ZEEBE").Bind(options),
             builder => builder
                 .AddWorker<CloseApplicationCommandHandler>()
-                .AddWorker<SetDecisionCommandCommandHandler>());
+                .AddWorker<SetDecisionCommandCommandHandler>()
+                .AddOutboundConnectorFunction<KafkaConnectorFunction>(services));
     }
 
     public static void ConfigureApplication(this IHost host)

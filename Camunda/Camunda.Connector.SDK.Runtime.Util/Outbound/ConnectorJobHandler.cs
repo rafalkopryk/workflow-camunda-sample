@@ -6,18 +6,17 @@ using System.Text.Json;
 
 namespace Camunda.Connector.SDK.Runtime.Util.Outbound;
 
-[ZeebeWorker(AutoComplate = false)]
-public class ConnectorJobHandler : IJobHandler
+public class ConnectorJobHandler<T> : IJobHandler where T : IOutboundConnectorFunction
 {
     private readonly ILogger _logger;
 
     // Protects Zeebe from enormously large messages it cannot handle
     public static int MAX_ERROR_MESSAGE_LENGTH = 6000;
 
-    protected IOutboundConnectorFunction _call;
+    protected T _call;
     //protected SecretProvider secretProvider;
 
-    public ConnectorJobHandler(IOutboundConnectorFunction call, ILogger<ConnectorJobHandler> logger)
+    public ConnectorJobHandler(T call, ILogger<ConnectorJobHandler<T>> logger)
     {
         _call = call;
         _logger = logger;
@@ -30,9 +29,9 @@ public class ConnectorJobHandler : IJobHandler
         var result = new ConnectorResult();
         try
         {
-            result.ResponseValue = _call.Execute(new JobHandlerContext(job));
+            result.ResponseValue = await _call.Execute(new JobHandlerContext(job));
 
-            var customHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(job.CustomHeaders);
+            var customHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(job.CustomHeaders, JsonSerializerCustomOptions.CamelCase);
             result.Variables = ConnectorHelper.CreateOutputVariables(result.GetResponseValue, customHeaders);
         }
         catch (Exception ex)
@@ -93,7 +92,7 @@ public class ConnectorJobHandler : IJobHandler
 
     protected async Task CompleteJob(IJobClient client, IJob job, ConnectorResult result)
     {
-        var variables = JsonSerializer.Serialize(result.Variables);
+        var variables = JsonSerializer.Serialize(result.Variables, JsonSerializerCustomOptions.CamelCase);
         await client.CompleteJobCommand(job, variables);
     }
 
