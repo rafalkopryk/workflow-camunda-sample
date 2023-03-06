@@ -8,4 +8,9 @@ public class ConnectorException : Exception
     {
         ErrorCode = errorCode;
     }
+
+    public ConnectorException(string message, Exception? innerException = null)
+        :base(message, innerException)
+    {
+    }
 }

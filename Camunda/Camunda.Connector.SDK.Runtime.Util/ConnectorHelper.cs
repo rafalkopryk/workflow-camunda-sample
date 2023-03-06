@@ -1,4 +1,9 @@
-﻿namespace Camunda.Connector.SDK.Runtime.Util;
+﻿using Camunda.Client;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
+using System.Linq.Expressions;
+using System.Text.Json;
+
+namespace Camunda.Connector.SDK.Runtime.Util;
 
 public class ConnectorHelper
 {
@@ -13,9 +18,9 @@ public class ConnectorHelper
     public const string RESULT_EXPRESSION_HEADER_NAME = "resultExpression";
     public const string ERROR_EXPRESSION_HEADER_NAME = "errorExpression";
 
-  public static Dictionary<string, object> CreateOutputVariables(object responseContent, Dictionary<string, string> jobHeaders)
-  {
-        Dictionary<string, object> outputVariables = new ();
+    public static Dictionary<string, object> CreateOutputVariables(object responseContent, Dictionary<string, string> jobHeaders)
+    {
+        Dictionary<string, object> outputVariables = new();
         var resultVariableName = jobHeaders.FirstOrDefault(x => x.Key == RESULT_VARIABLE_HEADER_NAME).Value;
         var resultExpression = jobHeaders.FirstOrDefault(x => x.Key == RESULT_EXPRESSION_HEADER_NAME).Value;
 
@@ -25,11 +30,16 @@ public class ConnectorHelper
         }
 
         //TODO
-        //Optional.ofNullable(resultExpression)
-        //    .filter(s-> !s.isBlank())
-        //        .map(expression->FEEL_ENGINE_WRAPPER.evaluateToJson(expression, responseContent))
-        //        .map(json->parseJsonVarsAsTypeOrThrow(json, Map.class, resultExpression))
-        //    .ifPresent(outputVariables::putAll);
+
+        if (!string.IsNullOrWhiteSpace(resultExpression))
+        {
+            var json = FeelEngineWrapper.EvaluateToJson(resultExpression, responseContent);
+            var resultDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(json, JsonSerializerCustomOptions.CamelCase);
+            foreach (var result in resultDictionary)
+            {
+                outputVariables.TryAdd(result.Key, result.Value);
+            }
+        }
 
         return outputVariables;
     }

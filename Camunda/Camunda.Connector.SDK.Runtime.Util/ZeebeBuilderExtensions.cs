@@ -1,6 +1,8 @@
 ﻿using Camunda.Client;
 using Camunda.Connector.SDK.Core.Api.Annotation;
 using Camunda.Connector.SDK.Core.Api.Outbound;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
+using Camunda.Connector.SDK.Runtime.Util.Inbound.Correlation;
 using Camunda.Connector.SDK.Runtime.Util.Outbound;
 using Microsoft.Extensions.DependencyInjection;
 

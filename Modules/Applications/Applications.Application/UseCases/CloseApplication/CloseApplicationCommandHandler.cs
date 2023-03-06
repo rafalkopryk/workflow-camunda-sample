@@ -1,33 +1,35 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using Camunda.Client;
-using Common.Application.Serializer;
-using System.Text.Json;
+using Common.Kafka;
+using MediatR;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[ZeebeWorker(Type = "close-application", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 5_000, 15_000 })]
-internal class CloseApplicationCommandHandler : IJobHandler
+[EventEnvelope(Topic = "command.credit.applications.close.start.v1")]
+public record CloseApplicationCommand(string ApplicationId) : INotification;
+
+internal class CloseApplicationCommandHandler : INotificationHandler<CloseApplicationCommand>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext)
+    private readonly IEventBusProducer _eventBusProducer;
+
+    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IEventBusProducer eventBusProducer)
     {
         _creditApplicationDbContext = creditApplicationDbContext;
+        _eventBusProducer = eventBusProducer;
     }
 
-    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
+    public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
     {
-        var input = JsonSerializer.Deserialize<Input>(job.Variables, Camunda.Client.JsonSerializerCustomOptions.CamelCase);
-
-        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
+        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(notification.ApplicationId);
         creditApplication.ForwardTo(State.ApplicationClosed(creditApplication.State, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
-    }
 
-    private record Input
-    {
-        public string ApplicationId { get; init; }
+        await _eventBusProducer.PublishAsync(new CloseApplicationCommanddDone(notification.ApplicationId), cancellationToken);
     }
 }
+
+[EventEnvelope(Topic = "command.credit.applications.close.done.v1")]
+public record CloseApplicationCommanddDone(string ApplicationId) : INotification;

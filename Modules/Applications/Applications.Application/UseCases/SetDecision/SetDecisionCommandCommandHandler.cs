@@ -1,38 +1,35 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using Camunda.Client;
 using Common.Application.Dictionary;
-using Common.Application.Serializer;
+using Common.Kafka;
 using MediatR;
-using System.Text.Json;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-[ZeebeWorker(Type = "set-decision-data", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 1_000, 5_000 })]
-internal class SetDecisionCommandCommandHandler : IJobHandler
+[EventEnvelope(Topic = "command.credit.applications.decision.start.v1")]
+public record SetDecisionCommand(string ApplicationId, Decision Decision) : INotification;
+
+internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisionCommand>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
+    private readonly IEventBusProducer _eventBusProducer;
 
-    public SetDecisionCommandCommandHandler(CreditApplicationDbContext creditApplicationDbContext)
+    public SetDecisionCommandCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IEventBusProducer eventBusProducer)
     {
         _creditApplicationDbContext = creditApplicationDbContext;
+        _eventBusProducer = eventBusProducer;
     }
 
-    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
+    public async Task Handle(SetDecisionCommand notification, CancellationToken cancellationToken)
     {
-
-        var input = JsonSerializer.Deserialize<Input>(job.Variables, Camunda.Client.JsonSerializerCustomOptions.CamelCase);
-
-        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(input.ApplicationId);
-        creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, input.Decision, DateTimeOffset.Now));
+        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(notification.ApplicationId);
+        creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, notification.Decision, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
-    }
 
-    private record Input
-    {
-        public string ApplicationId { get; init; }
-
-        public Decision Decision { get; init; }
+        await _eventBusProducer.PublishAsync(new SetDecisionCommandDone(notification.ApplicationId), cancellationToken);
     }
 }
+
+[EventEnvelope(Topic = "command.credit.applications.decision.done.v1")]
+public record SetDecisionCommandDone(string ApplicationId) : INotification;

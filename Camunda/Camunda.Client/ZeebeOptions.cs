@@ -1,9 +1,6 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Camunda.Client;
+﻿namespace Camunda.Client;
 
 public record ZeebeOptions
 {
-    [JsonPropertyName("ADDRESS")]
-    public string Address { get; init; }
+    public string Endpoint { get; init; }
 }

@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "applications.webapi": "StartDebugging",
+        "calculations.webapi": "StartDebugging",
+        "utility.kafkaconnector": "StartDebugging"
+      }
+    }
+  }
+}

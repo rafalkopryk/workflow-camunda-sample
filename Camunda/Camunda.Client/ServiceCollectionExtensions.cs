@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         };
         services.AddGrpcClient<Gateway.GatewayClient>(client =>
         {
-            client.Address = new Uri(zeebeOptions.Address);
+            client.Address = new Uri(zeebeOptions.Endpoint);
         })
         .ConfigureChannel(configureChannel =>
         {

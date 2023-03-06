@@ -6,3 +6,4 @@ public class OutboundConnectorAttribute : Attribute
     public string[] InputVariables { get; set; }
     public string Type { get; set; }
 }
+

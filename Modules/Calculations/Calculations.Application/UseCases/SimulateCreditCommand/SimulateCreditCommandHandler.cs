@@ -1,28 +1,35 @@
-﻿using Calculations.Application.Domain;
+﻿namespace Calculations.Application.UseCases.SimulateCreditCommand;
+
+using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
-using Camunda.Client;
 using Common.Application.Dictionary;
-using Common.Application.Serializer;
-using System.Text.Json;
 
-namespace Calculations.Application.UseCases.SimulateCreditCommand;
+using Common.Kafka;
+using MediatR;
 
-[ZeebeWorker(Type = "simulate-credit", MaxJobsToActivate = 10, PollingTimeoutInMs = 15_000, PollIntervalInMs = 500, RetryBackOffInMs = new[] { 1_000, 5_000 }, AutoComplate = false)]
-internal class SimulateCreditCommandHandler : IJobHandler
+[EventEnvelope(Topic = "command.credit.calculations.simulation.start.v1")]
+public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : INotification;
+
+[EventEnvelope(Topic = "command.credit.calculations.simulation.done.v1")]
+public record SimulateCreditCommandDone(string ApplicationId, string Decision) : INotification;
+
+internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCreditCommand>
 {
     private readonly CreditCalculationDbContext _creditCalculationDbContext;
 
-    public SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext)
+    private readonly IEventBusProducer _eventBusProducer;
+
+    public SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IEventBusProducer eventBusProducer)
     {
         _creditCalculationDbContext = creditCalculationDbContext;
+        _eventBusProducer = eventBusProducer;
     }
 
-    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
+    public async Task Handle(SimulateCreditCommand notification, CancellationToken cancellationToken)
     {
-        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(job.Variables, Camunda.Client.JsonSerializerCustomOptions.CamelCase);
-        var decsion = creditApplication switch
+        var decsion = notification switch
         {
-            { Amount: < 1000 or > 25000} => Decision.Negative,
+            { Amount: < 1000 or > 25000 } => Decision.Negative,
             { CreditPeriodInMonths: < 6 or > 24 } => Decision.Negative,
             { AverageNetMonthlyIncome: < 2000 } => Decision.Negative,
             _ => Decision.Positive
@@ -30,9 +37,9 @@ internal class SimulateCreditCommandHandler : IJobHandler
 
         var calculation = new CreditCalculation
         {
-            ApplicationId = creditApplication.ApplicationId,
-            Amount = creditApplication.Amount,
-            CreditPeriodInMonths = creditApplication.CreditPeriodInMonths,
+            ApplicationId = notification.ApplicationId,
+            Amount = notification.Amount,
+            CreditPeriodInMonths = notification.CreditPeriodInMonths,
             Decision = decsion,
         };
 
@@ -40,8 +47,6 @@ internal class SimulateCreditCommandHandler : IJobHandler
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await client.CompleteJobCommand(job, JsonSerializer.Serialize(new { calculation.Decision, creditApplication.ApplicationId }, Camunda.Client.JsonSerializerCustomOptions.CamelCase));
+        await _eventBusProducer.PublishAsync(new SimulateCreditCommandDone(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
     }
-
-    private record CreditApplication(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 }
