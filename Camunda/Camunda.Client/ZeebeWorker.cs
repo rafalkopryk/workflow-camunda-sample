@@ -13,14 +13,14 @@ internal class ZeebeWorker<T> : BackgroundService
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger _logger;
     private static int s_currentJobsActive = 0;
-    private readonly ZeebeWorkerAttribute _attribute;
+    private readonly ServiceTaskConfiguration _serviceTaskConfiguration;
 
-    public ZeebeWorker(Gateway.GatewayClient client, IServiceScopeFactory serviceScopeFactory, IEnumerable<ZeebeConfiguration> _zeebeConfigurations, ILogger<ZeebeWorker<T>> logger)
+    public ZeebeWorker(Gateway.GatewayClient client, IServiceScopeFactory serviceScopeFactory, ServiceTaskConfiguration serviceTaskConfiguration, ILogger<ZeebeWorker<T>> logger)
     {
         _client = client;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
-        _attribute = _zeebeConfigurations.FirstOrDefault(x => x.Type == typeof(T))?.Attribute ?? throw new ArgumentNullException(nameof(_attribute));
+        _serviceTaskConfiguration = serviceTaskConfiguration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,18 +31,18 @@ internal class ZeebeWorker<T> : BackgroundService
             MaxDegreeOfParallelism = 5,
         };
 
-        var thresholdJobsActivation = _attribute!.MaxJobsToActivate * 0.6;
+        var thresholdJobsActivation = _serviceTaskConfiguration!.MaxJobsToActivate * 0.6;
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var jobCount = _attribute.MaxJobsToActivate - s_currentJobsActive;
-            var jobType = _attribute.Type;
+            var jobCount = _serviceTaskConfiguration.MaxJobsToActivate - s_currentJobsActive;
+            var jobType = _serviceTaskConfiguration.Type;
             var request = new ActivateJobsRequest
             {
                 Type = jobType,
                 MaxJobsToActivate = jobCount,
-                Timeout = _attribute.TimeoutInMs,
-                RequestTimeout = _attribute.PollingTimeoutInMs,
+                Timeout = _serviceTaskConfiguration.TimeoutInMs,
+                RequestTimeout = _serviceTaskConfiguration.RequestTimeoutInMs,
             };
 
             try
@@ -57,12 +57,12 @@ internal class ZeebeWorker<T> : BackgroundService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
-                await Task.Delay(TimeSpan.FromMilliseconds(_attribute.PollIntervalInMs));
+                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs));
             }
 
             if (s_currentJobsActive > thresholdJobsActivation)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(_attribute.PollIntervalInMs));
+                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs));
             }
         }
     }
@@ -98,7 +98,7 @@ internal class ZeebeWorker<T> : BackgroundService
             var handler = serviceScope.ServiceProvider.GetRequiredService<T>();
             await handler.Handle(jobClient, internalJob, cancellationToken);
 
-            if (!_attribute.AutoComplate)
+            if (!_serviceTaskConfiguration.AutoComplate)
             {
                 return;
             }
@@ -112,7 +112,7 @@ internal class ZeebeWorker<T> : BackgroundService
         {
             _logger.LogError(ex, "Error during subscribe job {jobType}", activatedJob.Type);
 
-            var retryBackOff = _attribute.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
+            var retryBackOff = _serviceTaskConfiguration.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
             await _client.FailJobAsync(new FailJobRequest
             {
                 ErrorMessage = ex.Message,

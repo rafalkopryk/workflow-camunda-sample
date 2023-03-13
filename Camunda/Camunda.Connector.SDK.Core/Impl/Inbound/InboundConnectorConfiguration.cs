@@ -1,4 +1,4 @@
-﻿namespace Camunda.Connector.SDK.Runtime.Util.Inbound;
+﻿namespace Camunda.Connector.SDK.Core.Impl.Inbound;
 
 public record InboundConnectorConfiguration
 (

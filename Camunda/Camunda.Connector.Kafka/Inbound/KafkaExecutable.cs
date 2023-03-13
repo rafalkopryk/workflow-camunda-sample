@@ -31,12 +31,11 @@ internal class KafkaExecutable : IInboundConnectorExecutable
     {
         var properties = context.GetPropertiesAsType<KafkaProperties>();
 
-
         //TODO fix it
         Task.Run(async () =>
         {
             using var consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build();
-            consumer.Subscribe(properties.Topic);
+            consumer.Subscribe(properties.SubscriptionTopic);
             
             try
             {
@@ -46,10 +45,10 @@ internal class KafkaExecutable : IInboundConnectorExecutable
                     await ConsumeNextEvent(context, consumer, cancellationToken);
                 }
             }
-            catch (Exception e)
+            catch (OperationCanceledException e)
             {
                 _logger.LogError(e, "Error consuming message");
-                //_consumer.Close();
+                consumer.Close();
             }
         }, cancellationToken);
 
@@ -62,21 +61,13 @@ internal class KafkaExecutable : IInboundConnectorExecutable
         {
             var message = consumer.Consume(cancellationToken);
             if (message.Message == null) return;
-
-            try
-            {
                 var body = message.Message.Value;
                 var result = await context.Correlate(body);
 
                 //TODO
                 consumer.Commit();
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
         }
-        catch (Exception e)
+        catch (ConsumeException e)
         {
             _logger.LogError(e, "Error consuming message");
             //_consumer.Commit();

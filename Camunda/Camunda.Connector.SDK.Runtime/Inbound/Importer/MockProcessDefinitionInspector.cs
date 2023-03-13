@@ -2,6 +2,7 @@
 using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Camunda.Connector.SDK.Runtime.Inbound.Importer;
 
@@ -22,7 +23,7 @@ public class MockProcessDefinitionInspector : IProcessDefinitionInspector
         return inboundConnectorPropertiesOptions.Select(x => new InboundConnectorProperties
         {
             BpmnProcessId = x.BpmnProcessId,
-            CorrelationPoint = new MessageCorrelationPoint(x.CorrelationPoint.MessageName, x.CorrelationPoint.CorrelationKeyExpression),
+            CorrelationPoint = new MessageCorrelationPoint(x.CorrelationPoint.MessageName, x.Properties.FirstOrDefault(x => x.Key == "inbound.correlationKeyMapping").Value),
             Properties = x.Properties
         }).ToArray();
     }
@@ -38,5 +39,4 @@ public record InboundConnectorPropertiesOptions
 public record MessageCorrelationOptions
 {
     public string MessageName { get; init; }
-    public string CorrelationKeyExpression { get; init; }
 }

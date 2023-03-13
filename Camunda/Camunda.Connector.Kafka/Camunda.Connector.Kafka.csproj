@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Camunda.Connector.SDK.Runtime.Util\Camunda.Connector.SDK.Runtime.Util.csproj" />
+    <ProjectReference Include="..\Camunda.Connector.SDK.Core\Camunda.Connector.SDK.Core.csproj" />
   </ItemGroup>
 
 </Project>

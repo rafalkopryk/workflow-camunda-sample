@@ -10,17 +10,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Camunda.Connector.SDK.Runtime.Inbound;
 
-public static class ServiceColectionExtensions
+public static class InboundConnectorsServiceColectionExtensions
 {
-    public static void AddInboundConnectorsRuntime(this IServiceCollection services, Action<InboundConnectorsRuntimeBuilder> configure)
+    public static IZeebeBuilder AddInboundConnectorsRuntime(this IZeebeBuilder zeebeBuilder, Action<InboundConnectorsRuntimeBuilder> configure)
     {
-        services.AddScoped<InboundCorrelationHandler>();
-        services.AddScoped<IInboundConnectorFactoryConnectorFactory, DefaultInboundConnectorFactory>();
+        zeebeBuilder.Configure(services =>
+        {
+            services.AddScoped<InboundCorrelationHandler>();
+            services.AddScoped<IInboundConnectorFactoryConnectorFactory, DefaultInboundConnectorFactory>();
 
-        services.AddScoped<InboundConnectorManager>();
+            services.AddScoped<InboundConnectorManager>();
 
-        var builder = new InboundConnectorsRuntimeBuilder(services);
-        configure?.Invoke(builder);
+            var builder = new InboundConnectorsRuntimeBuilder(services);
+            configure?.Invoke(builder);
+        });
+
+        return zeebeBuilder;
     }
 }
 

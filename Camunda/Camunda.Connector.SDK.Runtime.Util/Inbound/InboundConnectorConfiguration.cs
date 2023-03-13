@@ -1,4 +1,5 @@
 ﻿using Camunda.Connector.SDK.Core.Api.Inbound;
+using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Camunda.Connector.SDK.Runtime.Util.Inbound;
