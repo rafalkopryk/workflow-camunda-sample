@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "El
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BPMN", "BPMN", "{9B3C7712-6C9E-427A-BC80-57754734767F}"
 	ProjectSection(SolutionItems) = preProject
-		BPMN\credit-application.bpmn = BPMN\credit-application.bpmn
+		..\workflow-camunda-sample3\BPMN\credit-application.bpmn = ..\workflow-camunda-sample3\BPMN\credit-application.bpmn
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calculations", "Calculations", "{5657C541-D5D8-45F2-8F42-99CD0CE9FA66}"
@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camunda.Connector.SDK.Runti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camunda.Connector.Kafka", "Camunda\Camunda.Connector.Kafka\Camunda.Connector.Kafka.csproj", "{D3D1D4D6-9F12-49F8-8F94-6CB90FE58255}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility.KafkaConnector", "Modules\KafkaConnector\Utility.KafkaConnector\Utility.KafkaConnector.csproj", "{021540FD-F788-48EE-B4DA-6E41C5CB49A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.KafkaConnector", "Modules\KafkaConnector\Utility.KafkaConnector\Utility.KafkaConnector.csproj", "{021540FD-F788-48EE-B4DA-6E41C5CB49A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{6F42F3F7-D785-48C8-A49C-08888CF522D8}"
 EndProject

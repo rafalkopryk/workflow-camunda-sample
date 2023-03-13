@@ -74,7 +74,13 @@
       <bpmn:outgoing>Flow_10ln5na</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:receiveTask id="Activity_ContractSigned" name="Contract signed" messageRef="Message_003spe7">
-      <bpmn:extensionElements />
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="subscription.topic" value="event.credit.applications.contractSigned.v1" />
+          <zeebe:property name="inbound.correlationKeyMapping" value="=applicationId" />
+          <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0fo6sxx</bpmn:incoming>
       <bpmn:outgoing>Flow_0mvvtax</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -84,13 +90,24 @@
           <zeebe:output source="={&#10;  decision: decision&#10;}" target="simulationResult" />
           <zeebe:output source="=decision" target="decision" />
         </zeebe:ioMapping>
+        <zeebe:properties>
+          <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
+          <zeebe:property name="inbound.correlationKeyMapping" value="=applicationId" />
+          <zeebe:property name="subscription.topic" value="command.credit.calculations.simulation.done.v1" />
+        </zeebe:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wyuxuo</bpmn:incoming>
       <bpmn:outgoing>Flow_0mgcb2w</bpmn:outgoing>
     </bpmn:receiveTask>
     <bpmn:sequenceFlow id="Flow_10ln5na" sourceRef="Activity_DecisionStart" targetRef="Activity_DecisionDone" />
     <bpmn:receiveTask id="Activity_DecisionDone" name="Decision done" messageRef="Message_3pb9ton">
-      <bpmn:extensionElements />
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="subscription.topic" value="command.credit.applications.decision.done.v1" />
+          <zeebe:property name="inbound.correlationKeyMapping" value="=applicationId" />
+          <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_10ln5na</bpmn:incoming>
       <bpmn:outgoing>Flow_0k8505b</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -117,6 +134,13 @@
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:receiveTask id="Activity_CloseApplicationDone" name="Close application done" messageRef="Message_03kucpc">
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
+          <zeebe:property name="subscription.topic" value="command.credit.applications.close.done.v1" />
+          <zeebe:property name="inbound.correlationKeyMapping" value="=applicationId" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0cwxvpk</bpmn:incoming>
       <bpmn:outgoing>Flow_021xgq0</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -172,10 +196,6 @@
         <dc:Bounds x="190" y="271" width="1270" height="409" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0v8xhir_di" bpmnElement="TextAnnotation_0v8xhir">
-        <dc:Bounds x="920" y="280" width="110" height="62" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_08y44ab_di" bpmnElement="Event_EndCreditApplication">
         <dc:Bounds x="1252" y="443" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -193,10 +213,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0y4pyzu_di" bpmnElement="Activity_SimulationStart">
         <dc:Bounds x="400" y="421" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0cwlo0u_di" bpmnElement="TextAnnotation_0cwlo0u">
-        <dc:Bounds x="830" y="417" width="100" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0p2kqbb_di" bpmnElement="Activity_DecisionStart">
@@ -223,10 +239,14 @@
         <dc:Bounds x="1070" y="500" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1uukvbl_di" bpmnElement="Association_1uukvbl">
-        <di:waypoint x="1013" y="384" />
-        <di:waypoint x="994" y="342" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0cwlo0u_di" bpmnElement="TextAnnotation_0cwlo0u">
+        <dc:Bounds x="830" y="417" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0v8xhir_di" bpmnElement="TextAnnotation_0v8xhir">
+        <dc:Bounds x="920" y="280" width="110" height="62" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_125oqqt_di" bpmnElement="Event_0yurv0o">
         <dc:Bounds x="1002" y="383" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -273,10 +293,6 @@
         <di:waypoint x="298" y="461" />
         <di:waypoint x="400" y="461" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1nau8k3_di" bpmnElement="Association_1nau8k3">
-        <di:waypoint x="818" y="454" />
-        <di:waypoint x="830" y="450" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10ln5na_di" bpmnElement="Flow_10ln5na">
         <di:waypoint x="680" y="380" />
         <di:waypoint x="680" y="421" />
@@ -289,6 +305,14 @@
         <di:waypoint x="1170" y="540" />
         <di:waypoint x="1270" y="540" />
         <di:waypoint x="1270" y="479" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1nau8k3_di" bpmnElement="Association_1nau8k3">
+        <di:waypoint x="818" y="454" />
+        <di:waypoint x="830" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1uukvbl_di" bpmnElement="Association_1uukvbl">
+        <di:waypoint x="1013" y="384" />
+        <di:waypoint x="994" y="342" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
