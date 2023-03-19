@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,8 @@ internal class KafkaWorker<TEvent> : BackgroundService
         using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
 
         var topic = typeof(TEvent).GetEventEnvelopeAttribute() ?? throw new ArgumentNullException(nameof(EventEnvelopeAttribute));
+
+        await CreateTopics(topic.Topic);
 
         using var consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build();
 
@@ -109,6 +112,23 @@ internal class KafkaWorker<TEvent> : BackgroundService
         catch (Exception e)
         {
             _logger.LogError(e, "Error consuming message");
+        }
+    }
+
+    private async Task CreateTopics(params string[] topics)
+    {
+        try
+        {
+            var config = new AdminClientConfig(_consumerConfig);
+            using var adminClient = new AdminClientBuilder(config).Build();
+
+            await adminClient.CreateTopicsAsync(topics.Select(topic => new TopicSpecification
+            {
+                Name = topic
+            }));
+        }
+        catch (CreateTopicsException ex) when (ex.Message.Contains("already exists"))
+        {
         }
     }
 }

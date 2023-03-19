@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[EventEnvelope(Topic = "command.credit.applications.close.start.v1")]
+[EventEnvelope(Topic = "command.credit.applications.close.v1")]
 public record CloseApplicationCommand(string ApplicationId) : INotification;
 
 internal class CloseApplicationCommandHandler : INotificationHandler<CloseApplicationCommand>
@@ -27,9 +27,9 @@ internal class CloseApplicationCommandHandler : INotificationHandler<CloseApplic
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new CloseApplicationCommanddDone(notification.ApplicationId), cancellationToken);
+        await _eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId), cancellationToken);
     }
 }
 
-[EventEnvelope(Topic = "command.credit.applications.close.done.v1")]
-public record CloseApplicationCommanddDone(string ApplicationId) : INotification;
+[EventEnvelope(Topic = "event.credit.applications.applicationClosed.v1")]
+public record ApplicationClosed(string ApplicationId) : INotification;

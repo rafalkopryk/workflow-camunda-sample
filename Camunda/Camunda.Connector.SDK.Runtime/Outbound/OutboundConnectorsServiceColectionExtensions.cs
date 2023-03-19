@@ -9,7 +9,7 @@ namespace Camunda.Connector.SDK.Runtime.Outbound;
 
 public static class OutboundConnectorsServiceColectionExtensions
 {
-    public static IZeebeBuilder AddOutboundConnectorsRuntime(this IZeebeBuilder zeebeBuilder, Action<OutboundConnectorsRuntimeBuilder> configure)
+    public static IZeebeBuilder AddOutboundConnectorsRuntime(this IZeebeBuilder zeebeBuilder, Action<IOutboundConnectorsRuntimeBuilder> configure)
     {
         zeebeBuilder.Configure(serviceCollection =>
         {
@@ -21,7 +21,7 @@ public static class OutboundConnectorsServiceColectionExtensions
     }
 }
 
-public class OutboundConnectorsRuntimeBuilder : IOutboundConnectorsRuntimeBuilder
+internal class OutboundConnectorsRuntimeBuilder : IOutboundConnectorsRuntimeBuilder
 {
     private readonly IZeebeBuilder _zeebeBuilder;
 

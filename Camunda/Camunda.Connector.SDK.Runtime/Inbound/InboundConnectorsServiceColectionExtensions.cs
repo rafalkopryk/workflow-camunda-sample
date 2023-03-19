@@ -38,13 +38,13 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
         _services = services;
     }
 
-    public InboundConnectorsRuntimeBuilder AddProcessDefinitionInspector<T>() where T : class, IProcessDefinitionInspector
+    public IInboundConnectorsRuntimeBuilder AddProcessDefinitionInspector<T>() where T : class, IProcessDefinitionInspector
     {
         _services.AddScoped<IProcessDefinitionInspector, T>();
         return this;
     }
 
-    public InboundConnectorsRuntimeBuilder AddProcessDefinitionImporter(Action<ProcessDefinitionOptions> configure)
+    public IInboundConnectorsRuntimeBuilder AddProcessDefinitionImporter(Action<ProcessDefinitionOptions> configure)
     {
         _services.Configure<ProcessDefinitionOptions>(configure);
         _services.AddHostedService<ProcessDefinitionImporter>();
@@ -56,7 +56,7 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
     {
         configure?.Invoke(_services);
 
-        _services.AddTransient(typeof(T));
+        _services.AddScoped(typeof(T));
 
         var inboundConnectorAttribute = typeof(T).GetAttribute<InboundConnectorAttribute>();
         var inboundConnectorConfigurable = new InboundConnectorConfiguration(inboundConnectorAttribute.Name, inboundConnectorAttribute.Type, typeof(T));

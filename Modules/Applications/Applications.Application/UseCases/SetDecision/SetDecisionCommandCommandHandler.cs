@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-[EventEnvelope(Topic = "command.credit.applications.decision.start.v1")]
+[EventEnvelope(Topic = "command.credit.applications.decision.v1")]
 public record SetDecisionCommand(string ApplicationId, Decision Decision) : INotification;
 
 internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisionCommand>
@@ -27,9 +27,9 @@ internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisi
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new SetDecisionCommandDone(notification.ApplicationId), cancellationToken);
+        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId), cancellationToken);
     }
 }
 
-[EventEnvelope(Topic = "command.credit.applications.decision.done.v1")]
-public record SetDecisionCommandDone(string ApplicationId) : INotification;
+[EventEnvelope(Topic = "event.credit.applications.decisionGenerated.v1")]
+public record DecisionGenerated(string ApplicationId) : INotification;

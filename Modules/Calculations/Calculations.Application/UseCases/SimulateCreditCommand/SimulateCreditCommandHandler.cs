@@ -7,11 +7,11 @@ using Common.Application.Dictionary;
 using Common.Kafka;
 using MediatR;
 
-[EventEnvelope(Topic = "command.credit.calculations.simulation.start.v1")]
+[EventEnvelope(Topic = "command.credit.calculations.simulation.v1")]
 public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : INotification;
 
-[EventEnvelope(Topic = "command.credit.calculations.simulation.done.v1")]
-public record SimulateCreditCommandDone(string ApplicationId, string Decision) : INotification;
+[EventEnvelope(Topic = "event.credit.calculations.simulationFinished.v1")]
+public record SimulationCreditFinished(string ApplicationId, string Decision) : INotification;
 
 internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCreditCommand>
 {
@@ -47,6 +47,6 @@ internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCredi
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new SimulateCreditCommandDone(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
+        await _eventBusProducer.PublishAsync(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
     }
 }

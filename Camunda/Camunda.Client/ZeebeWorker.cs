@@ -28,7 +28,7 @@ internal class ZeebeWorker<T> : BackgroundService
         var parallelOptions = new ParallelOptions
         {
             CancellationToken = stoppingToken,
-            MaxDegreeOfParallelism = 5,
+            MaxDegreeOfParallelism = _serviceTaskConfiguration.MaxJobsToActivate,
         };
 
         var thresholdJobsActivation = _serviceTaskConfiguration!.MaxJobsToActivate * 0.6;

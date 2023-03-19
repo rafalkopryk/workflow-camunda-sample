@@ -23,7 +23,8 @@ public static class ZeebeBuilderExtensions
     {
         builder.AddInboundConnectorExecutable<KafkaExecutable>(serviceCollections =>
         {
-            serviceCollections.Configure<ConsumerConfig>(consumerOptions);
+            serviceCollections.Configure(consumerOptions);
+            serviceCollections.AddScoped<IKafkaSubscription, KafkaSubscription>();
         });
 
         return builder;

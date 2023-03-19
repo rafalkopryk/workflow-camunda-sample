@@ -26,7 +26,7 @@ public class KafkaConnectorFunction : IOutboundConnectorFunction
 
         var connectorRequest = context.GetVariablesAsType<KafkaConnectorRequest>();
 
-        var data = JsonSerializer.Serialize(connectorRequest.Message.Value);
+        var data = JsonSerializer.Serialize(connectorRequest.Message.Value, JsonSerializerKafkaOptions.CamelCase);
         var message = new Message<string, string>
         {
             Key = connectorRequest.Message.Key.ToString(),
