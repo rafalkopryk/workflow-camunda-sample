@@ -38,13 +38,13 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
         _services = services;
     }
 
-    public IInboundConnectorsRuntimeBuilder AddProcessDefinitionInspector<T>() where T : class, IProcessDefinitionInspector
+    public InboundConnectorsRuntimeBuilder AddProcessDefinitionInspector<T>() where T : class, IProcessDefinitionInspector
     {
         _services.AddScoped<IProcessDefinitionInspector, T>();
         return this;
     }
 
-    public IInboundConnectorsRuntimeBuilder AddProcessDefinitionImporter(Action<ProcessDefinitionOptions> configure)
+    public InboundConnectorsRuntimeBuilder AddProcessDefinitionImporter(Action<ProcessDefinitionOptions> configure)
     {
         _services.Configure<ProcessDefinitionOptions>(configure);
         _services.AddHostedService<ProcessDefinitionImporter>();
