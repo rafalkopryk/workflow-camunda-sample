@@ -6,7 +6,6 @@ namespace Camunda.Client;
 
 public class ZeebeBuilder : IZeebeBuilder
 {
-    //TODO change to private
     private readonly IServiceCollection _services;
 
     public ZeebeBuilder(IServiceCollection services)

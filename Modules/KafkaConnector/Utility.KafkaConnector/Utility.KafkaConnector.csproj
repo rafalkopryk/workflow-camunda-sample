@@ -19,4 +19,10 @@
     <ProjectReference Include="..\..\..\Camunda\Camunda.Connector.Kafka\Camunda.Connector.Kafka.csproj" />
     <ProjectReference Include="..\..\..\Camunda\Camunda.Connector.SDK.Runtime\Camunda.Connector.SDK.Runtime.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="BPMN\credit-application.bpmn">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

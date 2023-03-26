@@ -60,7 +60,7 @@ internal class InboundConnectorManager
 
         foreach (var processDefinition in relevantProcessDefinitions)
         {
-            var inboundConnectors = _processDefinitionInspector.FindInboundConnectors(processDefinition);
+            var inboundConnectors = await _processDefinitionInspector.FindInboundConnectors(processDefinition);
             await HandleLatestBpmnVersion(processDefinition.BpmnProcessId, inboundConnectors);
         }
     }

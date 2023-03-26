@@ -4,5 +4,5 @@ namespace Camunda.Connector.SDK.Runtime.Inbound.Importer;
 
 public interface IProcessDefinitionInspector
 {
-    InboundConnectorProperties[] FindInboundConnectors(ProcessDefinition processDefinition);
+    Task<InboundConnectorProperties[]> FindInboundConnectors(ProcessDefinition processDefinition);
 }

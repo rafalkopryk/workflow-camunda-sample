@@ -8,10 +8,16 @@
 
   <ItemGroup>
     <Folder Include="Inbound\Operate\" />
+    <Folder Include="Inbound\Operate\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Camunda.BPMNV2\Camunda.BPMNV2.csproj" />
     <ProjectReference Include="..\Camunda.Connector.SDK.Runtime.Util\Camunda.Connector.SDK.Runtime.Util.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Camunda.Connector.SDK.Runtime.Tests" />
+	</ItemGroup>
 
 </Project>
