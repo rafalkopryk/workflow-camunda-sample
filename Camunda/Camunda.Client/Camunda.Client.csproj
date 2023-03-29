@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Protos\gateway.proto" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.21.5" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
     <PackageReference Include="Grpc.Tools" Version="2.49.0">
@@ -24,7 +20,8 @@
     <Protobuf Include="Protos\gateway.proto">
       <SourceUri>https://raw.githubusercontent.com/camunda/zeebe/main/gateway-protocol/src/main/proto/gateway.proto</SourceUri>
       <GrpcServices>Client</GrpcServices>
-    </Protobuf>
+	  <GrpcOutputDir>Client</GrpcOutputDir>
+	</Protobuf>
   </ItemGroup>
 
 </Project>

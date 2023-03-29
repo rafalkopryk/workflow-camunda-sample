@@ -14,6 +14,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                .AddOutboundConnectorsRuntime(outboundConnectorsBuilder => outboundConnectorsBuilder
                     .AddKafkaOutboundConnectorFunction(kafkaOptions => ctx.Configuration.GetSection("EventBus").Bind(kafkaOptions)))
                .AddInboundConnectorsRuntime(inboundConnectorsBuilder => inboundConnectorsBuilder
+                    //.AddOperateBPMNFileProcessDefinitionInspector(options => { })
                     .AddPathBPMNFileProcessDefinitionInspector(options => ctx.Configuration.GetSection("PathDefinitionsOptions").Bind(options))
                     .AddProcessDefinitionImporter(options => ctx.Configuration.GetSection("ProcessDefinitionsOptions").Bind(options))
                     .AddKafkaInboundConnectorFunction(kafkaOptions => ctx.Configuration.GetSection("EventBus").Bind(kafkaOptions))));

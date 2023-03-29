@@ -1,4 +1,5 @@
 ﻿using Camunda.Client;
+using Camunda.Client.Operate;
 using Camunda.Connector.SDK.Core.Api.Annotation;
 using Camunda.Connector.SDK.Core.Api.Inbound;
 using Camunda.Connector.SDK.Core.Impl.Inbound;
@@ -9,6 +10,7 @@ using Camunda.Connector.SDK.Runtime.Inbound.Lifecycle;
 using Camunda.Connector.SDK.Runtime.Util.Inbound;
 using Camunda.Connector.SDK.Runtime.Util.Inbound.Correlation;
 using Microsoft.Extensions.DependencyInjection;
+using static System.Net.WebRequestMethods;
 
 namespace Camunda.Connector.SDK.Runtime.Inbound;
 
@@ -18,10 +20,9 @@ public static class InboundConnectorsServiceColectionExtensions
     {
         zeebeBuilder.Configure(services =>
         {
-            services.AddScoped<InboundCorrelationHandler>();
-            services.AddScoped<IInboundConnectorFactoryConnectorFactory, DefaultInboundConnectorFactory>();
-
-            services.AddScoped<InboundConnectorManager>();
+            services.AddSingleton<InboundCorrelationHandler>();
+            services.AddSingleton<IInboundConnectorFactoryConnectorFactory, DefaultInboundConnectorFactory>();
+            services.AddSingleton<InboundConnectorManager>();
 
             var builder = new InboundConnectorsRuntimeBuilder(services);
             configure?.Invoke(builder);
@@ -42,7 +43,7 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
 
     public InboundConnectorsRuntimeBuilder AddMockProcessDefinitionInspector()
     {
-        _services.AddScoped<IProcessDefinitionInspector, MockProcessDefinitionInspector>();
+        _services.AddSingleton<IProcessDefinitionInspector, MockProcessDefinitionInspector>();
         return this;
     }
 
@@ -51,13 +52,24 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
         _services.Configure(configure);
 
         _services.AddSingleton<IBpmnProvider, PathFileProvider>();
-        _services.AddScoped<IProcessDefinitionInspector, BPMNFileProcessDefinitionInspector>();
+        _services.AddSingleton<IProcessDefinitionInspector, BPMNFileProcessDefinitionInspector>();
+        return this;
+    }
+
+    public InboundConnectorsRuntimeBuilder AddOperateBPMNFileProcessDefinitionInspector(Action<PathFileProviderOptions> configure)
+    {
+        _services.AddHttpClient<IOperateClient, OperateClient>(client =>
+        {
+            client.BaseAddress = new Uri("http://operate:8080/");
+        });
+        _services.AddSingleton<IBpmnProvider, OperateFileProvider>();
+        _services.AddSingleton<IProcessDefinitionInspector, BPMNFileProcessDefinitionInspector>();
         return this;
     }
 
     public InboundConnectorsRuntimeBuilder AddProcessDefinitionImporter(Action<ProcessDefinitionOptions> configure)
     {
-        _services.Configure<ProcessDefinitionOptions>(configure);
+        _services.Configure(configure);
         _services.AddHostedService<ProcessDefinitionImporter>();
 
         return this;
