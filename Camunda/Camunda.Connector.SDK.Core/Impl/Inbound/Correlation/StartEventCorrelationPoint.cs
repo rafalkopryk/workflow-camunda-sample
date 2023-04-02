@@ -1,4 +1,4 @@
-﻿using Camunda.Connector.SDK.Core.Api.Inbound;
+﻿using System;
 
 namespace Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
 

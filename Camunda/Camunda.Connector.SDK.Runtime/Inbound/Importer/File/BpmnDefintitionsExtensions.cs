@@ -1,14 +1,13 @@
 ﻿using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
 using Spec.BPMN.MODEL;
-using Camunda.BPMNV2.ZeebeModel;
+using static Camunda.Connector.SDK.Core.Impl.Constants;
+using Camunda.BPMN.Model.ZeebeModel;
 
 namespace Camunda.Connector.SDK.Runtime.Inbound.Importer.File;
 
 internal static class BpmnDefintitionsExtensions
 {
-    private const string CorrelationKeyMappingKey = "inbound.correlationKeyMapping";
-
     private static T[] GetElements<T>(this IEnumerable<TRootElement> rootElements)
     {
         return rootElements.Where(x => x is T).Cast<T>().ToArray() ?? Array.Empty<T>();
@@ -50,7 +49,7 @@ internal static class BpmnDefintitionsExtensions
         }
 
         var properties = intermediateCatchEvent?.ExtensionElements.GetZeebeProperties().ToDictionary(x => x.Name, x => x.Value);
-        var corellationKeyMapping = properties.FirstOrDefault(x => x.Key == CorrelationKeyMappingKey).Value;
+        var corellationKeyMapping = properties.FirstOrDefault(x => x.Key == CORRELATION_KEY_EXPRESSION_KEYWORD).Value;
         return new InboundConnectorProperties[]
         {
             new InboundConnectorProperties
@@ -71,7 +70,7 @@ internal static class BpmnDefintitionsExtensions
         }
 
         var properties = element?.ExtensionElements.GetZeebeProperties().ToDictionary(x => x.Name, x => x.Value);
-        var corellationKeyMapping = properties.FirstOrDefault(x => x.Key == CorrelationKeyMappingKey).Value;
+        var corellationKeyMapping = properties.FirstOrDefault(x => x.Key == CORRELATION_KEY_EXPRESSION_KEYWORD).Value;
         return new InboundConnectorProperties[]
         {
             new InboundConnectorProperties

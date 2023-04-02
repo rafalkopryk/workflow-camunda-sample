@@ -3,6 +3,8 @@ using Camunda.Connector.SDK.Runtime.Util.Feel;
 using System.Linq.Expressions;
 using System.Text.Json;
 
+using static Camunda.Connector.SDK.Core.Impl.Constants;
+
 namespace Camunda.Connector.SDK.Runtime.Util;
 
 public class ConnectorHelper
@@ -14,15 +16,11 @@ public class ConnectorHelper
 
     private static string ERROR_CANNOT_PARSE_VARIABLES = "Cannot parse '%s' as '%s'.";
 
-    public const string RESULT_VARIABLE_HEADER_NAME = "resultVariable";
-    public const string RESULT_EXPRESSION_HEADER_NAME = "resultExpression";
-    public const string ERROR_EXPRESSION_HEADER_NAME = "errorExpression";
-
     public static Dictionary<string, object> CreateOutputVariables(object responseContent, Dictionary<string, string> jobHeaders)
     {
         Dictionary<string, object> outputVariables = new();
-        var resultVariableName = jobHeaders.FirstOrDefault(x => x.Key == RESULT_VARIABLE_HEADER_NAME).Value;
-        var resultExpression = jobHeaders.FirstOrDefault(x => x.Key == RESULT_EXPRESSION_HEADER_NAME).Value;
+        var resultVariableName = jobHeaders.FirstOrDefault(x => x.Key == RESULT_VARIABLE_KEYWORD).Value;
+        var resultExpression = jobHeaders.FirstOrDefault(x => x.Key == RESULT_EXPRESSION_KEYWORD).Value;
 
         if (!string.IsNullOrWhiteSpace(resultVariableName))
         {
@@ -42,6 +40,12 @@ public class ConnectorHelper
         }
 
         return outputVariables;
+    }
+
+    public static string CreateOutputVariablesAsString(object responseContent, Dictionary<string, string> jobHeaders)
+    {
+        var result = CreateOutputVariables(responseContent, jobHeaders);
+        return JsonSerializer.Serialize(result, JsonSerializerCustomOptions.CamelCase);
     }
 
     //public static Optional<BpmnError> examineErrorExpression(

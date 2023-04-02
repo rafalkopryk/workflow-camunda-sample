@@ -5,7 +5,6 @@ using Camunda.Connector.SDK.Core.Api.Inbound;
 using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Camunda.Connector.SDK.Runtime.Inbound.Importer;
 using Camunda.Connector.SDK.Runtime.Inbound.Importer.File;
-using Camunda.Connector.SDK.Runtime.Inbound.Importer.Mock;
 using Camunda.Connector.SDK.Runtime.Inbound.Lifecycle;
 using Camunda.Connector.SDK.Runtime.Util.Inbound;
 using Camunda.Connector.SDK.Runtime.Util.Inbound.Correlation;
@@ -39,12 +38,6 @@ public class InboundConnectorsRuntimeBuilder : IInboundConnectorsRuntimeBuilder
     public InboundConnectorsRuntimeBuilder(IServiceCollection services)
     {
         _services = services;
-    }
-
-    public InboundConnectorsRuntimeBuilder AddMockProcessDefinitionInspector()
-    {
-        _services.AddSingleton<IProcessDefinitionInspector, MockProcessDefinitionInspector>();
-        return this;
     }
 
     public InboundConnectorsRuntimeBuilder AddPathBPMNFileProcessDefinitionInspector(Action<PathFileProviderOptions> configure) 

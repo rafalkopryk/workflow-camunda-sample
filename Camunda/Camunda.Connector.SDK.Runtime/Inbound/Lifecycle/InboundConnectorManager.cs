@@ -71,7 +71,8 @@ internal class InboundConnectorManager
 
         try
         {
-            await executable.Activate(new InboundConnectorContextImpl(newProperties, _correlationHandler), cancellationToken);
+            //TODO cancellationCallback
+            await executable.Activate(new InboundConnectorContextImpl(newProperties, _correlationHandler, null), cancellationToken);
 
             activeConnectorsByExecutionId.TryAdd(newProperties.GetCorrelationPointId(), executable);
 

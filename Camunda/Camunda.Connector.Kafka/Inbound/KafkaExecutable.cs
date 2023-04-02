@@ -28,11 +28,7 @@ internal class KafkaExecutable : IInboundConnectorExecutable
         var properties = context.GetPropertiesAsType<KafkaProperties>();
         await _subscription.ProduceEvent(
             properties,
-            async @event =>
-            {
-                var veriables = JsonSerializer.Serialize(@event, JsonSerializerKafkaOptions.CamelCase);
-                await context.Correlate(veriables);
-            },
+            context.Correlate,
             cancellationToken);
     }
 }

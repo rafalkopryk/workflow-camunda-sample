@@ -10,16 +10,21 @@ public class InboundConnectorContextImpl : IInboundConnectorContext
 {
     private readonly InboundConnectorProperties _properties;
     private readonly InboundCorrelationHandler _correlationHandler;
+    private readonly Action _cancellationCallback;
 
-    public InboundConnectorContextImpl(InboundConnectorProperties properties, InboundCorrelationHandler correlationHandler)
+    public InboundConnectorContextImpl(
+        InboundConnectorProperties properties,
+        InboundCorrelationHandler correlationHandler,
+        Action cancellationCallback)
     {
         _properties = properties;
         _correlationHandler = correlationHandler;
+        _cancellationCallback = cancellationCallback;
     }
 
-    public async Task<InboundConnectorResult> Correlate(string variables)
+    public async Task<IInboundConnectorResult<IResponseData>> Correlate(object variables) 
     {
-        return await _correlationHandler.Correlate(_properties.CorrelationPoint, variables);
+        return await _correlationHandler.Correlate(_properties, variables);
     }
 
     public InboundConnectorProperties GetProperties()
@@ -41,5 +46,10 @@ public class InboundConnectorContextImpl : IInboundConnectorContext
     public void Validate(object var1)
     {
         //TODO
+    }
+
+    public void Cancel()
+    {
+        _cancellationCallback.Invoke();
     }
 }

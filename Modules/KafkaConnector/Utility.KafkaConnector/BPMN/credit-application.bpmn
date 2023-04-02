@@ -9,13 +9,13 @@
         <bpmn:flowNodeRef>Event_EndCreditApplication</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Decision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_CreditApplicatin</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_Simulation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Decision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_ContractSigned</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_DecisionGenerated</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_CloseApplication</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0yurv0o</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_ApplicationClosed</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_Simulation</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0da1w3w" name="Credit.Calculations">
         <bpmn:flowNodeRef>Activity_SimulationFinished</bpmn:flowNodeRef>
@@ -43,20 +43,6 @@
     <bpmn:sequenceFlow id="Flow_0mgcb2w" sourceRef="Activity_SimulationFinished" targetRef="Activity_Decision" />
     <bpmn:sequenceFlow id="Flow_1wyuxuo" sourceRef="Activity_Simulation" targetRef="Activity_SimulationFinished" />
     <bpmn:sequenceFlow id="Flow_0zfmfoz" sourceRef="StartEvent_CreditApplicatin" targetRef="Activity_Simulation" />
-    <bpmn:serviceTask id="Activity_Simulation" name="Simulation" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:connector-kafka:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="*" target="topic.bootstrapServers" />
-          <zeebe:input source="command.credit.calculations.simulation.v1" target="topic.topicName" />
-          <zeebe:input source="Simulation" target="message.key" />
-          <zeebe:input source="={ &#10;  &#34;applicationId&#34;:applicationId,&#10;  &#34;amount&#34;: amount,&#10;  &#34;creditPeriodInMonths&#34;: creditPeriodInMonths,&#10;  &#34;averageNetMonthlyIncome&#34;:averageNetMonthlyIncome&#10;}" target="message.value" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0zfmfoz</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wyuxuo</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_Decision" name="Decision" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
@@ -75,7 +61,7 @@
       <bpmn:extensionElements>
         <zeebe:properties>
           <zeebe:property name="subscription.topic" value="event.credit.applications.contractSigned.v1" />
-          <zeebe:property name="inbound.correlationKeyMapping" value="=message.applicationId" />
+          <zeebe:property name="correlationKeyExpression" value="=message.applicationId" />
           <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
         </zeebe:properties>
       </bpmn:extensionElements>
@@ -84,13 +70,11 @@
     </bpmn:receiveTask>
     <bpmn:receiveTask id="Activity_SimulationFinished" name="Simulation finished" messageRef="Message_2hb2nh0">
       <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=message.decision" target="decision" />
-        </zeebe:ioMapping>
         <zeebe:properties>
           <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
-          <zeebe:property name="inbound.correlationKeyMapping" value="=message.applicationId" />
+          <zeebe:property name="correlationKeyExpression" value="=message.applicationId" />
           <zeebe:property name="subscription.topic" value="event.credit.calculations.simulationFinished.v1" />
+          <zeebe:property name="resultExpression" value="={  &#34;decision&#34;:message.decision}" />
         </zeebe:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wyuxuo</bpmn:incoming>
@@ -101,7 +85,7 @@
       <bpmn:extensionElements>
         <zeebe:properties>
           <zeebe:property name="subscription.topic" value="event.credit.applications.decisionGenerated.v1" />
-          <zeebe:property name="inbound.correlationKeyMapping" value="=message.applicationId" />
+          <zeebe:property name="correlationKeyExpression" value="=message.applicationId" />
           <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
         </zeebe:properties>
       </bpmn:extensionElements>
@@ -135,13 +119,27 @@
         <zeebe:properties>
           <zeebe:property name="inbound.type" value="io.camunda:connector-kafka:1" />
           <zeebe:property name="subscription.topic" value="event.credit.applications.applicationClosed.v1" />
-          <zeebe:property name="inbound.correlationKeyMapping" value="=message.applicationId" />
+          <zeebe:property name="correlationKeyExpression" value="=message.applicationId" />
         </zeebe:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0cwxvpk</bpmn:incoming>
       <bpmn:outgoing>Flow_021xgq0</bpmn:outgoing>
     </bpmn:receiveTask>
     <bpmn:sequenceFlow id="Flow_021xgq0" sourceRef="Activity_ApplicationClosed" targetRef="Event_EndCreditApplication" />
+    <bpmn:serviceTask id="Activity_Simulation" name="Simulation" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:connector-kafka:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="*" target="topic.bootstrapServers" />
+          <zeebe:input source="command.credit.calculations.simulation.v1" target="topic.topicName" />
+          <zeebe:input source="Simulation" target="message.key" />
+          <zeebe:input source="={ &#10;  &#34;applicationId&#34;:applicationId,&#10;  &#34;amount&#34;: amount,&#10;  &#34;creditPeriodInMonths&#34;: creditPeriodInMonths,&#10;  &#34;averageNetMonthlyIncome&#34;:averageNetMonthlyIncome&#10;}" target="message.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zfmfoz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wyuxuo</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:association id="Association_1nau8k3" sourceRef="Gateway_Decision" targetRef="TextAnnotation_0cwlo0u" />
     <bpmn:textAnnotation id="TextAnnotation_0cwlo0u">
       <bpmn:text>the result of the decision</bpmn:text>
@@ -203,10 +201,6 @@
           <dc:Bounds x="267" y="424" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0y4pyzu_di" bpmnElement="Activity_Simulation">
-        <dc:Bounds x="400" y="421" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0p2kqbb_di" bpmnElement="Activity_Decision">
         <dc:Bounds x="630" y="300" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -238,6 +232,9 @@
       <bpmndi:BPMNShape id="TextAnnotation_0v8xhir_di" bpmnElement="TextAnnotation_0v8xhir">
         <dc:Bounds x="920" y="280" width="110" height="62" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kxll1x_di" bpmnElement="Activity_Simulation">
+        <dc:Bounds x="400" y="421" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_125oqqt_di" bpmnElement="Event_0yurv0o">
         <dc:Bounds x="1002" y="383" width="36" height="36" />

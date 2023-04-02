@@ -8,7 +8,9 @@ public interface IInboundConnectorContext
 
     void Validate(object var1);
 
-    Task<InboundConnectorResult> Correlate(string variables);
+    Task<IInboundConnectorResult<IResponseData>> Correlate(object variables);
+
+    void Cancel();
 
     InboundConnectorProperties GetProperties();
 

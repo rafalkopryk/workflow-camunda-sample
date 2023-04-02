@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Camunda.BPMNV2\Camunda.BPMNV2.csproj" />
+    <ProjectReference Include="..\Camunda.BPMN.Model\Camunda.BPMN.Model.csproj" />
     <ProjectReference Include="..\Camunda.Client.Operate\Camunda.Client.Operate.csproj" />
     <ProjectReference Include="..\Camunda.Connector.SDK.Runtime.Util\Camunda.Connector.SDK.Runtime.Util.csproj" />
   </ItemGroup>

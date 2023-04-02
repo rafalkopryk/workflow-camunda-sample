@@ -1,6 +1,4 @@
-﻿using Camunda.Connector.SDK.Core.Api.Inbound;
-
-namespace Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
+﻿namespace Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
 
 public class MessageCorrelationPoint : ProcessCorrelationPoint
 {
