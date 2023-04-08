@@ -22,7 +22,7 @@ internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisi
 
     public async Task Handle(SetDecisionCommand notification, CancellationToken cancellationToken)
     {
-        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(notification.ApplicationId);
+        var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
         creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, notification.Decision, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);

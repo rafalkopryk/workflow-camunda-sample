@@ -22,7 +22,7 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
 
     public async Task<Result> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
-        if (_creditApplicationDbContext.Applications.Any(application => application.ApplicationId == command.ApplicationId))
+        if (await _creditApplicationDbContext.HasCreditApplicationAsync(command.ApplicationId))
         {
             return Result.Failure(ErrorCode.ResourceExists);
         }

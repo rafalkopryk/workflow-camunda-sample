@@ -23,7 +23,7 @@ internal class SignContractCommandHandler : IRequestHandler<SignContractCommand,
 
     public async Task<Result> Handle(SignContractCommand command, CancellationToken cancellationToken)
     {
-        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(command.ApplicationId);
+        var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(command.ApplicationId);
         if (creditApplication is null)
             return Result.Failure(ErrorCode.ResourceNotFound);
 

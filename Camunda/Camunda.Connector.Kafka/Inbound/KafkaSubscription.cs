@@ -3,9 +3,9 @@ using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Unicode;
 
 namespace Camunda.Connector.Kafka.Inbound;
 
@@ -94,10 +94,43 @@ internal class KafkaSubscription : IKafkaSubscription
 
         if (consumerResult.IsPartitionEOF || consumerResult.Message.Value == null) return;
 
-        var message = JsonSerializer.Deserialize<Dictionary<string, object>>(consumerResult.Message.Value, JsonSerializerKafkaOptions.CamelCase);
-        var subscriptionEvent = new KafkaSubscriptionEvent(string.Empty, 000, message);
+        var start = Stopwatch.GetTimestamp();
+        using var activity = Diagnostics.Consumer.Start(consumerResult.Topic, consumerResult.Message);
 
-        await callback.Invoke(subscriptionEvent);
+        try
+        {
+            activity?.AddDefaultOpenTelemetryTags(consumerResult.Topic, consumerResult.Message);
+
+            var message = JsonSerializer.Deserialize<Dictionary<string, object>>(consumerResult.Message.Value, JsonSerializerKafkaOptions.CamelCase);
+            var subscriptionEvent = new KafkaSubscriptionEvent(string.Empty, 000, message);
+
+            await callback.Invoke(subscriptionEvent);
+
+            consumer.Commit();
+
+            var tags = new TagList
+            {
+                new ("topic", consumerResult.Topic),
+                new ("status", "Positive")
+            };
+
+            Diagnostics.ConsumeCounter.Add(1, tags);
+            Diagnostics.ConsumeHistogram.Record(Stopwatch.GetElapsedTime(start).TotalMilliseconds, tags);
+        }
+        catch (Exception e)
+        {
+            var tags = new TagList
+            {
+                new ("topic", consumerResult.Topic),
+                new ("status", "Failed")
+            };
+
+            Diagnostics.ConsumeCounter.Add(1, tags);
+            Diagnostics.ConsumeHistogram.Record(Stopwatch.GetElapsedTime(start).TotalMilliseconds, tags);
+
+            activity?.RecordException(e);
+            throw;
+        }
 
         consumer.Commit(consumerResult);
     }

@@ -43,7 +43,7 @@ internal class OutboundConnectorsRuntimeBuilder : IOutboundConnectorsRuntimeBuil
             FetchVariabeles = attribute.InputVariables,
         };
 
-        _serviceCollecion.AddScoped(typeof(T));
+        _serviceCollecion.AddSingleton(typeof(T));
         _zeebeBuilder.AddWorker<ConnectorJobHandler<T>>(serviceTaskConfiguration, configure);
 
         return this;

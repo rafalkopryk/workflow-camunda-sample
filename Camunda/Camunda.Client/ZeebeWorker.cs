@@ -3,6 +3,8 @@ using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace Camunda.Client;
 
@@ -33,6 +35,8 @@ internal class ZeebeWorker<T> : BackgroundService
 
         var thresholdJobsActivation = _serviceTaskConfiguration!.MaxJobsToActivate * 0.6;
 
+        await Task.Yield();
+
         while (!stoppingToken.IsCancellationRequested)
         {
             var jobCount = _serviceTaskConfiguration.MaxJobsToActivate - s_currentJobsActive;
@@ -45,24 +49,35 @@ internal class ZeebeWorker<T> : BackgroundService
                 RequestTimeout = _serviceTaskConfiguration.RequestTimeoutInMs,
             };
 
+            var start = Stopwatch.GetTimestamp();
+            using var activity = Diagnostics.Consumer.Start(jobType);
+
             try
             {
                 using var call = _client.ActivateJobs(request, cancellationToken: stoppingToken);
+
+                //var activatedJobs = new List<ActivatedJob>();
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
                     var source = response.Jobs.ToList();
                     await Parallel.ForEachAsync(source, parallelOptions, HandleJob);
+                    //activatedJobs.AddRange(source);
                 }
+
+                //await Parallel.ForEachAsync(activatedJobs, parallelOptions, HandleJob);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
-                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs));
+                
+                activity?.RecordException(ex);
+
+                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs), stoppingToken);
             }
 
             if (s_currentJobsActive > thresholdJobsActivation)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs));
+                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs), stoppingToken);
             }
         }
     }

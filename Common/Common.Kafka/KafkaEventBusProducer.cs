@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
 
 internal class KafkaEventBusProducer : IEventBusProducer
 {
@@ -31,17 +32,27 @@ internal class KafkaEventBusProducer : IEventBusProducer
         {
             Key = eventEnvelope.Topic,
             Value = data,
+            Headers = Activity.Current?.Id != null
+             ? new Headers
+             {
+                 new Header("traceparent", Encoding.ASCII.GetBytes(Activity.Current.Id)),
+             }
+            : new Headers()
         };
+
+        using var activity = Diagnostics.Producer.Start(eventEnvelope.Topic, message);
 
         try
         {
+            activity?.AddDefaultOpenTelemetryTags(eventEnvelope.Topic, message);
+
             await _producer.ProduceAsync(eventEnvelope.Topic, message, cancellationToken);
 
-            _logger.LogInformation("Kafka SEND to {Topic}", eventEnvelope.Topic);
+            _logger.LogInformation("Kafka SEND to {@Topic}", eventEnvelope.Topic);
         }
         catch (Exception e)
         {
-            //activity?.RecordException(e);
+            activity?.RecordException(e);
             throw;
         }
     }

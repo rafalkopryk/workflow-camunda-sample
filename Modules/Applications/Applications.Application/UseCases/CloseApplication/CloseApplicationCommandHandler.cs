@@ -22,7 +22,7 @@ internal class CloseApplicationCommandHandler : INotificationHandler<CloseApplic
 
     public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
     {
-        var creditApplication = await _creditApplicationDbContext.Applications.FindAsync(notification.ApplicationId);
+        var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
         creditApplication.ForwardTo(State.ApplicationClosed(creditApplication.State, DateTimeOffset.Now));
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);

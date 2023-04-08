@@ -23,11 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "El
 		config\otel-collector-config.yaml = config\otel-collector-config.yaml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BPMN", "BPMN", "{9B3C7712-6C9E-427A-BC80-57754734767F}"
-	ProjectSection(SolutionItems) = preProject
-		BPMN\credit-application.bpmn = BPMN\credit-application.bpmn
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calculations", "Calculations", "{5657C541-D5D8-45F2-8F42-99CD0CE9FA66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations.WebApi", "Modules\Calculations\Calculations.WebApi\Calculations.WebApi.csproj", "{5289AD69-8844-463B-A99A-BB6EB7A7127E}"

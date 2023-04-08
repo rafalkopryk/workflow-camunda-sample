@@ -3,7 +3,6 @@ using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
 using CSharpFunctionalExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.UseCases.GetApplication;
 
@@ -18,8 +17,7 @@ internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery
 
     public async Task<Result<GetApplicationQueryResponse>> Handle(GetApplicationQuery query, CancellationToken cancellationToken)
     {
-        var creditApplication = await _creditApplicationDbContext.Applications.AsNoTracking()
-            .FirstOrDefaultAsync(application => application.ApplicationId == query.ApplicationId, cancellationToken);
+        var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(query.ApplicationId);
 
         if (creditApplication is null)
             return Result.Failure<GetApplicationQueryResponse>(ErrorCode.ResourceNotFound);

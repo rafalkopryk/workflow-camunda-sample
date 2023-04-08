@@ -49,6 +49,7 @@ services:
       - zeebe
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
+       otel__url: http://otel:4317
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: utility-kafkaconnector
        EventBus__enableautocommit: "false"
@@ -66,7 +67,7 @@ services:
       ACCEPT_EULA: "Y"
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.9}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -99,7 +100,7 @@ services:
   #    - es01
 
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.9}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
     container_name: operate
     ports:
       - "8085:8080"
