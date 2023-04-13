@@ -1,0 +1,92 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Kafka Consumer Connector",
+  "id": "io.camunda.connectors.inbound.KAFKA.ReceiveTask.v1",
+  "entriesVisible": true,
+  "version": 1,
+  "description": "Receive a message from Kafka",
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/rabbitmq",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:Task"
+  ],
+  "elementType": {
+    "value": "bpmn:ReceiveTask"
+  },
+  "groups": [
+    {
+      "id": "subscription",
+      "label": "Subscription"
+    },
+    {
+      "id": "activation",
+      "label": "Activation"
+    },
+    {
+      "id": "variable-mapping",
+      "label": "Variable Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "io.camunda:connector-kafka-inbound:1",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "inbound.type"
+      }
+    },
+    {
+      "label": "Topic name",
+      "description": "Name of the topic to subscribe to",
+      "group": "subscription",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "topicName"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Correlation key expression",
+      "type": "String",
+      "group": "activation",
+      "feel": "required",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "correlationKeyExpression"
+      },
+      "description": "Expression to extract the correlation key from the inbound payload"
+    },
+    {
+      "label": "Result Variable",
+      "type": "String",
+      "group": "variable-mapping",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "resultVariable"
+      },
+      "description": "Name of variable to store the result of the Connector in"
+    },
+    {
+      "label": "Result Expression",
+      "type": "String",
+      "group": "variable-mapping",
+      "feel": "required",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "resultExpression"
+      },
+      "description": "Expression to map the inbound payload to process variables"
+    }
+  ]
+}

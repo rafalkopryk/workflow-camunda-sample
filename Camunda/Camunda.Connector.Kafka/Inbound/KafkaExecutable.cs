@@ -7,7 +7,7 @@ namespace Camunda.Connector.Kafka.Inbound;
 
 [InboundConnector(
     Name = "KAFKA",
-    Type = "io.camunda:connector-kafka:1")]
+    Type = "io.camunda:connector-kafka-inbound:1")]
 internal class KafkaExecutable : IInboundConnectorExecutable
 {
     private readonly IKafkaSubscription _subscription;

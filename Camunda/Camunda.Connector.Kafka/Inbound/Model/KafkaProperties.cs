@@ -4,6 +4,6 @@ namespace Camunda.Connector.Kafka.Inbound.Model;
 
 public record KafkaProperties
 {
-    [JsonPropertyName("subscription.topic")]
-    public string SubscriptionTopic { get; init; }
+    [JsonPropertyName("topicName")]
+    public string TopicName { get; init; }
 };

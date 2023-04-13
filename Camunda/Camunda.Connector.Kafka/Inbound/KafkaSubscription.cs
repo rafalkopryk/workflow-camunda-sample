@@ -27,12 +27,12 @@ internal class KafkaSubscription : IKafkaSubscription
 
     public async Task ProduceEvent(KafkaProperties properties, Func<KafkaSubscriptionEvent, Task> callback, CancellationToken cancellationToken)
     {
-        await CreateTopics(properties.SubscriptionTopic);
+        await CreateTopics(properties.TopicName);
 
         _ = Task.Factory.StartNew(async () =>
         {
             using var consumer = new ConsumerBuilder<Ignore, byte[]>(_consumerConfig).Build();
-            consumer.Subscribe(properties.SubscriptionTopic);
+            consumer.Subscribe(properties.TopicName);
 
             try
             {

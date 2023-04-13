@@ -57,5 +57,7 @@ public static class Constants
      * identifies the specific inbound Connector implementation.
      */
     public static string INBOUND_TYPE_KEYWORD = "inbound.type";
+
+    public static string LEGACY_VARIABLE_MAPPING_KEYWORD = "inbound.variableMapping";
 }
 
