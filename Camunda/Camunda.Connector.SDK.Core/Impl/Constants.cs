@@ -58,6 +58,6 @@ public static class Constants
      */
     public static string INBOUND_TYPE_KEYWORD = "inbound.type";
 
-    public static string LEGACY_VARIABLE_MAPPING_KEYWORD = "inbound.variableMapping";
+    public static string TOPIC_NAME_KEYWORD = "topic.topicName";
 }
 

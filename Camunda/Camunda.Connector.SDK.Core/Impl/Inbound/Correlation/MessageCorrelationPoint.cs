@@ -6,17 +6,13 @@ public class MessageCorrelationPoint : ProcessCorrelationPoint
 
     public string MessageName { get; }
 
-    /** FEEL expression */
-    public string CorrelationKeyExpression { get; }
-
-    public MessageCorrelationPoint(string messageName, string correlationKeyExpression)
+    public MessageCorrelationPoint(string messageName)
     {
         MessageName = messageName;
-        CorrelationKeyExpression = correlationKeyExpression;
     }
 
     public override string GetId()
     {
-        return MessageName + "-" + CorrelationKeyExpression.Trim();
+        return MessageName;
     }
 }

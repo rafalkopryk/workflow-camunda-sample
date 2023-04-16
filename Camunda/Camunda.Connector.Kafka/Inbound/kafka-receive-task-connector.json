@@ -18,6 +18,10 @@
   },
   "groups": [
     {
+      "id": "kafka",
+      "label": "Kafka"
+    },
+    {
       "id": "subscription",
       "label": "Subscription"
     },
@@ -28,6 +32,10 @@
     {
       "id": "variable-mapping",
       "label": "Variable Mapping"
+    },
+    {
+      "id": "errors",
+      "label": "Errors"
     }
   ],
   "properties": [
@@ -40,17 +48,29 @@
       }
     },
     {
-      "label": "Topic name",
-      "description": "Name of the topic to subscribe to",
-      "group": "subscription",
+      "label": "Topic",
+      "description": "Provide topic name",
+      "group": "kafka",
       "type": "String",
       "feel": "optional",
       "binding": {
         "type": "zeebe:property",
-        "name": "topicName"
+        "name": "topic.topicName"
       },
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "label": "Additional Properties",
+      "description": "Provide additional Kafka producer properties in JSON",
+      "group": "kafka",
+      "type": "String",
+      "optional": true,
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "additionalProperties"
       }
     },
     {
@@ -78,15 +98,25 @@
     },
     {
       "label": "Result Expression",
-      "type": "String",
+      "description": "Expression to map the inbound payload to process variables",
       "group": "variable-mapping",
+      "type": "Text",
       "feel": "required",
-      "optional": true,
       "binding": {
         "type": "zeebe:property",
         "name": "resultExpression"
-      },
-      "description": "Expression to map the inbound payload to process variables"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
+      }
     }
   ]
 }

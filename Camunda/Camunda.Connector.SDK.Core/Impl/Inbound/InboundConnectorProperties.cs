@@ -18,7 +18,7 @@ public record InboundConnectorProperties
 
     public string? GetProperty(string propertyName)
     {
-        return Properties.FirstOrDefault(x => string.Equals(x.Key, propertyName, StringComparison.OrdinalIgnoreCase)).Value;
+        return Properties?.FirstOrDefault(x => string.Equals(x.Key, propertyName, StringComparison.OrdinalIgnoreCase)).Value;
     }
 
     public string GetRequiredProperty(string propertyName)

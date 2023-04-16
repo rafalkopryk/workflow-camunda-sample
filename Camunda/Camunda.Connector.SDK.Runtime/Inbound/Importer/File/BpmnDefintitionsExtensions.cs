@@ -56,7 +56,7 @@ internal static class BpmnDefintitionsExtensions
             {
                 BpmnProcessId = bpmnProcess.Id,
                 Properties = properties,
-                CorrelationPoint = new MessageCorrelationPoint(messageName, corellationKeyMapping)
+                CorrelationPoint = new MessageCorrelationPoint(messageName)
             }
         };
     }
@@ -77,7 +77,7 @@ internal static class BpmnDefintitionsExtensions
             {
                 BpmnProcessId = bpmnProcess.Id,
                 Properties = properties,
-                CorrelationPoint = new MessageCorrelationPoint(messageName, corellationKeyMapping)
+                CorrelationPoint = new MessageCorrelationPoint(messageName)
             }
         };
     }

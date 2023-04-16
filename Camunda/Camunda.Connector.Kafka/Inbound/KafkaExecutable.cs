@@ -25,8 +25,8 @@ internal class KafkaExecutable : IInboundConnectorExecutable
 
     public async Task Activate(IInboundConnectorContext context, CancellationToken cancellationToken)
     {
-        var properties = context.GetPropertiesAsType<KafkaProperties>();
-        await _subscription.ProduceEvent(
+        var properties = context.GetPropertiesAsType<KafkaConnectorProperties>();
+        await _subscription.Subscribe(
             properties,
             context.Correlate,
             cancellationToken);

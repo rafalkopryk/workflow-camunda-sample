@@ -4,5 +4,5 @@ namespace Camunda.Connector.Kafka.Inbound;
 
 internal interface IKafkaSubscription
 {
-    Task ProduceEvent(KafkaProperties properties, Func<KafkaSubscriptionEvent, Task> callback, CancellationToken cancellationToken);
+    Task Subscribe(KafkaConnectorProperties properties, Func<KafkaInboundMessage, Task> callback, CancellationToken cancellationToken);
 }

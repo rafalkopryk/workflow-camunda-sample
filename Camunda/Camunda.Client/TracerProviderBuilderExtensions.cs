@@ -1,8 +1,6 @@
-﻿
-using Camunda.Client;
-using OpenTelemetry.Trace;
+﻿using OpenTelemetry.Trace;
 
-namespace Camunda.Connector.Kafka;
+namespace Camunda.Client;
 
 public static class TracerProviderBuilderExtensions
 {

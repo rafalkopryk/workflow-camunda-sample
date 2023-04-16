@@ -19,8 +19,8 @@ public class ConnectorHelper
     public static Dictionary<string, object> CreateOutputVariables(object responseContent, Dictionary<string, string> jobHeaders)
     {
         Dictionary<string, object> outputVariables = new();
-        var resultVariableName = jobHeaders.FirstOrDefault(x => x.Key == RESULT_VARIABLE_KEYWORD).Value;
-        var resultExpression = jobHeaders.FirstOrDefault(x => x.Key == RESULT_EXPRESSION_KEYWORD).Value;
+        var resultVariableName = jobHeaders?.FirstOrDefault(x => x.Key == RESULT_VARIABLE_KEYWORD).Value;
+        var resultExpression = jobHeaders?.FirstOrDefault(x => x.Key == RESULT_EXPRESSION_KEYWORD).Value;
 
         if (!string.IsNullOrWhiteSpace(resultVariableName))
         {

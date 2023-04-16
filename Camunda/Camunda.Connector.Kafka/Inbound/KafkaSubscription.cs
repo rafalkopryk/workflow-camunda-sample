@@ -25,14 +25,14 @@ internal class KafkaSubscription : IKafkaSubscription
         _consumerConfig.AutoOffsetReset ??= AutoOffsetReset.Earliest;
     }
 
-    public async Task ProduceEvent(KafkaProperties properties, Func<KafkaSubscriptionEvent, Task> callback, CancellationToken cancellationToken)
+    public async Task Subscribe(KafkaConnectorProperties properties, Func<KafkaInboundMessage, Task> callback, CancellationToken cancellationToken)
     {
         await CreateTopics(properties.TopicName);
 
         _ = Task.Factory.StartNew(async () =>
         {
-            using var consumer = new ConsumerBuilder<Ignore, byte[]>(_consumerConfig).Build();
-            consumer.Subscribe(properties.TopicName);
+            using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
+            consumer.Subscribe(properties.TopicName);  // TODO : should we allow multiple topics?
 
             try
             {
@@ -75,12 +75,12 @@ internal class KafkaSubscription : IKafkaSubscription
     }
 
     private async Task ConsumeNextEvent(
-        Func<KafkaSubscriptionEvent, Task> callback,
-        IConsumer<Ignore, byte[]> consumer,
+        Func<KafkaInboundMessage, Task> callback,
+        IConsumer<string, string> consumer,
         TimeSpan timeout,
         CancellationToken cancellationToken)
     {
-        ConsumeResult<Ignore, byte[]> consumerResult;
+        ConsumeResult<string, string> consumerResult;
         try
         {
             consumerResult = consumer!.Consume(timeout);
@@ -102,9 +102,9 @@ internal class KafkaSubscription : IKafkaSubscription
             activity?.AddDefaultOpenTelemetryTags(consumerResult.Topic, consumerResult.Message);
 
             var message = JsonSerializer.Deserialize<Dictionary<string, object>>(consumerResult.Message.Value, JsonSerializerKafkaOptions.CamelCase);
-            var subscriptionEvent = new KafkaSubscriptionEvent(string.Empty, 000, message);
+            var kafkaInboundMessage = new KafkaInboundMessage(consumerResult.Key, consumerResult.Message.Value, message);
 
-            await callback.Invoke(subscriptionEvent);
+            await callback.Invoke(kafkaInboundMessage);
 
             consumer.Commit();
 
