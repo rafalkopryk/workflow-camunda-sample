@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Camunda.BPMN.Model\Camunda.BPMN.Model.csproj" />
+    <ProjectReference Include="..\Camunda.Client.Operate\Camunda.Client.Operate.csproj" />
+    <ProjectReference Include="..\Camunda.Connector.SDK.Runtime.Util\Camunda.Connector.SDK.Runtime.Util.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Camunda.Connector.SDK.Runtime.Tests" />
+	</ItemGroup>
+
+</Project>

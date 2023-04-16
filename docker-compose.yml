@@ -10,12 +10,15 @@ services:
       - db
       - zeebe
     environment:
-       ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
-       ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
-       ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
-       ZEEBE__CLOUD: ${ZEEBE_CLOUD}
+       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
        otel__url: http://otel:4317
        ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: credit-applications
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
 
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
@@ -27,12 +30,32 @@ services:
       - zeebe
 
     environment:
-       ZEEBE__ADDRESS: ${ZEEBE_ADDRESS}
-       ZEEBE__CLIENT__ID: ${ZEEBE_CLIENT_ID}
-       ZEEBE__CLIENT__SECRET: ${ZEEBE_CLIENT_SECRET}
-       ZEEBE__CLOUD: ${ZEEBE_CLOUD}
+       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
        otel__url: http://otel:4317
        ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: credit-calculations
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
+
+  utility.kafkaconnector:
+    image: ${DOCKER_REGISTRY-}utilitykafkaconnector
+    build:
+      context: .
+      dockerfile: Modules/KafkaConnector/Utility.KafkaConnector/Dockerfile
+    depends_on:
+      - zeebe
+    environment:
+       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
+       otel__url: http://otel:4317
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: utility-kafkaconnector
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
 
   db:
     image: "mcr.microsoft.com/mssql/server"
@@ -44,7 +67,7 @@ services:
       ACCEPT_EULA: "Y"
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.3}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -52,32 +75,32 @@ services:
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://es01:9200
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=100
       # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
     restart: always
     volumes:
-      - zeebe:/usr/local/zeebe/data10
+      - zeebe:/usr/local/zeebe/data
     depends_on:
       - es01
 
-  tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
-    image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.1.3}
-    container_name: tasklist
-    ports:
-      - "8086:8080"
-    environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
-      - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
-      - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://es01:9200
-      - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://es01:9200
-    depends_on:
-      - zeebe
-      - es01
+  #tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
+  #  image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.1.8}
+  #  container_name: tasklist
+  #  ports:
+  #    - "8086:8080"
+  #  environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
+  #    - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
+  #    - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://es01:9200
+  #    - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://es01:9200
+  #  depends_on:
+  #    - zeebe
+  #    - es01
 
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.3}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
     container_name: operate
     ports:
       - "8085:8080"
@@ -113,7 +136,7 @@ services:
       timeout: 5s
       retries: 3
     volumes:
-      - elastic:/usr/share/elasticsearch/data10
+      - elastic:/usr/share/elasticsearch/data
 
   kibana:
     container_name: kibana
@@ -122,6 +145,8 @@ services:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.5}
     ports:
       - 5602:5601
+    volumes:
+      - kibana:/usr/share/kibana/data
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=http://es01:9200
@@ -152,6 +177,48 @@ services:
     depends_on:
       - apm
 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+     - "9092:9092"
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+ 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8089:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - DYNAMIC_CONFIG_ENABLED=true
+    depends_on:
+        - kafka
+        - zookeeper
+
 volumes:
   zeebe:
   elastic:
+  kibana:
+

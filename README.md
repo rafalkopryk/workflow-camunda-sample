@@ -2,7 +2,8 @@
 
 An example of using the camunda platfrom to control the process
 
-![image](https://user-images.githubusercontent.com/17733188/196046190-f9693676-636b-41cb-acb6-c08223ae7efb.png)
+![image](https://user-images.githubusercontent.com/17733188/222998284-9496e385-7cd9-4629-9bbb-5dc5b878c18a.png)
+
 
 ## to run
 *  complete the .env file

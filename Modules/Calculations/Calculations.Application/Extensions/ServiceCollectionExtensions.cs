@@ -2,7 +2,7 @@
 
 using Calculations.Application.Infrastructure.Database;
 using Calculations.Application.UseCases.SimulateCreditCommand;
-using Common.Zeebe;
+using Common.Kafka;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +13,16 @@ public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(typeof(SimulateCreditCommand));
         services.AddDbContextPool<CreditCalculationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Calculations.WebApi")));
 
-        services.AddZeebe(
-            options => configuration.GetSection("ZEEBE").Bind(options),
+        services.AddMediatR(typeof(SimulateCreditCommand));
+
+        services.AddKafka(
+            options => configuration.GetSection("EventBus").Bind(options),
+            options => configuration.GetSection("EventBus").Bind(options),
             builder => builder
-                .AddService()
-                .AddTaskWorker<SimulateCreditCommand>());
+                .UseTopic<SimulateCreditCommand>());
     }
 
     public static void ConfigureApplication(this IHost host)

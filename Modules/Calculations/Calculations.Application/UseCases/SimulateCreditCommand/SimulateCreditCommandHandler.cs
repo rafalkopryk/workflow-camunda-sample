@@ -1,30 +1,35 @@
-﻿using Calculations.Application.Domain;
+﻿namespace Calculations.Application.UseCases.SimulateCreditCommand;
+
+using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
 using Common.Application.Dictionary;
-using Common.Application.Serializer;
-using Common.Zeebe;
+
+using Common.Kafka;
 using MediatR;
-using System.Text.Json;
 
-namespace Calculations.Application.UseCases.SimulateCreditCommand;
+[EventEnvelope(Topic = "command.credit.calculations.simulation.v1")]
+public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : INotification;
 
-internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditCommand>
+[EventEnvelope(Topic = "event.credit.calculations.simulationFinished.v1")]
+public record SimulationCreditFinished(string ApplicationId, string Decision) : INotification;
+
+internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCreditCommand>
 {
-    private readonly IZeebeService _zeebeService;
     private readonly CreditCalculationDbContext _creditCalculationDbContext;
 
-    public SimulateCreditCommandHandler(IZeebeService zeebeService, CreditCalculationDbContext creditCalculationDbContext)
+    private readonly IEventBusProducer _eventBusProducer;
+
+    public SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IEventBusProducer eventBusProducer)
     {
-        _zeebeService = zeebeService;
         _creditCalculationDbContext = creditCalculationDbContext;
+        _eventBusProducer = eventBusProducer;
     }
 
-    public async Task<Unit> Handle(SimulateCreditCommand request, CancellationToken cancellationToken)
+    public async Task Handle(SimulateCreditCommand notification, CancellationToken cancellationToken)
     {
-        var creditApplication = JsonSerializer.Deserialize<CreditApplication>(request.Job.Variables, JsonSerializerCustomOptions.CamelCase);
-        var decsion = creditApplication switch
+        var decsion = notification switch
         {
-            { Amount: < 1000 or > 25000} => Decision.Negative,
+            { Amount: < 1000 or > 25000 } => Decision.Negative,
             { CreditPeriodInMonths: < 6 or > 24 } => Decision.Negative,
             { AverageNetMonthlyIncome: < 2000 } => Decision.Negative,
             _ => Decision.Positive
@@ -32,20 +37,16 @@ internal class SimulateCreditCommandHandler : IRequestHandler<SimulateCreditComm
 
         var calculation = new CreditCalculation
         {
-            ApplicationId = creditApplication.ApplicationId,
-            Amount = creditApplication.Amount,
-            CreditPeriodInMonths = creditApplication.CreditPeriodInMonths,
+            ApplicationId = notification.ApplicationId,
+            Amount = notification.Amount,
+            CreditPeriodInMonths = notification.CreditPeriodInMonths,
             Decision = decsion,
         };
 
         await _creditCalculationDbContext.Calculations.AddAsync(calculation, cancellationToken);
 
-        await _zeebeService.SetVeriables(request.Job.ElementInstanceKey, new { calculation.Decision, creditApplication.ApplicationId }, cancellationToken);
-
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        await _eventBusProducer.PublishAsync(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
     }
-
-    private record CreditApplication(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 }
