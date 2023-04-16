@@ -13,4 +13,10 @@ public class ConnectorException : Exception
         :base(message, innerException)
     {
     }
+
+    public ConnectorException(string errorCode, string message, Exception? innerException = null)
+    : base(message, innerException)
+    {
+        ErrorCode = errorCode;
+    }
 }

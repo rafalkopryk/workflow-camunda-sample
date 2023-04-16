@@ -1,6 +1,7 @@
 ﻿using Camunda.Client;
 using Camunda.Connector.SDK.Core.Api.Error;
 using Camunda.Connector.SDK.Core.Api.Outbound;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
@@ -13,13 +14,16 @@ public class ConnectorJobHandler<T> : IJobHandler where T : IOutboundConnectorFu
     // Protects Zeebe from enormously large messages it cannot handle
     public static int MAX_ERROR_MESSAGE_LENGTH = 6000;
 
-    protected T _call;
+    private readonly T _call;
     //protected SecretProvider secretProvider;
 
-    public ConnectorJobHandler(T call, ILogger<ConnectorJobHandler<T>> logger)
+    private readonly IJsonTransformerEngine _jsonTransformerEngine;
+
+    public ConnectorJobHandler(T call, ILogger<ConnectorJobHandler<T>> logger, IJsonTransformerEngine jsonTransformerEngine)
     {
         _call = call;
         _logger = logger;
+        _jsonTransformerEngine = jsonTransformerEngine;
     }
 
     public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
@@ -32,7 +36,7 @@ public class ConnectorJobHandler<T> : IJobHandler where T : IOutboundConnectorFu
             result.ResponseValue = await _call.Execute(new JobHandlerContext(job));
 
             var customHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(job.CustomHeaders, JsonSerializerCustomOptions.CamelCase);
-            result.Variables = ConnectorHelper.CreateOutputVariables(result.GetResponseValue, customHeaders);
+            result.Variables = ConnectorHelper.CreateOutputVariables(result.GetResponseValue, customHeaders, _jsonTransformerEngine);
         }
         catch (Exception ex)
         {

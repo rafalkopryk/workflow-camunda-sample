@@ -2,8 +2,10 @@
 using Camunda.Connector.SDK.Core.Api.Annotation;
 using Camunda.Connector.SDK.Core.Api.Outbound;
 using Camunda.Connector.SDK.Core.Impl.Outbound;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
 using Camunda.Connector.SDK.Runtime.Util.Outbound;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Camunda.Connector.SDK.Runtime.Outbound;
 
@@ -13,6 +15,8 @@ public static class OutboundConnectorsServiceColectionExtensions
     {
         zeebeBuilder.Configure(serviceCollection =>
         {
+            serviceCollection.TryAddSingleton<IJsonTransformerEngine, ConsJsonTransformerEngine>();
+
             var builder = new OutboundConnectorsRuntimeBuilder(zeebeBuilder, serviceCollection);
             configure?.Invoke(builder);
         });

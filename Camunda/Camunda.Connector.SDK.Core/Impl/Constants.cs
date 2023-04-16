@@ -11,7 +11,7 @@ public static class Constants
      *
      * <p>For inbound Connectors, this value comes from the extension properties of a BPMN element.
      */
-    public static string RESULT_VARIABLE_KEYWORD = "resultVariable";
+    public const string RESULT_VARIABLE_KEYWORD = "resultVariable";
 
     /**
      * The keyword that identifies the source of `result expression` property of a Connector. Result
@@ -21,7 +21,7 @@ public static class Constants
      *
      * <p>For inbound Connectors, this value comes from the extension properties of a BPMN element.
      */
-    public static string RESULT_EXPRESSION_KEYWORD = "resultExpression";
+    public const string RESULT_EXPRESSION_KEYWORD = "resultExpression";
 
     /**
      * The keyword that identifies the source of `error expression` property of a Connector. Error
@@ -30,7 +30,7 @@ public static class Constants
      *
      * <p>This value only exists for outbound Connectors and comes from Zeebe job headers.
      */
-    public static string ERROR_EXPRESSION_KEYWORD = "errorExpression";
+    public const string ERROR_EXPRESSION_KEYWORD = "errorExpression";
 
     /**
      * The keyword that identifies the source of `correlation key expression` property of a Connector.
@@ -40,7 +40,7 @@ public static class Constants
      * <p>This value only exists for inbound Connectors that target an intermediate message catch
      * event and comes from the extension properties of a BPMN element.
      */
-    public static string CORRELATION_KEY_EXPRESSION_KEYWORD = "correlationKeyExpression";
+    public const string CORRELATION_KEY_EXPRESSION_KEYWORD = "correlationKeyExpression";
 
     /**
      * The keyword that identifies the source of `activation condition` property of a Connector.
@@ -50,14 +50,20 @@ public static class Constants
      * <p>This value only exists for inbound Connectors and comes from the extension properties of a
      * BPMN element.
      */
-    public static string ACTIVATION_CONDITION_KEYWORD = "activationCondition";
+    public const string ACTIVATION_CONDITION_KEYWORD = "activationCondition";
 
     /**
      * The keyword that identifies the source of `type` property of an inbound Connector. Type
      * identifies the specific inbound Connector implementation.
      */
-    public static string INBOUND_TYPE_KEYWORD = "inbound.type";
+    public const string INBOUND_TYPE_KEYWORD = "inbound.type";
 
-    public static string TOPIC_NAME_KEYWORD = "topic.topicName";
+    public const string TOPIC_NAME_KEYWORD = "topic.topicName";
+
+    public static class Errors
+    {
+        public const string EXTRACT_CORRELATION_KEY_FAILED_KEYWORD = "EXTRACT_CORRELATION_KEY_FAILED";
+        public const string EXTRACT_VARIABLES_FAILED_KEYWORD = "EXTRACT_VARIABLES_FAILED";
+    }
 }
 

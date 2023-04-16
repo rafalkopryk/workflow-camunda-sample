@@ -14,13 +14,22 @@ public class InboundCorrelationHandler
 {
     private readonly ILogger _logger;
     private readonly Gateway.GatewayClient _client;
+    private readonly IJsonTransformerEngine _jsonTransformerEngine;
 
-    public InboundCorrelationHandler(ILogger<InboundCorrelationHandler> logger, Gateway.GatewayClient client)
+    public InboundCorrelationHandler(ILogger<InboundCorrelationHandler> logger, Gateway.GatewayClient client, IJsonTransformerEngine jsonTransformerEngine)
     {
         _logger = logger;
         _client = client;
+        _jsonTransformerEngine = jsonTransformerEngine;
     }
 
+    /// <summary>
+    /// Component responsible for calling Zeebe to report an inbound event
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    /// <exception cref="ConnectorException"></exception>
     public async Task<IInboundConnectorResult<IResponseData>> Correlate(
         InboundConnectorProperties properties, object variables)
     {
@@ -44,7 +53,7 @@ public class InboundCorrelationHandler
                 new CorrelationErrorData(CorrelationErrorReason.ACTIVATION_CONDITION_NOT_MET));
         }
 
-        var extractedVariables = ConnectorHelper.CreateOutputVariablesAsString(variables, properties.Properties);
+        var extractedVariables = ExtractVariables(properties, variables);
 
         try
         {
@@ -80,7 +89,7 @@ public class InboundCorrelationHandler
                 new CorrelationErrorData(CorrelationErrorReason.ACTIVATION_CONDITION_NOT_MET));
         }
 
-        var extractedVariables = ConnectorHelper.CreateOutputVariablesAsString(variables, properties.Properties);
+        var extractedVariables = ExtractVariables(properties, variables);
 
         try
         {
@@ -90,7 +99,6 @@ public class InboundCorrelationHandler
                 Name = correlationPoint.MessageName,
                 Variables = extractedVariables,
                 TimeToLive = (long)TimeSpan.FromHours(1).TotalMilliseconds,
-                //MessageId = correlationPoint.GetId(),
             });
 
             _logger.LogInformation("Published message with key: {response.Key}", response.Key);
@@ -122,12 +130,32 @@ public class InboundCorrelationHandler
         var correlationKeyExpression = properties.GetRequiredProperty(CORRELATION_KEY_EXPRESSION_KEYWORD);
         try
         {
-            return FeelEngineWrapper.EvaluateToJson(correlationKeyExpression, context);
+            var result = FeelEngineWrapper.Evaluate(correlationKeyExpression, context, _jsonTransformerEngine);
+            return !string.IsNullOrWhiteSpace(result)
+                ? result.Replace("\"", string.Empty)
+                : throw new ConnectorException(Errors.EXTRACT_CORRELATION_KEY_FAILED_KEYWORD);
         }
         catch (Exception e)
         {
             throw new ConnectorException(
-                "Failed to evaluate correlation key expression: " + correlationKeyExpression, e);
+                Errors.EXTRACT_CORRELATION_KEY_FAILED_KEYWORD,
+                "Failed to evaluate correlation key expression: " + correlationKeyExpression,
+                e);
+        }
+    }
+
+    private string ExtractVariables(InboundConnectorProperties properties, object variables)
+    {
+        try
+        {
+            return ConnectorHelper.CreateOutputVariablesAsString(variables, properties.Properties, _jsonTransformerEngine);
+        }
+        catch (Exception e)
+        {
+            throw new ConnectorException(
+                Errors.EXTRACT_VARIABLES_FAILED_KEYWORD,
+                "Failed to evaluate veriables expression",
+                e);
         }
     }
 }

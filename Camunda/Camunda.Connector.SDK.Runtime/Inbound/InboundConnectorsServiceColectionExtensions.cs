@@ -6,10 +6,11 @@ using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Camunda.Connector.SDK.Runtime.Inbound.Importer;
 using Camunda.Connector.SDK.Runtime.Inbound.Importer.File;
 using Camunda.Connector.SDK.Runtime.Inbound.Lifecycle;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
 using Camunda.Connector.SDK.Runtime.Util.Inbound;
 using Camunda.Connector.SDK.Runtime.Util.Inbound.Correlation;
 using Microsoft.Extensions.DependencyInjection;
-using static System.Net.WebRequestMethods;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Camunda.Connector.SDK.Runtime.Inbound;
 
@@ -19,6 +20,8 @@ public static class InboundConnectorsServiceColectionExtensions
     {
         zeebeBuilder.Configure(services =>
         {
+            services.TryAddSingleton<IJsonTransformerEngine, ConsJsonTransformerEngine>();
+
             services.AddSingleton<InboundCorrelationHandler>();
             services.AddSingleton<IInboundConnectorFactoryConnectorFactory, DefaultInboundConnectorFactory>();
             services.AddSingleton<InboundConnectorManager>();

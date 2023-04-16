@@ -1,6 +1,9 @@
+using Camunda.Connector.SDK.Core.Api.Error;
 using Camunda.Connector.SDK.Core.Impl.Inbound;
 using Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
+using Camunda.Connector.SDK.Runtime.Util.Feel;
 using Camunda.Connector.SDK.Runtime.Util.Inbound.Correlation;
+using FluentAssertions;
 using GatewayProtocol;
 using JsonDiffPatchDotNet;
 using Microsoft.Extensions.Logging;
@@ -33,7 +36,7 @@ public class InboundCorrelationHandlerTest
             .Setup(x => x.CreateProcessInstanceAsync(It.IsAny<CreateProcessInstanceRequest>(), null, null, It.IsAny<CancellationToken>()))
             .Returns(createProcessInstanceAsyncCallMock);
 
-        _handler = new InboundCorrelationHandler(loggerMock.Object, _zeebeClient.Object);
+        _handler = new InboundCorrelationHandler(loggerMock.Object, _zeebeClient.Object, new ConsJsonTransformerEngine());
     }
 
     [Fact]
@@ -89,6 +92,64 @@ public class InboundCorrelationHandlerTest
             null,
             CancellationToken.None),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task Message_IncorrectCorrelationKey_ShouldThrowConnectorException()
+    {
+        //arrage
+        var correlationKey = "=correlationKey";
+        var veriables = new
+        {
+            TestKey = "Testvalue"
+        };
+
+        var point = new MessageCorrelationPoint("msg1");
+        var properties = new InboundConnectorProperties
+        {
+            CorrelationPoint = point,
+            BpmnProcessId = "process1",
+            Properties = new Dictionary<string, string>
+            {
+                [CORRELATION_KEY_EXPRESSION_KEYWORD] = correlationKey
+            }
+        };
+
+        //act
+        var action = async () => await _handler.Correlate(properties, veriables);
+
+        //assert
+        await action.Should().ThrowAsync<ConnectorException>();
+    }
+
+    [Fact]
+    public async Task Message_NoResultVar_IncorrectResultExprProvided_ShouldThrowConnectorException()
+    {
+        //arrage
+        var correlationKey = "=correlationKey";
+        var veriables = new
+        {
+            CorrelationKey = correlationKey,
+            TestKey = "Testvalue"
+        };
+
+        var point = new MessageCorrelationPoint("msg1");
+        var properties = new InboundConnectorProperties
+        {
+            CorrelationPoint = point,
+            BpmnProcessId = "process1",
+            Properties = new Dictionary<string, string>
+            {
+                [CORRELATION_KEY_EXPRESSION_KEYWORD] = correlationKey,
+                [RESULT_EXPRESSION_KEYWORD] = "={ otherKeyAlias: otherKey}"
+            }
+        };
+
+        //act
+        var action = async () => await _handler.Correlate(properties, veriables);
+
+        //assert
+        await action.Should().ThrowAsync<ConnectorException>();
     }
 
     [Theory]
