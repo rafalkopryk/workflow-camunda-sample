@@ -3,7 +3,6 @@
 using Calculations.Application.Infrastructure.Database;
 using Calculations.Application.UseCases.SimulateCreditCommand;
 using Common.Kafka;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContextPool<CreditCalculationDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Calculations.WebApi")));
 
-        services.AddMediatR(typeof(SimulateCreditCommand));
+        services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
 
         services.AddKafka(
             options => configuration.GetSection("EventBus").Bind(options),

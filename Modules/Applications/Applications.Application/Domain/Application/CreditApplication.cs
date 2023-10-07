@@ -1,4 +1,6 @@
-﻿namespace Applications.Application.Domain.Application;
+﻿using Common.Application.Dictionary;
+
+namespace Applications.Application.Domain.Application;
 
 public class CreditApplication
 {
@@ -17,8 +19,7 @@ public class CreditApplication
         decimal amount,
         int creditPeriodInMonths,
         CustomerPersonalData customerPersonalData,
-        Declaration declaration,
-        DateTimeOffset date)
+        Declaration declaration)
     {
         return new CreditApplication
         {
@@ -29,7 +30,7 @@ public class CreditApplication
             Declaration = declaration,
             States = new List<State>
             {
-                State.ApplicationRegistered(date),
+                State.ApplicationRegistered(SystemClock.Now),
             }
         };
     }
@@ -37,5 +38,20 @@ public class CreditApplication
     public void ForwardTo(State state)
     {
         States.Add(state);
+    }
+
+    public void GenerateDecision(Decision decision)
+    {
+        States.Add(State.DecisionGenerated(State, decision, SystemClock.Now));
+    }
+
+    public void SignContract()
+    {
+        States.Add(State.ContractSigned(State, SystemClock.Now));
+    }
+
+    public void CloseApplication()
+    {
+        States.Add(State.ApplicationClosed(State, SystemClock.Now));
     }
 }

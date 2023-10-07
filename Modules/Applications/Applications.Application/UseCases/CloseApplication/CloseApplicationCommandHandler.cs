@@ -1,5 +1,4 @@
-﻿using Applications.Application.Domain.Application;
-using Applications.Application.Infrastructure.Database;
+﻿using Applications.Application.Infrastructure.Database;
 using Common.Kafka;
 using MediatR;
 
@@ -23,7 +22,7 @@ internal class CloseApplicationCommandHandler : INotificationHandler<CloseApplic
     public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
-        creditApplication.ForwardTo(State.ApplicationClosed(creditApplication.State, DateTimeOffset.Now));
+        creditApplication.CloseApplication();
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

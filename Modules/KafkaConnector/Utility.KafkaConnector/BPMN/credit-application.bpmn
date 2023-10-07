@@ -49,7 +49,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="*" target="topic.bootstrapServers" />
           <zeebe:input source="command.credit.applications.decision.v1" target="topic.topicName" />
-          <zeebe:input source="Decision" target="message.key" />
+          <zeebe:input source="=applicationId" target="message.key" />
           <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId,&#10;  &#34;decision&#34;: decision&#10;}" target="message.value" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders />
@@ -65,7 +65,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="*" target="topic.bootstrapServers" />
           <zeebe:input source="command.credit.applications.close.v1" target="topic.topicName" />
-          <zeebe:input source="Close" target="message.key" />
+          <zeebe:input source="=applicationId" target="message.key" />
           <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId&#10;}" target="message.value" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders />
@@ -81,7 +81,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="*" target="topic.bootstrapServers" />
           <zeebe:input source="command.credit.calculations.simulation.v1" target="topic.topicName" />
-          <zeebe:input source="Simulation" target="message.key" />
+          <zeebe:input source="=applicationId" target="message.key" />
           <zeebe:input source="={ &#10;  &#34;applicationId&#34;:applicationId,&#10;  &#34;amount&#34;: amount,&#10;  &#34;creditPeriodInMonths&#34;: creditPeriodInMonths,&#10;  &#34;averageNetMonthlyIncome&#34;:averageNetMonthlyIncome&#10;}" target="message.value" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders />

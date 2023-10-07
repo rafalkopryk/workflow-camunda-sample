@@ -74,27 +74,6 @@ internal class KafkaWorker<TEvent> : BackgroundService
 
     private async Task ConsumeNextEvent(IConsumer<Ignore, string> consumer, IMediator mediator, CancellationToken cancellationToken)
     {
-        //IReadOnlyCollection<ConsumeResult<Ignore, string>> consumerResults;
-        //try
-        //{
-        //    consumerResults = consumer!.ConsumeBatch(cancellationToken, 5);
-        //    if (!consumerResults.Any()) return;
-        //}
-        //catch (ConsumeException e) when (new[] { ErrorCode.GroupLoadInProgress }.Contains(e.Error.Code))
-        //{
-        //    //TODO logger
-        //    return;
-        //}
-
-        //var parallelOptions = new ParallelOptions
-        //{
-        //    CancellationToken = cancellationToken,
-        //    MaxDegreeOfParallelism = 5,
-        //};
-
-        //await Parallel.ForEachAsync(consumerResults, parallelOptions, async (consumerResult, cancellationToken) => await ConsumeResult(consumerResult, consumer, mediator, cancellationToken));
-
-
         ConsumeResult<Ignore, string> consumerResult;
         try
         {

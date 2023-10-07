@@ -67,7 +67,7 @@ services:
       ACCEPT_EULA: "Y"
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.2.16}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -86,21 +86,9 @@ services:
     depends_on:
       - es01
 
-  #tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
-  #  image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.1.8}
-  #  container_name: tasklist
-  #  ports:
-  #    - "8086:8080"
-  #  environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
-  #    - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
-  #    - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://es01:9200
-  #    - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://es01:9200
-  #  depends_on:
-  #    - zeebe
-  #    - es01
 
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.2.0}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.2.16}
     container_name: operate
     ports:
       - "8085:8080"
@@ -206,7 +194,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     ports:
-      - "8089:8080"
+      - "8087:8080"
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=local

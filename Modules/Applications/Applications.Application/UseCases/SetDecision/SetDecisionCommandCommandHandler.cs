@@ -1,5 +1,4 @@
-﻿using Applications.Application.Domain.Application;
-using Applications.Application.Infrastructure.Database;
+﻿using Applications.Application.Infrastructure.Database;
 using Common.Application.Dictionary;
 using Common.Kafka;
 using MediatR;
@@ -23,7 +22,7 @@ internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisi
     public async Task Handle(SetDecisionCommand notification, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
-        creditApplication.ForwardTo(State.DecisionGenerated(creditApplication.State, notification.Decision, DateTimeOffset.Now));
+        creditApplication.GenerateDecision(notification.Decision);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

@@ -1,5 +1,4 @@
-﻿using Applications.Application.Domain.Application;
-using Applications.Application.Infrastructure.Database;
+﻿using Applications.Application.Infrastructure.Database;
 using Common.Application.Errors;
 using Common.Kafka;
 using CSharpFunctionalExtensions;
@@ -27,7 +26,7 @@ internal class SignContractCommandHandler : IRequestHandler<SignContractCommand,
         if (creditApplication is null)
             return Result.Failure(ErrorCode.ResourceNotFound);
 
-        creditApplication.ForwardTo(State.ContractSigned(creditApplication.State, DateTimeOffset.Now));
+        creditApplication.SignContract();
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

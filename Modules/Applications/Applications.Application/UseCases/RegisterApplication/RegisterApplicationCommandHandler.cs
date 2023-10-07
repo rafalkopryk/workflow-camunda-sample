@@ -64,7 +64,6 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
             new Declaration
             {
                 AverageNetMonthlyIncome = request.CreditApplication.Declaration.AverageNetMonthlyIncome
-            },
-            DateTimeOffset.Now);
+            });
     }
 }

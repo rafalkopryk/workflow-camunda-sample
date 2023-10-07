@@ -11,6 +11,8 @@ public static class ServiceCollectionExtensions
         Action<ProducerConfig> producerOptions,
         Action<KafkaBuilder> configure = null)
     {
+        services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
+
         services.Configure(consumerOptions);
 
         var producerConfig = new ProducerConfig();
