@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
-using System.Diagnostics;
 
 namespace Camunda.Client;
 
@@ -14,7 +13,6 @@ internal class ZeebeWorker<T> : BackgroundService
     private readonly Gateway.GatewayClient _client;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger _logger;
-    private static int s_currentJobsActive = 0;
     private readonly ServiceTaskConfiguration _serviceTaskConfiguration;
 
     public ZeebeWorker(Gateway.GatewayClient client, IServiceScopeFactory serviceScopeFactory, ServiceTaskConfiguration serviceTaskConfiguration, ILogger<ZeebeWorker<T>> logger)
@@ -27,68 +25,42 @@ internal class ZeebeWorker<T> : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var parallelOptions = new ParallelOptions
-        {
-            CancellationToken = stoppingToken,
-            MaxDegreeOfParallelism = _serviceTaskConfiguration.MaxJobsToActivate,
-        };
-
-        var thresholdJobsActivation = _serviceTaskConfiguration!.MaxJobsToActivate * 0.6;
-
         await Task.Yield();
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var jobCount = _serviceTaskConfiguration.MaxJobsToActivate - s_currentJobsActive;
             var jobType = _serviceTaskConfiguration.Type;
-            var request = new ActivateJobsRequest
+            var request = new StreamActivatedJobsRequest
             {
                 Type = jobType,
-                MaxJobsToActivate = jobCount,
                 Timeout = _serviceTaskConfiguration.TimeoutInMs,
-                RequestTimeout = _serviceTaskConfiguration.RequestTimeoutInMs,
+                TenantIds = { _serviceTaskConfiguration.TenatIds },
             };
 
-            var start = Stopwatch.GetTimestamp();
             using var activity = Diagnostics.Consumer.Start(jobType);
 
             try
             {
-                using var call = _client.ActivateJobs(request, cancellationToken: stoppingToken);
-
-                //var activatedJobs = new List<ActivatedJob>();
+                using var call = _client.StreamActivatedJobs(request, cancellationToken: stoppingToken);
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
-                    var source = response.Jobs.ToList();
-                    await Parallel.ForEachAsync(source, parallelOptions, HandleJob);
-                    //activatedJobs.AddRange(source);
+                    await HandleJob(response, stoppingToken);
                 }
-
-                //await Parallel.ForEachAsync(activatedJobs, parallelOptions, HandleJob);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
                 
                 activity?.RecordException(ex);
-
-                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs), stoppingToken);
-            }
-
-            if (s_currentJobsActive > thresholdJobsActivation)
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PollIntervalInMs), stoppingToken);
             }
         }
     }
 
-    private async ValueTask HandleJob(ActivatedJob? activatedJob, CancellationToken cancellationToken)
+    private async ValueTask HandleJob(ActivatedJob activatedJob, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             await Task.FromCanceled(cancellationToken);
 
-
-        Interlocked.Increment(ref s_currentJobsActive);
         try
         {
             var internalJob = new InternalJob
@@ -135,10 +107,6 @@ internal class ZeebeWorker<T> : BackgroundService
                 Retries = activatedJob.Retries - 1,
                 RetryBackOff = retryBackOff,
             });
-        }
-        finally
-        {
-            Interlocked.Decrement(ref s_currentJobsActive);
         }
     }
 }

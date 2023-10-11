@@ -38,7 +38,7 @@ internal class KafkaSubscription : IKafkaSubscription
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+                    await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken);
                     await ConsumeNextEvent(callback, consumer, TimeSpan.FromSeconds(1), cancellationToken);
                 }
             }

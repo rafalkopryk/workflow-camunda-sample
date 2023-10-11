@@ -37,7 +37,7 @@ internal class OutboundConnectorsRuntimeBuilder : IOutboundConnectorsRuntimeBuil
         _serviceCollecion = serviceCollecion;
     }
 
-    public IOutboundConnectorsRuntimeBuilder AddOutboundConnectorFunction<T>(Action<IServiceCollection> configure = null) where T : class, IOutboundConnectorFunction
+    public IOutboundConnectorsRuntimeBuilder AddOutboundConnectorFunction<T>(Action<IServiceCollection> configure = null, string tenatId = null) where T : class, IOutboundConnectorFunction
     {
         var attribute = typeof(T).GetAttribute<OutboundConnectorAttribute>();
         var serviceTaskConfiguration = new ServiceTaskConfiguration
@@ -45,6 +45,7 @@ internal class OutboundConnectorsRuntimeBuilder : IOutboundConnectorsRuntimeBuil
             Type = attribute.Type,
             AutoComplate = false,
             FetchVariabeles = attribute.InputVariables,
+            TenatIds = tenatId != null ? new[]{ tenatId } : Array.Empty<string>(),
         };
 
         _serviceCollecion.AddSingleton(typeof(T));

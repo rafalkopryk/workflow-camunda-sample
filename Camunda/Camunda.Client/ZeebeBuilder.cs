@@ -21,11 +21,9 @@ public class ZeebeBuilder : IZeebeBuilder
             Type = attribute.Type,
             AutoComplate = attribute.AutoComplate,
             FetchVariabeles = attribute.FetchVariabeles,
-            MaxJobsToActivate = attribute.MaxJobsToActivate,
-            PollIntervalInMs = attribute.PollIntervalInMs,
-            RequestTimeoutInMs = attribute.RequestTimeoutInMs,
             RetryBackOffInMs = attribute.RetryBackOffInMs,
-            TimeoutInMs = attribute.TimeoutInMs
+            TimeoutInMs = attribute.TimeoutInMs,
+            TenatIds = attribute.TenatIds,
         };
         AddWorker<T>(serviceTaskConfiguration);
         return this;

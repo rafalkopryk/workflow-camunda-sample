@@ -8,13 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Camunda.Connector.Kafka;
 public static class ZeebeBuilderExtensions
 {
-    public static IOutboundConnectorsRuntimeBuilder AddKafkaOutboundConnectorFunction(this IOutboundConnectorsRuntimeBuilder builder, Action<ProducerConfig> producerOptions)
+    public static IOutboundConnectorsRuntimeBuilder AddKafkaOutboundConnectorFunction(this IOutboundConnectorsRuntimeBuilder builder, Action<ProducerConfig> producerOptions, string? tenatId = null)
     {
         builder.AddOutboundConnectorFunction<KafkaConnectorFunction>(serviceCollections =>
         {
             var configuration = new ProducerConfig();
             serviceCollections.Configure(producerOptions);
-        });
+        }, tenatId);
 
         return builder;
     }
