@@ -55,7 +55,7 @@ internal class KafkaWorker<TEvent> : BackgroundService
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
                 await ConsumeNextEvent(consumer, mediator, cancellationToken);
             }
         }

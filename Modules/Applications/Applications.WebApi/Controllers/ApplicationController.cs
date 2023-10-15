@@ -31,7 +31,7 @@ public class ApplicationController : BaseController
     }
 
     [HttpGet("{applicationId}", Name = "GetApplication")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetApplicationQueryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromRoute] string applicationId, CancellationToken cancellationToken)
     {

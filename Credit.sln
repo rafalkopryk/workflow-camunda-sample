@@ -53,7 +53,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camunda.Client.Operate", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camunda.BPMN.Model", "Camunda\Camunda.BPMN.Model\Camunda.BPMN.Model.csproj", "{46F780C0-9B00-4021-AC5E-8A978047A2AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.Connector.Banchmark", "Camunda\Camunda.Connector.Banchmark\Camunda.Connector.Banchmark.csproj", "{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camunda.Connector.Banchmark", "Camunda\Camunda.Connector.Banchmark\Camunda.Connector.Banchmark.csproj", "{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{9206460F-DA5F-4518-87EC-AA4D8A364EAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credit.Frontend", "Modules\Frontend\Credit.Frontend\Credit.Frontend.csproj", "{1F0BACEB-2F35-4448-8BE1-89DC143239F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +133,10 @@ Global
 		{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F0BACEB-2F35-4448-8BE1-89DC143239F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F0BACEB-2F35-4448-8BE1-89DC143239F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F0BACEB-2F35-4448-8BE1-89DC143239F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F0BACEB-2F35-4448-8BE1-89DC143239F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +161,8 @@ Global
 		{9E97952A-3D0A-4D17-BFA9-43B398F0FD94} = {9625277D-CE06-4BC3-B0FE-D8BFF6E88030}
 		{46F780C0-9B00-4021-AC5E-8A978047A2AB} = {9625277D-CE06-4BC3-B0FE-D8BFF6E88030}
 		{41CA9329-D4E4-4DFF-A9F8-0AF16DE57877} = {9625277D-CE06-4BC3-B0FE-D8BFF6E88030}
+		{9206460F-DA5F-4518-87EC-AA4D8A364EAB} = {6DA2ACEC-049D-4542-8199-3777F65BF003}
+		{1F0BACEB-2F35-4448-8BE1-89DC143239F8} = {9206460F-DA5F-4518-87EC-AA4D8A364EAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {17E55403-D298-4E59-BD45-F0AE945859D1}

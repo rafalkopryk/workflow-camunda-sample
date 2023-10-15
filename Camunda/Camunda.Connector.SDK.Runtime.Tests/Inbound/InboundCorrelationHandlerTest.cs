@@ -7,7 +7,7 @@ using FluentAssertions;
 using GatewayProtocol;
 using JsonDiffPatchDotNet;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using System.Text.Json;
 using static Camunda.Connector.SDK.Core.Impl.Constants;
 
@@ -17,26 +17,24 @@ namespace Camunda.Connector.SDK.Runtime.Tests.Inbound;
 public class InboundCorrelationHandlerTest
 {
     private readonly InboundCorrelationHandler _handler;
-    private readonly Mock<Gateway.GatewayClient> _zeebeClient;
+    private readonly Gateway.GatewayClient _zeebeClient;
 
     const string EMPTY_JSON_KEYWORD = "{}";
 
     public InboundCorrelationHandlerTest()
     {
-        var loggerMock = new Mock<ILogger<InboundCorrelationHandler>>();
-        _zeebeClient = new Mock<Gateway.GatewayClient>();
+        var loggerMock = Substitute.For<ILogger<InboundCorrelationHandler>>();
+        _zeebeClient = Substitute.For<Gateway.GatewayClient>();
 
         var publishMessageAsyncCallMock = TestCallsExtenisons.AsyncUnaryCall(Task.FromResult(new PublishMessageResponse()));
-        _zeebeClient
-            .Setup(x => x.PublishMessageAsync(It.IsAny<PublishMessageRequest>(), null, null, It.IsAny<CancellationToken>()))
+        _zeebeClient.PublishMessageAsync(Arg.Any<PublishMessageRequest>(), null, null, Arg.Any<CancellationToken>())
             .Returns(publishMessageAsyncCallMock);
 
         var createProcessInstanceAsyncCallMock = TestCallsExtenisons.AsyncUnaryCall(Task.FromResult(new CreateProcessInstanceResponse()));
-        _zeebeClient
-            .Setup(x => x.CreateProcessInstanceAsync(It.IsAny<CreateProcessInstanceRequest>(), null, null, It.IsAny<CancellationToken>()))
+        _zeebeClient.CreateProcessInstanceAsync(Arg.Any<CreateProcessInstanceRequest>(), null, null, Arg.Any<CancellationToken>())
             .Returns(createProcessInstanceAsyncCallMock);
 
-        _handler = new InboundCorrelationHandler(loggerMock.Object, _zeebeClient.Object, new ConsJsonTransformerEngine());
+        _handler = new InboundCorrelationHandler(loggerMock, _zeebeClient, new ConsJsonTransformerEngine());
     }
 
     [Fact]
@@ -54,13 +52,12 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, new { });
 
         //assert
-        _zeebeClient.Verify(x => x.CreateProcessInstanceAsync(
-            It.Is<CreateProcessInstanceRequest>(
+        _zeebeClient.Received(1).CreateProcessInstanceAsync(
+            Arg.Is<CreateProcessInstanceRequest>(
                 x => x.BpmnProcessId == properties.BpmnProcessId),
             null,
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     [Theory]
@@ -84,14 +81,13 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, veriables);
 
         //assert
-        _zeebeClient.Verify(x => x.PublishMessageAsync(
-            It.Is<PublishMessageRequest>(
+        _zeebeClient.Received(1).PublishMessageAsync(
+            Arg.Is<PublishMessageRequest>(
                 x => x.Name == point.MessageName &&
                 x.CorrelationKey == correlationKeyValue),
             null,
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     [Fact]
@@ -172,15 +168,14 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, veriables);
 
         //assert
-        _zeebeClient.Verify(x => x.PublishMessageAsync(
-            It.Is<PublishMessageRequest>(
+        _zeebeClient.Received(1).PublishMessageAsync(
+            Arg.Is<PublishMessageRequest>(
                 x => x.Name == point.MessageName &&
                 x.CorrelationKey == correlationKeyValue &&
                 x.Variables == EMPTY_JSON_KEYWORD),
             null,
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     [Theory]
@@ -204,15 +199,14 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, veriables);
 
         //assert
-        _zeebeClient.Verify(x => x.PublishMessageAsync(
-            It.Is<PublishMessageRequest>(
+        _zeebeClient.Received().PublishMessageAsync(
+            Arg.Is<PublishMessageRequest>(
                 x => x.Name == point.MessageName &&
                 x.CorrelationKey == correlationKeyValue &&
                 IsJsonEquals(x.Variables, expectedVariables)),
             null,
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     [Theory]
@@ -236,15 +230,14 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, veriables);
 
         //assert
-        _zeebeClient.Verify(x => x.PublishMessageAsync(
-            It.Is<PublishMessageRequest>(
+        _zeebeClient.Received(1).PublishMessageAsync(
+            Arg.Is<PublishMessageRequest>(
                 x => x.Name == point.MessageName &&
                 x.CorrelationKey == correlationKeyValue &&
                 IsJsonEquals(x.Variables, expectedVariables)),
             null,
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     [Theory]
@@ -269,15 +262,14 @@ public class InboundCorrelationHandlerTest
         await _handler.Correlate(properties, veriables);
 
         //assert
-        _zeebeClient.Verify(x => x.PublishMessageAsync(
-            It.Is<PublishMessageRequest>(
+        _zeebeClient.Received(1).PublishMessageAsync(
+            Arg.Is<PublishMessageRequest>(
                 x => x.Name == point.MessageName &&
                 x.CorrelationKey == correlationKeyValue &&
                 IsJsonEquals(x.Variables, expectedVariables)),
             null, 
             null,
-            CancellationToken.None),
-            Times.Once);
+            CancellationToken.None);
     }
 
     private static bool IsJsonEquals(string left, string right)

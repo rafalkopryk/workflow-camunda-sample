@@ -30,11 +30,11 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
         var creditApplication = CreateCreditApplication(command);
 
         await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken);
-        await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _client.CreateProcessInstanceAsync(new CreateProcessInstanceRequest
+        await _client.PublishMessageAsync(new PublishMessageRequest
         {
-            BpmnProcessId = "credit-application",
+            Name = "applicationRegistered",
+            MessageId = command.ApplicationId,
             Variables = JsonSerializer.Serialize(
                 new
                 {
@@ -43,8 +43,10 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
                     creditApplication.CreditPeriodInMonths,
                     creditApplication.Declaration.AverageNetMonthlyIncome,
                 }, JsonSerializerCustomOptions.CamelCase),
-            Version = -1,
+            TimeToLive = (long)TimeSpan.FromHours(12).TotalMilliseconds
         });
+
+        await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

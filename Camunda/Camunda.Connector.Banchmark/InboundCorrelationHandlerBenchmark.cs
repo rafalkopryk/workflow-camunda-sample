@@ -9,7 +9,7 @@ using GatewayProtocol;
 using Grpc.Core;
 using Grpc.Core.Testing;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using System.Text.Json;
 using static Camunda.Connector.SDK.Core.Impl.Constants;
 
@@ -28,15 +28,15 @@ public class InboundCorrelationHandlerBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        var loggerMock = new Mock<ILogger<InboundCorrelationHandler>>();
+        var loggerMock = Substitute.For<ILogger<InboundCorrelationHandler>>();
+
         var mockCall = TestCalls.AsyncUnaryCall(Task.FromResult(new PublishMessageResponse()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-        var gatewayClientMock = new Mock<Gateway.GatewayClient>();
-        gatewayClientMock
-            .Setup(x => x.PublishMessageAsync(It.IsAny<PublishMessageRequest>(), null, null, It.IsAny<CancellationToken>()))
+        var gatewayClientMock = Substitute.For<Gateway.GatewayClient>();
+        gatewayClientMock.PublishMessageAsync(Arg.Any<PublishMessageRequest>(), null, null, Arg.Any<CancellationToken>())
             .Returns(mockCall);
 
-        _inboundCorrelationHandlerConsJson = new InboundCorrelationHandler(loggerMock.Object, gatewayClientMock.Object, new ConsJsonTransformerEngine());
-        _inboundCorrelationHandlerJmesPath = new InboundCorrelationHandler(loggerMock.Object, gatewayClientMock.Object, new JmesPathJsonTransformerEngine());
+        _inboundCorrelationHandlerConsJson = new InboundCorrelationHandler(loggerMock, gatewayClientMock, new ConsJsonTransformerEngine());
+        _inboundCorrelationHandlerJmesPath = new InboundCorrelationHandler(loggerMock, gatewayClientMock, new JmesPathJsonTransformerEngine());
         _propertiesCorelationKey = new InboundConnectorProperties
         {
             BpmnProcessId = "process1",

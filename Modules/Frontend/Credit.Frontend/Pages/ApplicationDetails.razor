@@ -1,0 +1,187 @@
+﻿@page "/applications/{ApplicationId}"
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IOptions<ExternalServicesOptions> ExternalServicesOptions;
+
+@implements IDisposable
+
+
+@using Credit.Frontend.Clients.Applications;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Microsoft.Extensions.Options;
+
+<h3>Application</h3>
+@if (model == null)
+{
+    <p><em>Loading...</em></p>
+
+    return;
+}
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField Label="ApplicationId" Variant="Variant.Outlined">@ApplicationId</MudField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney">@model.Amount</MudField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudField Label="CreditPeriodInMonths" Variant="Variant.Outlined">@model.CreditPeriodInMonths</MudField>
+    </MudItem>
+</MudGrid>
+
+<MudGrid>
+    @if (@model.State.Level == @APPLICATION_REGISTERED)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="Status" Variant="Variant.Outlined">Application registered</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField
+                Label="Decision" 
+                Variant="Variant.Outlined"
+                Adornment="Adornment.End"
+                AdornmentIcon="@DecisionIcon" 
+                AdornmentColor="@DecisionIconColor">Decision generating, wait...
+            </MudField>
+        </MudItem>
+    }
+
+    @if (@model.State.Level == @DECISION_GENERATED)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="Status" Variant="Variant.Outlined">Decision generated</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField
+                Label="Decision" 
+                Variant="Variant.Outlined"
+                Adornment="Adornment.End"
+                AdornmentIcon="@DecisionIcon" 
+                AdornmentColor="@DecisionIconColor">@model.State?.Decision
+            </MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="Contract" Variant="Variant.Outlined">
+                <MudButton 
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    OnClick="async () => await SignContract()"
+                    Disabled="@SignContractDisabled">Sign Contract
+                </MudButton>
+            </MudField>
+        </MudItem>
+    }
+
+    @if (@model.State.Level == APPLICATION_CLOSED)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="Status" Variant="Variant.Outlined">Application closed</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField
+                Label="Decision"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.End"
+                AdornmentIcon="@DecisionIcon"
+                AdornmentColor="@DecisionIconColor">@model.State?.Decision
+            </MudField>
+        </MudItem>
+    }
+
+    @if (@model.State.Level == CONTRACT_SIGNED)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="Status" Variant="Variant.Outlined">Contract Signed</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField
+                Label="Decision"
+                Variant="Variant.Outlined"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@DecisionIcon"
+                      AdornmentColor="@DecisionIconColor">@model.State?.Decision</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Label="ContractSigningDate" Variant="Variant.Outlined">@model.State?.ContractSigningDate</MudField>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+
+    public static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+    {
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
+
+    public const string APPLICATION_REGISTERED = nameof(APPLICATION_REGISTERED);
+    public const string DECISION_GENERATED = nameof(DECISION_GENERATED);
+    public const string CONTRACT_SIGNED = nameof(CONTRACT_SIGNED);
+    public const string APPLICATION_CLOSED = nameof(APPLICATION_CLOSED);
+
+    [Parameter]
+    public string? ApplicationId { get; set; }
+
+    private GetApplicationQueryCreditApplicationDto? model { get; set; }
+
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(5));
+
+    public bool SignContractDisabled { get; private set; }
+
+    public string DecisionIcon => model.State.Decision switch
+    {
+        Decision.Positive => Icons.Material.Filled.CheckCircle,
+        Decision.Negative => Icons.Material.Filled.Error,
+        _ => Icons.Material.Filled.Info,
+    };
+
+    public Color DecisionIconColor => model.State.Decision switch
+    {
+        Decision.Positive => Color.Success,
+        Decision.Negative => Color.Error,
+        _ => Color.Info
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await GetApplication();
+        await base.OnInitializedAsync();
+        RunLongPooling().Forget();
+    }
+
+    async Task SignContract()
+    {
+        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/sign", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
+        SignContractDisabled = true;
+        model = await GetApplication();
+    }
+
+    async Task RunLongPooling()
+    {
+        while (await _periodicTimer.WaitForNextTickAsync())
+        {
+            if (model.State.Level is not APPLICATION_REGISTERED and not DECISION_GENERATED)
+            { 
+                break;
+            }
+
+            model = await GetApplication();
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _periodicTimer?.Dispose();
+    }
+
+    private async Task<GetApplicationQueryCreditApplicationDto> GetApplication()
+    {
+        var result = await Http.GetFromJsonAsync<GetApplicationQueryResponse>($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}", options: options);
+        return result.CreditApplication;
+    }
+}

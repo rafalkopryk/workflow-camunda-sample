@@ -3,7 +3,7 @@ using Camunda.Connector.SDK.Core.Impl.Inbound.Correlation;
 using Camunda.Connector.SDK.Runtime.Inbound;
 using Camunda.Connector.SDK.Runtime.Inbound.Importer.File;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System.Text;
 
 using static Camunda.Connector.SDK.Core.Impl.Constants;
@@ -20,10 +20,9 @@ namespace Camunda.Connector.SDK.Runtime.Tests.Inbound
         public async Task FindInboundConnectors_ValidBpmnFile_ShouldReturnExpectedInboundConnectorProperties()
         {
             //arrange
-            var bpmnProviderMock = new Mock<IBpmnProvider>();
-            bpmnProviderMock.Setup(x => x.GetBpmn(It.IsAny<ProcessDefinition>())).ReturnsAsync(GetBpmnFile());
+            var bpmnProviderMock = Substitute.For<IBpmnProvider>();
+            bpmnProviderMock.GetBpmn(Arg.Any<ProcessDefinition>()).Returns(GetBpmnFile());
             var bpmnProcessId = "Process_Test";
-
             var expectedResult = new InboundConnectorProperties[]
             {
                 new InboundConnectorProperties
@@ -51,7 +50,7 @@ namespace Camunda.Connector.SDK.Runtime.Tests.Inbound
             };
 
             //act
-            var bpmnFileProcessDefinitionInspector = new BPMNFileProcessDefinitionInspector(bpmnProviderMock.Object);
+            var bpmnFileProcessDefinitionInspector = new BPMNFileProcessDefinitionInspector(bpmnProviderMock);
             var result = await bpmnFileProcessDefinitionInspector.FindInboundConnectors(new ProcessDefinition(default, default, default, bpmnProcessId));
 
             //assert

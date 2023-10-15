@@ -1,0 +1,116 @@
+﻿@page "/"
+@page "/applications"
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IOptions<ExternalServicesOptions> ExternalServicesOptions;
+
+@using Credit.Frontend.Clients.Applications;
+@using Microsoft.Extensions.Options;
+
+<h3>New application</h3>
+
+
+<MudForm Model="@Model" @ref="@Form">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Align="Align.Center" Class="mb-n4">Credit details</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.Amount"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="Credit amount"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.CreditPeriodInMonths"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="Credit Period In Months" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Align="Align.Center" Class="mb-n4">Declaration incomes</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+
+                    <MudTextField @bind-Value="Model.Declaration.AverageNetMonthlyIncome"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="Average Net Monthly Income"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Align="Align.Center" Class="mb-n4">Customer Personal Data</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.CustomerPersonalData.FirstName"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="FirstName" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+
+                    <MudTextField @bind-Value="Model.CustomerPersonalData.LastName"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="LastName" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.CustomerPersonalData.Pesel"
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Label="Pesel" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+
+
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Register())">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudForm>
+
+@code {
+    [Parameter]
+    public string? ApplicationId { get; set; } = Guid.NewGuid().ToString();
+
+    public MudForm Form { get; set; }
+
+    public RegisterApplicationCommandCreditApplicationDto Model { get; set; } = new RegisterApplicationCommandCreditApplicationDto
+        {
+            CustomerPersonalData = new RegisterApplicationCommandCustomerPersonalDto(),
+            Declaration = new RegisterApplicationCommandDeclarationDto(),
+        };
+
+    async Task Register()
+    {
+        var command = new RegisterApplicationCommand
+            {
+                ApplicationId = ApplicationId,
+                CreditApplication = Model,
+            };
+
+        var result = await Http.PostAsJsonAsync<RegisterApplicationCommand>($"{ExternalServicesOptions.Value.Applications.Url}/applications/", command);
+
+        NavigationManager.NavigateTo($"/applications/{command.ApplicationId}");
+    }
+}
