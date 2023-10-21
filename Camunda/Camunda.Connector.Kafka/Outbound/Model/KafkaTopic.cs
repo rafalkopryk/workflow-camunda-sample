@@ -1,3 +1,3 @@
 ﻿namespace Camunda.Connector.Kafka.Outbound.Model;
 
-public record KafkaTopic(string BootstrapServers, string TopicName);
+public record KafkaTopic(string TopicName);

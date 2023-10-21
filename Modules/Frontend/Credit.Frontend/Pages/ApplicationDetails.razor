@@ -63,8 +63,11 @@
                 AdornmentColor="@DecisionIconColor">@model.State?.Decision
             </MudField>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudField Label="Contract" Variant="Variant.Outlined">
+        
+        @if (@model.State.Decision == Decision.Positive)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudField Label="Contract" Variant="Variant.Outlined">
                 <MudButton 
                     Variant="Variant.Filled"
                     Color="Color.Primary"
@@ -73,6 +76,7 @@
                 </MudButton>
             </MudField>
         </MudItem>
+        }
     }
 
     @if (@model.State.Level == APPLICATION_CLOSED)

@@ -11,7 +11,7 @@ namespace Camunda.Connector.Kafka.Outbound;
 
 [OutboundConnector(
     Name = "KAFKA",
-    InputVariables = new[] { "authentication", "topic", "message", "additionalProperties" },
+    InputVariables = new[] { "topic", "message" },
     Type = "io.camunda:connector-kafka:1")]
 public class KafkaConnectorFunction : IOutboundConnectorFunction
 {

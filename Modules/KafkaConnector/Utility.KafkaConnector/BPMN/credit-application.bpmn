@@ -63,20 +63,6 @@
         <bpmn:incoming>Flow_1gvhb5f</bpmn:incoming>
         <bpmn:outgoing>Flow_15dryqn</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_Decision" name="Decision" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="3" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
-          <zeebe:ioMapping>
-            <zeebe:input source="*" target="topic.bootstrapServers" />
-            <zeebe:input source="command.credit.applications.decision.v1" target="topic.topicName" />
-            <zeebe:input source="=applicationId" target="message.key" />
-            <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId,&#10;  &#34;decision&#34;: decision&#10;}" target="message.value" />
-          </zeebe:ioMapping>
-          <zeebe:taskHeaders />
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_0oe7ocx</bpmn:incoming>
-        <bpmn:outgoing>Flow_15rrgi1</bpmn:outgoing>
-      </bpmn:serviceTask>
       <bpmn:intermediateCatchEvent id="Event_DecisionGenerated" name="Decision Generated" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
         <bpmn:extensionElements>
           <zeebe:properties>
@@ -117,6 +103,20 @@
         <bpmn:outgoing>Flow_0oe7ocx</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_1mpo215" messageRef="Message_1of36tg" />
       </bpmn:intermediateCatchEvent>
+      <bpmn:serviceTask id="Activity_Decision" name="Decision" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="3" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="*" target="topic.bootstrapServers" />
+            <zeebe:input source="command.credit.applications.decision.v1" target="topic.topicName" />
+            <zeebe:input source="=applicationId" target="message.key" />
+            <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId,&#10;  &#34;decision&#34;: decision&#10;}" target="message.value" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0oe7ocx</bpmn:incoming>
+        <bpmn:outgoing>Flow_15rrgi1</bpmn:outgoing>
+      </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_1eslz18" sourceRef="Activity_ApplicationDecision" targetRef="Gateway_Decision" />
     <bpmn:sequenceFlow id="Flow_0fo6sxx" name="Positive" sourceRef="Gateway_Decision" targetRef="Event_ContractSigned">
@@ -138,6 +138,7 @@
           <zeebe:taskHeaders />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1brl74h</bpmn:incoming>
+        <bpmn:outgoing>Flow_0lt8kco</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:startEvent id="Event_ApplicaitonTimeouted" name="Applicaiton timeout 5m" isInterrupting="false">
         <bpmn:outgoing>Flow_1brl74h</bpmn:outgoing>
@@ -145,25 +146,47 @@
           <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
         </bpmn:timerEventDefinition>
       </bpmn:startEvent>
+      <bpmn:endEvent id="Event_0p4ul82">
+        <bpmn:incoming>Flow_0lt8kco</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0lt8kco" sourceRef="Activity_1to3tmq" targetRef="Event_0p4ul82" />
     </bpmn:subProcess>
     <bpmn:subProcess id="Activity_ApplicationCancel" name="Application Cancel" triggeredByEvent="true">
       <bpmn:endEvent id="Event_CreditApplicationCanceled" name="Credit application Canceled">
         <bpmn:incoming>Flow_086c3ns</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_086c3ns" sourceRef="Event_ApplicationClosed" targetRef="Event_CreditApplicationCanceled" />
-      <bpmn:startEvent id="Event_ApplicationClosed" name="Application Closed">
+      <bpmn:startEvent id="Event_ApplicationClosed" name="Application Closed" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaMessageStart.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
         <bpmn:extensionElements>
           <zeebe:properties>
             <zeebe:property name="inbound.type" value="io.camunda:connector-kafka-inbound:1" />
+            <zeebe:property name="authenticationType" value="credentials" />
+            <zeebe:property name="topic.bootstrapServers" value="*" />
             <zeebe:property name="topic.topicName" value="event.credit.applications.applicationClosed.v1" />
+            <zeebe:property name="autoOffsetReset" value="latest" />
+            <zeebe:property name="correlationRequired" value="required" />
             <zeebe:property name="correlationKeyExpression" value="=value.applicationId" />
+            <zeebe:property name="resultExpression" />
           </zeebe:properties>
-          <zeebe:ioMapping />
         </bpmn:extensionElements>
         <bpmn:outgoing>Flow_086c3ns</bpmn:outgoing>
-        <bpmn:messageEventDefinition id="MessageEventDefinition_0j6uk6q" messageRef="Message_03kucpc" />
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1i6qttc" messageRef="Message_1vqcmko" />
       </bpmn:startEvent>
     </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_01re7t0" sourceRef="Gateway_Decision" targetRef="Event_CloseApplicationByNegativeDeicsion" />
+    <bpmn:endEvent id="Event_CloseApplicationByNegativeDeicsion" name="Close application">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;command.credit.applications.close.v1&#34;" target="topic.topicName" />
+          <zeebe:input source="=applicationId" target="message.key" />
+          <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId,&#10;  &#34;cancelReason&#34;: &#34;NegativeDecision&#34;&#10;}" target="message.value" />
+          <zeebe:input source="=&#34;&#34;" target="topic.bootstrapServers" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01re7t0</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1s2c4el" />
+    </bpmn:endEvent>
     <bpmn:intermediateCatchEvent id="Event_ContractSigned" name="Contract Signed" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
       <bpmn:extensionElements>
         <zeebe:properties>
@@ -178,27 +201,8 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0fo6sxx</bpmn:incoming>
       <bpmn:outgoing>Flow_1ur3yzv</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_17mrrxw" messageRef="Message_1rziz9e" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ev6fi2" messageRef="Message_0n2k719" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="Activity_1yp1gpk" name="Close application" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="3" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
-        <zeebe:ioMapping>
-          <zeebe:input source="*" target="topic.bootstrapServers" />
-          <zeebe:input source="command.credit.applications.close.v1" target="topic.topicName" />
-          <zeebe:input source="=applicationId" target="message.key" />
-          <zeebe:input source="={&#10;  &#34;applicationId&#34;: applicationId,&#10;  &#34;cancelReason&#34;: &#34;NegativeDecision&#34;&#10;}" target="message.value" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_01re7t0</bpmn:incoming>
-      <bpmn:outgoing>Flow_03odm4o</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_01re7t0" sourceRef="Gateway_Decision" targetRef="Activity_1yp1gpk" />
-    <bpmn:endEvent id="Event_0ijsl0d" name="Credit application Canceled">
-      <bpmn:incoming>Flow_03odm4o</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_03odm4o" sourceRef="Activity_1yp1gpk" targetRef="Event_0ijsl0d" />
     <bpmn:textAnnotation id="TextAnnotation_0cwlo0u">
       <bpmn:text>the result of the decision</bpmn:text>
     </bpmn:textAnnotation>
@@ -259,7 +263,18 @@
       <zeebe:subscription correlationKey="=applicationId" />
     </bpmn:extensionElements>
   </bpmn:message>
-  <bpmn:message id="Message_1rziz9e" name="0fc55c44-d017-48d4-9c40-ae5a56907762" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1">
+  <bpmn:message id="Message_1rziz9e" name="0fc55c44-d017-48d4-9c40-ae5a56907762">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_18rg9y6" name="NegativeDecision" errorCode="NegativeDecision" />
+  <bpmn:message id="Message_1vqcmko" name="a8fbd4bf-e4a1-483a-a4a9-bc42290a627e" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaMessageStart.v1">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0n2k719" name="60791c0e-c2ee-4397-b9a9-c8b1fb1aa114" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="=applicationId" />
     </bpmn:extensionElements>
@@ -267,155 +282,155 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="credit-application">
       <bpmndi:BPMNShape id="BPMNShape_11b5l28" bpmnElement="TextAnnotation_0cwlo0u">
-        <dc:Bounds x="980" y="80" width="100" height="41" />
+        <dc:Bounds x="980" y="85" width="100" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1wiedvw" bpmnElement="Gateway_Decision" isMarkerVisible="true">
-        <dc:Bounds x="925" y="135" width="50" height="50" />
+        <dc:Bounds x="925" y="140" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0k022tm" bpmnElement="Event_CreditApplicationSigned">
-        <dc:Bounds x="1232" y="142" width="36" height="36" />
+        <dc:Bounds x="1232" y="147" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1211" y="185" width="85" height="27" />
+          <dc:Bounds x="1211" y="190" width="85" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_12d3bjd_di" bpmnElement="Event_ContractSigned">
-        <dc:Bounds x="1072" y="142" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1050" y="188" width="79" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1vm0e67" bpmnElement="Activity_1yp1gpk">
-        <dc:Bounds x="1030" y="220" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_12i08t9" bpmnElement="StartEvent_CreditApplicatin">
-        <dc:Bounds x="152" y="137" width="36" height="36" />
+        <dc:Bounds x="152" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="157" y="118" width="25" height="14" />
+          <dc:Bounds x="157" y="123" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1i8bnyv" bpmnElement="Event_0ijsl0d">
-        <dc:Bounds x="1232" y="242" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0mp3je3_di" bpmnElement="Event_ContractSigned">
+        <dc:Bounds x="1072" y="147" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1208" y="285" width="85" height="27" />
+          <dc:Bounds x="1050" y="193" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dy0vtg_di" bpmnElement="Event_CloseApplicationByNegativeDeicsion">
+        <dc:Bounds x="1072" y="229" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1049" y="272" width="84" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1xc8kib" bpmnElement="Activity_ApplicationDecision" isExpanded="true">
-        <dc:Bounds x="240" y="50" width="650" height="210" />
+        <dc:Bounds x="240" y="55" width="650" height="210" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1sni1bl" bpmnElement="Event_0f0c09x">
-        <dc:Bounds x="262" y="131" width="36" height="36" />
+        <dc:Bounds x="262" y="136" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0ickd1d" bpmnElement="Activity_Simulation">
-        <dc:Bounds x="340" y="109" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1t5i94o" bpmnElement="Activity_Decision">
-        <dc:Bounds x="580" y="109" width="100" height="80" />
+        <dc:Bounds x="340" y="114" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1rwq84m" bpmnElement="Event_DecisionGenerated">
-        <dc:Bounds x="732" y="131" width="36" height="36" />
+        <dc:Bounds x="732" y="136" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="726" y="174" width="52" height="27" />
+          <dc:Bounds x="726" y="179" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1npqdc2" bpmnElement="Event_1np4qug">
-        <dc:Bounds x="822" y="131" width="36" height="36" />
+        <dc:Bounds x="822" y="136" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1lyn6hk_di" bpmnElement="Event_SimulationFinished">
-        <dc:Bounds x="492" y="131" width="36" height="36" />
+        <dc:Bounds x="492" y="136" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="485" y="174" width="52" height="27" />
+          <dc:Bounds x="485" y="179" width="52" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w5714u_di" bpmnElement="Activity_Decision">
+        <dc:Bounds x="580" y="114" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_0u0fn4l" bpmnElement="Flow_1gvhb5f">
-        <di:waypoint x="298" y="149" />
-        <di:waypoint x="340" y="149" />
+        <di:waypoint x="298" y="154" />
+        <di:waypoint x="340" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1h598a6" bpmnElement="Flow_15dryqn">
-        <di:waypoint x="440" y="149" />
-        <di:waypoint x="492" y="149" />
+        <di:waypoint x="440" y="154" />
+        <di:waypoint x="492" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1cppodf" bpmnElement="Flow_0oe7ocx">
-        <di:waypoint x="528" y="149" />
-        <di:waypoint x="580" y="149" />
+        <di:waypoint x="528" y="154" />
+        <di:waypoint x="580" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1ey4mc4" bpmnElement="Flow_15rrgi1">
-        <di:waypoint x="680" y="149" />
-        <di:waypoint x="732" y="149" />
+        <di:waypoint x="680" y="154" />
+        <di:waypoint x="732" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_03yo8vu" bpmnElement="Flow_00e5q6w">
-        <di:waypoint x="768" y="149" />
-        <di:waypoint x="822" y="149" />
+        <di:waypoint x="768" y="154" />
+        <di:waypoint x="822" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_1i791hj" bpmnElement="Activity_1ne8ce3" isExpanded="true">
-        <dc:Bounds x="240" y="340" width="560" height="200" />
+        <dc:Bounds x="210" y="310" width="510" height="200" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nytu10_di" bpmnElement="Activity_1to3tmq">
+        <dc:Bounds x="400" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1rbkfb9_di" bpmnElement="Event_ApplicaitonTimeouted">
-        <dc:Bounds x="302" y="432" width="36" height="36" />
+        <dc:Bounds x="272" y="402" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="293" y="476" width="54" height="27" />
+          <dc:Bounds x="263" y="446" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0nytu10_di" bpmnElement="Activity_1to3tmq">
-        <dc:Bounds x="620" y="410" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_0p4ul82_di" bpmnElement="Event_0p4ul82">
+        <dc:Bounds x="592" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1brl74h_di" bpmnElement="Flow_1brl74h">
-        <di:waypoint x="338" y="450" />
-        <di:waypoint x="620" y="450" />
+        <di:waypoint x="308" y="420" />
+        <di:waypoint x="400" y="420" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0f00u91" bpmnElement="Association_1nau8k3">
-        <di:waypoint x="968" y="153" />
-        <di:waypoint x="980" y="114" />
+      <bpmndi:BPMNEdge id="Flow_0lt8kco_di" bpmnElement="Flow_0lt8kco">
+        <di:waypoint x="500" y="420" />
+        <di:waypoint x="592" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0n6wdx3_di" bpmnElement="Activity_ApplicationCancel" isExpanded="true">
-        <dc:Bounds x="870" y="340" width="470" height="200" />
+        <dc:Bounds x="772" y="310" width="515" height="200" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1sfdrz8" bpmnElement="Event_CreditApplicationCanceled">
-        <dc:Bounds x="1252" y="422" width="36" height="36" />
+        <dc:Bounds x="1199" y="392" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1228" y="465" width="85" height="27" />
+          <dc:Bounds x="1175" y="435" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_011m7lo_di" bpmnElement="Event_ApplicationClosed">
-        <dc:Bounds x="922" y="422" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_18so59b_di" bpmnElement="Event_ApplicationClosed">
+        <dc:Bounds x="869" y="392" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="915" y="465" width="53" height="27" />
+          <dc:Bounds x="862" y="435" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_086c3ns_di" bpmnElement="Flow_086c3ns">
-        <di:waypoint x="958" y="440" />
-        <di:waypoint x="1252" y="440" />
+        <di:waypoint x="905" y="410" />
+        <di:waypoint x="1199" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0f00u91" bpmnElement="Association_1nau8k3">
+        <di:waypoint x="968" y="158" />
+        <di:waypoint x="980" y="119" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0lsqott" bpmnElement="Flow_1eslz18">
-        <di:waypoint x="890" y="160" />
-        <di:waypoint x="925" y="160" />
+        <di:waypoint x="890" y="165" />
+        <di:waypoint x="925" y="165" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1ad32gp" bpmnElement="Flow_0fo6sxx">
-        <di:waypoint x="975" y="160" />
-        <di:waypoint x="1072" y="160" />
+        <di:waypoint x="975" y="165" />
+        <di:waypoint x="1072" y="165" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="990" y="143" width="39" height="14" />
+          <dc:Bounds x="990" y="148" width="39" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01re7t0_di" bpmnElement="Flow_01re7t0">
-        <di:waypoint x="950" y="185" />
-        <di:waypoint x="950" y="260" />
-        <di:waypoint x="1030" y="260" />
+        <di:waypoint x="950" y="190" />
+        <di:waypoint x="950" y="247" />
+        <di:waypoint x="1072" y="247" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_008f3fa" bpmnElement="Flow_1ur3yzv">
-        <di:waypoint x="1108" y="160" />
-        <di:waypoint x="1232" y="160" />
+        <di:waypoint x="1108" y="165" />
+        <di:waypoint x="1232" y="165" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1g4ivtn" bpmnElement="Flow_1dyvr79">
-        <di:waypoint x="188" y="155" />
-        <di:waypoint x="240" y="155" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03odm4o_di" bpmnElement="Flow_03odm4o">
-        <di:waypoint x="1130" y="260" />
-        <di:waypoint x="1232" y="260" />
+        <di:waypoint x="188" y="160" />
+        <di:waypoint x="240" y="160" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
