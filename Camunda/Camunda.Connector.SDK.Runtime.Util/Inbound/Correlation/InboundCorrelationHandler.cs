@@ -114,11 +114,11 @@ public class InboundCorrelationHandler
     private bool IsActivationConditionMet(InboundConnectorProperties properties, object context)
     {
         var activationCondition = properties.GetProperty(ACTIVATION_CONDITION_KEYWORD);
-        if (string.IsNullOrWhiteSpace(activationCondition))
-        {
-            _logger.LogDebug("No activation condition specified for {CorrelationPointId}", properties.GetCorrelationPointId());
-            return true;
-        }
+        //if (string.IsNullOrWhiteSpace(activationCondition))
+        //{
+        //    _logger.LogDebug("No activation condition specified for {CorrelationPointId}", properties.GetCorrelationPointId());
+        //    return true;
+        //}
 
         //TODO
         //Object shouldActivate = feelEngine.evaluate(activationCondition, context);
