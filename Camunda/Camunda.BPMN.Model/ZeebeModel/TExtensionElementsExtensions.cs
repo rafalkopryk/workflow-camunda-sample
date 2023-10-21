@@ -7,9 +7,9 @@ namespace Camunda.BPMN.Model.ZeebeModel
     {
         public static ZeebeProperty[] GetZeebeProperties(this TExtensionElements extensionElements)
         {
-            return extensionElements.Any.FirstOrDefault(x => x.LocalName == "properties")
+            return extensionElements?.Any.FirstOrDefault(x => x.LocalName == "properties")
                 ?.ChildNodes.Cast<XmlElement>()
-                .Select(x => new ZeebeProperty(x.Attributes["name"].Value, x.Attributes["value"].Value))
+                .Select(x => new ZeebeProperty(x.GetAttribute("name"), x.GetAttribute("value")))
                 .ToArray() ?? Array.Empty<ZeebeProperty>();
         }
     }

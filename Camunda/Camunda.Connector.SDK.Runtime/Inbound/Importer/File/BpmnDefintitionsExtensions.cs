@@ -26,6 +26,7 @@ internal static class BpmnDefintitionsExtensions
     {
         return flowElements.Select(x => x switch
         {
+            TStartEvent startEvent => startEvent.GetInboundConnectorProperties(bpmnProcess, messages),
             TReceiveTask receiveTask => receiveTask.GetInboundConnectorProperties(bpmnProcess, messages),
             TIntermediateCatchEvent intermediateCatchEvent => GetInboundConnectorProperties(intermediateCatchEvent, bpmnProcess, messages),
             TServiceTask serviceTask => serviceTask.GetInboundConnectorProperties(bpmnProcess),
@@ -85,5 +86,32 @@ internal static class BpmnDefintitionsExtensions
     public static InboundConnectorProperties[] GetInboundConnectorProperties(this TServiceTask element, TProcess bpmnProcess)
     {
         return Array.Empty<InboundConnectorProperties>();
+    }
+
+    public static InboundConnectorProperties[] GetInboundConnectorProperties(this TStartEvent element, TProcess bpmnProcess, TMessage[] messages)
+    {
+        var messageEventDefinition = element.EventDefinition.FirstOrDefault(x => x is TMessageEventDefinition) as TMessageEventDefinition;
+        var messageName = messages.FirstOrDefault(x => x.Id == messageEventDefinition?.MessageRef?.Name)?.Name;
+        if (string.IsNullOrWhiteSpace(messageName))
+        {
+            return Array.Empty<InboundConnectorProperties>();
+        }
+
+        var properties = element?.ExtensionElements.GetZeebeProperties().ToDictionary(x => x.Name, x => x.Value);
+        var corellationKeyMapping = properties.FirstOrDefault(x => x.Key == CORRELATION_KEY_EXPRESSION_KEYWORD).Value;
+        if(corellationKeyMapping is null) 
+        { 
+            return Array.Empty<InboundConnectorProperties>();
+        }
+        
+        return new InboundConnectorProperties[]
+        {
+            new InboundConnectorProperties
+            {
+                BpmnProcessId = bpmnProcess.Id,
+                Properties = properties,
+                CorrelationPoint = new MessageCorrelationPoint(messageName)
+            }
+        };
     }
 }
