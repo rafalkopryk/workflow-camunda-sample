@@ -32,6 +32,9 @@ IHost host = Host.CreateDefaultBuilder(args)
                 {
                     configure.Endpoint = new Uri(ctx.Configuration.GetSection("otel:url").Value);
                 }));
+
+
+        services.AddHostedService<DeployBPMNDefinitionService>();
     })
     .Build();
 

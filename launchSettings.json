@@ -6,7 +6,8 @@
       "serviceActions": {
         "applications.webapi": "StartDebugging",
         "calculations.webapi": "StartDebugging",
-        "utility.kafkaconnector": "StartDebugging"
+        "utility.kafkaconnector": "StartDebugging",
+        "credit.front.server": "StartDebugging"
       }
     }
   }

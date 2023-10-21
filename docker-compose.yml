@@ -211,8 +211,16 @@ services:
         - kafka
         - zookeeper
 
+  credit.front.server:
+    image: ${DOCKER_REGISTRY-}creditfrontserver
+    build:
+      context: .
+      dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
+
 volumes:
   zeebe:
   elastic:
   kibana:
+
+
 
