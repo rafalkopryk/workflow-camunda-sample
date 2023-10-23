@@ -4,6 +4,7 @@ using Confluent.Kafka.Admin;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Trace;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -14,6 +15,8 @@ internal class KafkaSubscription : IKafkaSubscription
     private readonly ILogger _logger;
 
     private readonly ConsumerConfig _consumerConfig;
+
+    private static readonly ConcurrentDictionary<string, HashSet<Func<KafkaInboundMessage, Task>>> TopicCallbacks = new ();
 
     public KafkaSubscription(ILogger<KafkaSubscription> logger, IOptions<ConsumerConfig> consumerConfig)
     {
@@ -27,6 +30,17 @@ internal class KafkaSubscription : IKafkaSubscription
 
     public async Task Subscribe(KafkaConnectorProperties properties, Func<KafkaInboundMessage, Task> callback, CancellationToken cancellationToken)
     {
+        TopicCallbacks.AddOrUpdate(
+            properties.TopicName,
+            new HashSet<Func<KafkaInboundMessage, Task>> { callback },
+            (x, y) =>
+            {
+                y.Add(callback);
+                return y;
+            });
+
+        var callbacks = TopicCallbacks.FirstOrDefault(x => x.Key == properties.TopicName).Value.ToArray();
+
         await CreateTopics(properties.TopicName);
 
         _ = Task.Factory.StartNew(async () =>
@@ -39,7 +53,7 @@ internal class KafkaSubscription : IKafkaSubscription
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
-                    await ConsumeNextEvent(callback, consumer, TimeSpan.FromSeconds(1), cancellationToken);
+                    await ConsumeNextEvent(callbacks, consumer, TimeSpan.FromSeconds(1), cancellationToken);
                 }
             }
             catch (OperationCanceledException e)
@@ -75,7 +89,7 @@ internal class KafkaSubscription : IKafkaSubscription
     }
 
     private async Task ConsumeNextEvent(
-        Func<KafkaInboundMessage, Task> callback,
+        Func<KafkaInboundMessage, Task>[] callbacks,
         IConsumer<string, string> consumer,
         TimeSpan timeout,
         CancellationToken cancellationToken)
@@ -104,7 +118,10 @@ internal class KafkaSubscription : IKafkaSubscription
             var message = JsonSerializer.Deserialize<Dictionary<string, object>>(consumerResult.Message.Value, JsonSerializerKafkaOptions.CamelCase);
             var kafkaInboundMessage = new KafkaInboundMessage(consumerResult.Key, consumerResult.Message.Value, message);
 
-            await callback.Invoke(kafkaInboundMessage);
+            foreach (var callback in callbacks)
+            {
+                await callback.Invoke(kafkaInboundMessage);
+            }
 
             consumer.Commit();
 

@@ -1,3 +1,4 @@
+using Applications.Application.UseCases.CancelApplication;
 using Applications.Application.UseCases.GetApplication;
 using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SignContract;
@@ -46,6 +47,16 @@ public class ApplicationController : BaseController
     public async Task<IActionResult> Sign([FromRoute] string applicationId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new SignContractCommand(applicationId), cancellationToken);
+        return result.Match(() => Ok(), failure => Failure(failure));
+    }
+
+    [HttpPost("{applicationId}/cancel", Name = "CancelApplication")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Cancel([FromRoute] string applicationId, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new CancelApplicationCommand(applicationId), cancellationToken);
         return result.Match(() => Ok(), failure => Failure(failure));
     }
 }

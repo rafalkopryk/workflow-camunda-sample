@@ -69,14 +69,14 @@
         {
             <MudItem xs="12" sm="6" md="4">
                 <MudField Label="Contract" Variant="Variant.Outlined">
-                <MudButton 
-                    Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    OnClick="async () => await SignContract()"
-                    Disabled="@SignContractDisabled">Sign Contract
-                </MudButton>
-            </MudField>
-        </MudItem>
+                    <MudButton 
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        OnClick="async () => await SignContract()"
+                        Disabled="@SignContractDisabled">Sign Contract
+                    </MudButton>
+                </MudField>
+            </MudItem>
         }
     }
 
@@ -113,6 +113,22 @@
             <MudField Label="ContractSigningDate" Variant="Variant.Outlined">@model.State?.ContractSigningDate</MudField>
         </MudItem>
     }
+
+</MudGrid>
+<MudGrid>
+    @if (IsApplcationCancelAllowed)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudField Variant="Variant.Outlined">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="async () => await CancelApplication()"
+                           Disabled="@CancelApplcationDisabled">
+                    Cancel Application
+                </MudButton>
+            </MudField>
+        </MudItem>
+    }
 </MudGrid>
 
 @code {
@@ -135,6 +151,10 @@
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(5));
 
     public bool SignContractDisabled { get; private set; }
+
+    public bool CancelApplcationDisabled { get; private set; } = false;
+
+    public bool IsApplcationCancelAllowed => model?.State.Level is APPLICATION_REGISTERED or DECISION_GENERATED;
 
     public string DecisionIcon => model.State.Decision switch
     {
@@ -161,6 +181,13 @@
     {
         var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/sign", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
         SignContractDisabled = true;
+        model = await GetApplication();
+    }
+
+    async Task CancelApplication()
+    {
+        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/cancel", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
+        CancelApplcationDisabled = true;
         model = await GetApplication();
     }
 
