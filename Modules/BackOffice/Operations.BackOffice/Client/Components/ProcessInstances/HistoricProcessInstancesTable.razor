@@ -1,0 +1,103 @@
+﻿
+@using Color = MudBlazor.Color
+@using Operations.BackOffice.Client.Dto.ProcessInstances;
+@using Operations.BackOffice.Client.Services;
+@inject NavigationManager NavigationManager
+
+<MudTable
+    T="ProcessInstanceDto"
+          ServerData="@(new Func<TableState, Task<TableData<ProcessInstanceDto>>>(GetProcessInstancesFromServer))"
+    Hover="true"
+    RowsPerPage="PageSize"
+    @bind-Loading="@_isLoading"
+    Elevation="0">
+    <HeaderContent>
+        <MudTh>State</MudTh>
+        <MudTh>Instance ID</MudTh>
+        <MudTh>Business Key</MudTh>
+        <MudTh>Start Time</MudTh>
+        <MudTh>End Time</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="State">
+            @if (context.State == ProcessInstanceState.ACTIVE)
+            {
+                <MudIcon Icon="@Icons.Outlined.PlayCircleOutline" Color="Color.Tertiary" Title="Active"/>
+            }
+            else if (context.State == ProcessInstanceState.CANCELED)
+            
+            {
+                <MudIcon Icon="@Icons.Outlined.PauseCircleOutline" Color="Color.Default" Title="Canceled" />
+            }
+            else if (context.State == ProcessInstanceState.COMPLETED)
+            {
+                <MudIcon Icon="@Icons.Outlined.CheckCircleOutline" Color="Color.Success" Title="Completed"/>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Outlined.HelpOutline" Color="Color.Error" Title=@($"UNKNOWN:{context.State.ToString()}")/>
+            }
+        </MudTd>
+        <MudTd DataLabel="Instance ID">@context.Key</MudTd>
+        <MudTd DataLabel="Business Key">@context.BpmnProcessId</MudTd>
+        <MudTd DataLabel="Start Time">@context.StartDate</MudTd>
+        <MudTd DataLabel="End Time">@context.EndDate</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudIconButton Icon="@Icons.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Process Instance Details"/>
+        </MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public IProcessInstanceService ProcessInstanceService { get; set; }
+
+    [Parameter]
+    public IProcessDefinitionService ProcessDefinitionService { get; set; }
+
+    [Parameter]
+    public long ProcessDefinitionId { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    private ProcessInstanceDto[] _instances;
+    private int _totalInstances;
+
+    bool _isLoading;
+
+
+    private async Task<TableData<ProcessInstanceDto>> GetProcessInstancesFromServer(TableState state)
+    {
+        _isLoading = true;
+        await InvokeAsync(StateHasChanged);
+
+        //TODO to remove
+        var definitions = await ProcessDefinitionService.GetProcessDefinitions();
+        var definition = definitions.FirstOrDefault(x => x.Key == ProcessDefinitionId);
+
+        var instances = await ProcessInstanceService.GetProcessInstances(definition.BpmnProcessId);
+
+        _instances = instances.Where(x => x.ProcessVersion == definition.Version).ToArray();
+        _isLoading = false;
+        await InvokeAsync(StateHasChanged);
+
+        return new TableData<ProcessInstanceDto>()
+        {
+            Items = _instances,
+            TotalItems = _totalInstances
+        };
+    }
+
+    void OnDetailsClick(long instanceId)
+    {
+        NavigationManager.NavigateTo($"process-instances/{instanceId}");
+    }
+}

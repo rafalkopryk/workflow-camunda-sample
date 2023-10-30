@@ -1,7 +1,7 @@
-using Credit.Front.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Operations.BackOffice.Shared;
 
-namespace Credit.Front.Server.Controllers
+namespace Operations.BackOffice.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

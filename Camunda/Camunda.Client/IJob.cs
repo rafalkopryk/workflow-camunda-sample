@@ -1,4 +1,6 @@
-﻿namespace Camunda.Client;
+﻿using System.Text.Json;
+
+namespace Camunda.Client;
 
 public interface IJob
 {
@@ -15,4 +17,9 @@ public interface IJob
     DateTime Deadline { get; }
     string Variables { get; }
     string CustomHeaders { get; }
+
+    public T GetVariablesAsType<T>()
+    {
+        return JsonSerializer.Deserialize<T>(Variables, JsonSerializerCustomOptions.CamelCase);
+    }
 }

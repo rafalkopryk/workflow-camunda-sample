@@ -1,0 +1,79 @@
+﻿@page "/inspector"
+@page "/"
+
+@using System.Runtime.InteropServices.JavaScript;
+@using System.Net;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Microsoft.Extensions.Options;
+@using Operations.BackOffice.Client.Components.BPMNViewer;
+@using Operations.BackOffice.Client.Services;
+
+@inject IProcessInstanceService processInstanceService;
+
+<h3>BPMN</h3>
+
+<MudFileUpload T="IBrowserFile" FilesChanged="OpenDiagram">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.OpenInBrowser"
+                   for="@context">
+            Open BPMN Diagram
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+
+@* <MudForm Model="@ProcessInstanceId" @ref="@Form">
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="ProcessInstanceId"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Label="ProcessInstanceId" />
+    </MudItem>
+    <MudButton Class="ml-auto" OnClick="@(async () => await OpenProcessInstance())">Wczytaj stan z procesu</MudButton>
+</MudForm> *@
+
+
+
+    <BPMNViewer @ref="@_bpmnViewer" Xml="@_bpmnFile"></BPMNViewer>
+
+@code {
+
+    public static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+        };
+
+    public MudForm Form { get; set; }
+    public long ProcessInstanceId { get; set; }
+
+    private string _bpmnFile { get; set; }
+    private BPMNViewer _bpmnViewer;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task OpenDiagram(IBrowserFile file)
+    {
+        var stream = file.OpenReadStream();
+
+        _bpmnFile = await ToBPMNXml(stream);
+        _bpmnViewer.Xml = _bpmnFile;
+        await _bpmnViewer.OpenDiagram();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    async Task<string> ToBPMNXml(Stream stream)
+    {
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        return System.Text.Encoding.ASCII.GetString(memoryStream.ToArray());
+    }
+}

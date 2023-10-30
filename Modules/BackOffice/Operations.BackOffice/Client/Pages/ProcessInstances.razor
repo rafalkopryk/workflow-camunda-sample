@@ -1,0 +1,69 @@
+﻿@using Color = MudBlazor.Color
+@using Operations.BackOffice.Client.Components.BPMNViewer;
+@using Operations.BackOffice.Client.Components.ProcessInstances
+@using Operations.BackOffice.Client.Services;
+@using _Imports = MudBlazor._Imports
+
+@inject IProcessDefinitionService ProcessDefinitionService;
+@inject IProcessInstanceService ProcessInstanceService;
+
+@page "/process-definitions/{definitionId:long}"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h3" GutterBottom="true">Process Instances</MudText>
+        </MudItem>
+        
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>BPMN Diagram</CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Style="height: 500px">
+                    @if (_bpmnXml != null)
+                    {
+                        <BPMNViewer @ref="@_viewer" Xml="@_bpmnXml">
+                        </BPMNViewer>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>Process Instances for definition <code>@DefinitionId</code></CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                     <HistoricProcessInstancesTable ProcessDefinitionId="@DefinitionId" ProcessInstanceService="@ProcessInstanceService" ProcessDefinitionService="@ProcessDefinitionService"/>
+                 </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+
+    private BPMNViewer _viewer;
+
+    [Parameter]
+    public long DefinitionId { get; set; }
+
+    private string _bpmnXml;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _bpmnXml = await ProcessDefinitionService.GetProcessDefinitionXml(DefinitionId);
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

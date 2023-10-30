@@ -66,16 +66,17 @@ services:
       SA_PASSWORD: "S3cur3P@ssW0rd!"
       ACCEPT_EULA: "Y"
 
-  zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.3.0}
+  zeebe:
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
     container_name: zeebe
     ports:
       - "26500:26500"
       - "9600:9600"
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://es01:9200
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=100
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
+      # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
       # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
@@ -88,27 +89,35 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - zeebe:/usr/local/zeebe/dataV2
+      - zeebe:/usr/local/zeebe/data
     depends_on:
-      - es01
+      - elasticsearch
 
-
-  operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.3.0}
+  operate:
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION}
     container_name: operate
     ports:
       - "8085:8080"
     environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
-      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://es01:9200
-      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://es01:9200
+      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      - management.endpoints.web.exposure.include=health
+      - management.endpoint.health.probes.enabled=true
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 1s
+      retries: 5
+      start_period: 30s
     depends_on:
       - zeebe
-      - es01
+      - elasticsearch
 
-  es01: # https://hub.docker.com/_/elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.9}
-    container_name: es01
+
+  elasticsearch: # https://hub.docker.com/_/elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    container_name: elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -130,23 +139,20 @@ services:
       timeout: 5s
       retries: 3
     volumes:
-      - elastic:/usr/share/elasticsearch/dataV2
+      - elastic:/usr/share/elasticsearch/data
 
   kibana:
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     container_name: kibana
-    depends_on:
-      - es01
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.5}
     ports:
       - 5602:5601
     volumes:
       - kibana:/usr/share/kibana/data
-    environment:
-      - SERVERNAME=kibana
-      - ELASTICSEARCH_HOSTS=http://es01:9200
+    depends_on:
+      - elasticsearch
 
   apm:
-    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.17.5}
+    image: docker.elastic.co/apm/apm-server:7.17.5
     container_name: apm
     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
     cap_drop: ["ALL"]
@@ -157,7 +163,7 @@ services:
         - kibana
     command: >
       apm-server -e
-         -E output.elasticsearch.hosts=["es01:9200"]
+         -E output.elasticsearch.hosts=["elasticsearch:9200"]
 
   otel:
     container_name: otel
@@ -196,20 +202,20 @@ services:
     ports:
       - "2181:2181"
  
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "8087:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-      - DYNAMIC_CONFIG_ENABLED=true
-    depends_on:
-        - kafka
-        - zookeeper
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka-ui
+  #   ports:
+  #     - "8087:8080"
+  #   restart: always
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=local
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+  #     - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+  #     - DYNAMIC_CONFIG_ENABLED=true
+  #   depends_on:
+  #       - kafka
+  #       - zookeeper
 
   credit.front.server:
     image: ${DOCKER_REGISTRY-}creditfrontserver
@@ -217,10 +223,27 @@ services:
       context: .
       dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
 
+  operations.webapi:
+    image: ${DOCKER_REGISTRY-}operationswebapi
+    build:
+      context: .
+      dockerfile: Modules/Operations/Operations.WebApi/Dockerfile
+    environment:
+       otel__url: http://otel:4317
+       Elasticsearch__Endpoint: http://elasticsearch:9200
+
+  operations.backoffice.server:
+    image: ${DOCKER_REGISTRY-}operationsbackofficeserver
+    build:
+      context: .
+      dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
+
 volumes:
   zeebe:
   elastic:
   kibana:
+
+
 
 
 

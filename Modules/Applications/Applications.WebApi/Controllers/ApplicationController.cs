@@ -6,7 +6,6 @@ using Common.Application.Envelope;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Applications.WebApi.Controllers;
 
 [ApiController]

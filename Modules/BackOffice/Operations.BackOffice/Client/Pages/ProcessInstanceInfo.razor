@@ -1,0 +1,115 @@
+﻿@using Color = MudBlazor.Color 
+@using System.Text.Json 
+@using Operations.BackOffice.Client.Components.BPMNViewer;
+@using Operations.BackOffice.Client.Services;
+ 
+@inject IProcessDefinitionService ProcessDefinitionService
+@inject IProcessInstanceService ProcessInsatnceService
+
+
+ @page "/process-instances/{instanceId:long}" 
+ 
+ <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16"> 
+ <MudGrid> 
+ <MudItem xs="12"> 
+     <MudText Typo="Typo.h3" GutterBottom="true">Process Instance <code>@InstanceId</code> Details</MudText> 
+ </MudItem> 
+ @if (_instance != null) 
+ { 
+     <MudItem xs="12" lg="4"> 
+         <MudCard> 
+             <MudCardHeader> 
+                 <CardHeaderContent>Process Instance Attributes</CardHeaderContent> 
+                 <CardHeaderActions> 
+                     <MudToolBar DisableGutters="true" Dense="true"> 
+                     </MudToolBar> 
+                 </CardHeaderActions> 
+             </MudCardHeader> 
+             <MudCardContent> 
+                 <MudGrid> 
+                     <MudItem xs="12">
+                                <MudField T="string" Label="Process Instance Id" Variant="Variant.Text" InnerPadding="false" AdornmentIcon="@Icons.Outlined.ContentCopy" Adornment="Adornment.End">@InstanceId</MudField>
+                            </MudItem> 
+                     <MudItem xs="12"> 
+                         <MudField Label="Process State" Variant="Variant.Text" Adornment="Adornment.End" AdornmentIcon="@Icons.Outlined.ContentCopy">@_instance.State</MudField> 
+                     </MudItem>
+                     <MudItem xs="12"> 
+                         <MudField Label="Process Definition Id" Variant="Variant.Text" InnerPadding="false">@_instance.BpmnProcessId</MudField> 
+                     </MudItem>
+                     <MudItem xs="12"> 
+                         <MudField Label="Started At" Variant="Variant.Text" InnerPadding="false">@_instance.StartDate</MudField> 
+                     </MudItem> 
+                     <MudItem xs="12"> 
+                         <MudField Label="Ended At" Variant="Variant.Text" InnerPadding="false">@_instance.EndDate</MudField>
+                            </MudItem>
+                        </MudGrid> 
+             </MudCardContent> 
+         </MudCard> 
+     </MudItem> 
+ 
+     <MudItem xs="12" lg="8"> 
+         <MudCard> 
+             <MudCardHeader Class="py-2 pr-2"> 
+                 <CardHeaderContent> 
+                     <MudToolBar DisableGutters="true" Dense="true"> 
+                         BPMN Diagram 
+                         <MudSpacer/> 
+                     </MudToolBar> 
+                 </CardHeaderContent> 
+             </MudCardHeader> 
+             <MudCardContent Class="relative pa-0" Style="height: 500px; overflow:hidden;">
+                        @if (_bpmnXml != null)
+                        {
+                            <BPMNViewer @ref="@_viewer" Xml="@_bpmnXml" SequenceFlows="@_sequenceFlows"></BPMNViewer>
+                        }
+             </MudCardContent> 
+         </MudCard> 
+     </MudItem> 
+ 
+     <MudItem xs="12"> 
+         <MudCard> 
+             <MudCardHeader> 
+                 <CardHeaderContent>Process Instance Details</CardHeaderContent> 
+             </MudCardHeader> 
+             <MudCardContent> 
+                 <MudTabs>
+                 </MudTabs> 
+             </MudCardContent> 
+         </MudCard> 
+     </MudItem> 
+ } 
+ 
+ 
+ </MudGrid> 
+ </MudContainer> 
+ 
+ 
+@code {
+
+    [Parameter] 
+    public long InstanceId { get; set; } 
+
+    private ProcessInstanceDto _instance;
+    private string? _bpmnXml;
+    private string[] _sequenceFlows = Array.Empty<string>();
+
+    private BPMNViewer _viewer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) 
+    { 
+        if (firstRender) 
+        {
+            var processInstance = await ProcessInsatnceService.GetProcessInstance(InstanceId);
+            var definitions = await ProcessDefinitionService.GetProcessDefinitions(processInstance.BpmnProcessId);
+            var sequenceFlows = await ProcessInsatnceService.GetProcessInstanceSequenceFlows(InstanceId);
+
+            var definition = definitions.FirstOrDefault(x => x.Version == processInstance.ProcessVersion);
+
+            _instance = processInstance;
+            _sequenceFlows = sequenceFlows;
+            _bpmnXml = await ProcessDefinitionService.GetProcessDefinitionXml(definition.Key.Value);
+ 
+             await InvokeAsync(StateHasChanged); 
+         } 
+     }
+ } 

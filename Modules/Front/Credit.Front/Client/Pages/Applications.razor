@@ -97,18 +97,18 @@
     public MudForm Form { get; set; }
 
     public RegisterApplicationCommandCreditApplicationDto Model { get; set; } = new RegisterApplicationCommandCreditApplicationDto
-        {
-            CustomerPersonalData = new RegisterApplicationCommandCustomerPersonalDto(),
-            Declaration = new RegisterApplicationCommandDeclarationDto(),
-        };
+    {
+        CustomerPersonalData = new RegisterApplicationCommandCustomerPersonalDto(),
+        Declaration = new RegisterApplicationCommandDeclarationDto(),
+    };
 
     async Task Register()
     {
         var command = new RegisterApplicationCommand
-            {
-                ApplicationId = ApplicationId,
-                CreditApplication = Model,
-            };
+        {
+            ApplicationId = ApplicationId,
+            CreditApplication = Model,
+        };
 
         var result = await Http.PostAsJsonAsync<RegisterApplicationCommand>($"{ExternalServicesOptions.Value.Applications.Url}/applications/", command);
 

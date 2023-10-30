@@ -1,0 +1,46 @@
+﻿@page "/process-definitions"
+@using Microsoft.Extensions.Options;
+@using Operations.BackOffice.Client.Dto.ProcessDefinitions;
+@using Operations.BackOffice.Client.Services;
+
+@inject IProcessDefinitionService _processDefinitionService;
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudText Typo="Typo.h3" GutterBottom="true">Process Definitions</MudText>
+    
+    <MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Key</MudTh>
+            <MudTh>Version</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.Key</MudTd>
+            <MudTd DataLabel="Sign">@context.Version</MudTd>
+            <MudTd DataLabel="Name">@context.BpmnProcessId</MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Definition Details" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+
+    private IEnumerable<ProcessDefinitionDto> Elements = new List<ProcessDefinitionDto>();
+
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await _processDefinitionService.GetProcessDefinitions();
+        _loading = false;
+    }
+
+    void OnDetailsClick(long definitionId)
+    {
+        NavigationManager.NavigateTo($"process-definitions/{definitionId}");
+    }
+}

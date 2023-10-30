@@ -1,0 +1,58 @@
+﻿@using System.Runtime.InteropServices.JavaScript;
+@using System.Net;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Microsoft.Extensions.Options;
+
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+@* @if (Xml != null)
+{
+    <div @ref="_bpmnJsElement"></div>
+}
+ *@
+<div @ref="_bpmnJsElement"></div>
+
+@code {
+    private ElementReference _bpmnJsElement;
+    private IJSObjectReference _bpmnJsModule;
+    private IJSObjectReference _bpmnJsInstance;
+
+    [Parameter]
+    public string? Xml { get; set; }
+
+    [Parameter]
+    public string[] SequenceFlows { get; set; } = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bpmnJsModule = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "./Components/BPMNViewer/BPMNViewer.razor.js");
+
+        _bpmnJsInstance = await _bpmnJsModule.InvokeAsync<IJSObjectReference>(
+            "createBpmnJSInstance",
+            _bpmnJsElement);
+
+        if (string.IsNullOrWhiteSpace(Xml))
+        {
+            return;
+        }
+
+        await OpenDiagram();
+    }
+
+    public async Task OpenDiagram()
+    {
+        await _bpmnJsModule.InvokeVoidAsync("openDiagram", _bpmnJsInstance, Xml);
+
+        await _bpmnJsModule.InvokeVoidAsync("addMarker", _bpmnJsInstance, SequenceFlows);
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        // await _bpmnJsInstance.InvokeVoidAsync("destroy"); // @TODO REVIEW
+        await _bpmnJsInstance.DisposeAsync();
+        await _bpmnJsModule.DisposeAsync();
+    }
+}

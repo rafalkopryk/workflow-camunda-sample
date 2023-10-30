@@ -21,7 +21,7 @@ public class JobHandlerContext : AbstractConnectorContext, IOutboundConnectorCon
 
     public T GetVariablesAsType<T>()
     {
-        return JsonSerializer.Deserialize<T>(_job.Variables, JsonSerializerCustomOptions.CamelCase);
+        return _job.GetVariablesAsType<T>();
     }
 
     public void ReplaceSecrets(object input)
