@@ -18,12 +18,14 @@ internal class SearchProcessDefinitionsQueryHandler : IRequestHandler<SearchProc
 
     public async Task<Result<SearchProcessDefinitionsQueryResponse>> Handle(SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
     {
-        var luceneSyntax = query.Filter?.BpmnProcessId is null
-                ? $"""intent: "CREATED" AND valueType: "PROCESS" """
-                : $"""intent: "CREATED" AND valueType: "PROCESS" AND value.bpmnProcessId: "{query.Filter.BpmnProcessId}" """;
+        var luceneSyntax = new QueryLuceneBuilder()
+            .Append("intent", "CREATED")
+            .Append("valueType", "PROCESS")
+            .Append("value.bpmnProcessId", query.Filter?.BpmnProcessId)
+            .Build();
 
         var result = await _elasticsearchClient.SearchAsync<ProcessDefinitionDocument>(s => s
-            .Index("zeebe-record_process_*")
+            .Index("zeebe-record-process*")
             .Size(999)
             .QueryLuceneSyntax(luceneSyntax));
 

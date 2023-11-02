@@ -16,4 +16,7 @@ public record PorcessInstanceValueDocument
 
     [JsonPropertyName("version")]
     public int? Version { get; init; }
+
+    [JsonPropertyName("processDefinitionKey")]
+    public long? ProcessDefinitionKey { get; init; }
 }

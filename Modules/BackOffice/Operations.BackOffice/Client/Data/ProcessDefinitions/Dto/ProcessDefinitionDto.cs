@@ -1,4 +1,4 @@
-﻿namespace Operations.BackOffice.Client.Dto.ProcessDefinitions;
+﻿namespace Operations.BackOffice.Client.Data.ProcessDefinitions.Dto;
 
 public record ProcessDefinitionDto
 {

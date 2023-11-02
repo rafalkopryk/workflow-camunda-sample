@@ -1,4 +1,4 @@
-﻿namespace Operations.BackOffice.Client.Dto.ProcessInstances;
+﻿namespace Operations.BackOffice.Client.Data.ProcessInstances.Dto;
 
 public enum ProcessInstanceState
 {

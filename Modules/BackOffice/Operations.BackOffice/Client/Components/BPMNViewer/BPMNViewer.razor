@@ -2,17 +2,16 @@
 @using System.Net;
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
+
 @using Microsoft.Extensions.Options;
 
 @inject IJSRuntime JS
 @implements IAsyncDisposable
 
-@* @if (Xml != null)
+@if (Xml != null)
 {
     <div @ref="_bpmnJsElement"></div>
 }
- *@
-<div @ref="_bpmnJsElement"></div>
 
 @code {
     private ElementReference _bpmnJsElement;
@@ -25,28 +24,55 @@
     [Parameter]
     public string[] SequenceFlows { get; set; } = Array.Empty<string>();
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public List<OverlayConfig> OverlayConfigs { get; set; } = new();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _bpmnJsModule = await JS.InvokeAsync<IJSObjectReference>(
-            "import", "./Components/BPMNViewer/BPMNViewer.razor.js");
-
-        _bpmnJsInstance = await _bpmnJsModule.InvokeAsync<IJSObjectReference>(
-            "createBpmnJSInstance",
-            _bpmnJsElement);
-
-        if (string.IsNullOrWhiteSpace(Xml))
+        if (firstRender)
         {
-            return;
+            _bpmnJsModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "./Components/BPMNViewer/BPMNViewer.razor.js");
+
+            _bpmnJsInstance = await _bpmnJsModule.InvokeAsync<IJSObjectReference>(
+                "createBpmnJSInstance",
+                _bpmnJsElement);
+
+            await InvokeAsync(StateHasChanged);
         }
 
-        await OpenDiagram();
+        if (!firstRender && _bpmnJsInstance != null)
+        {
+            await OpenDiagram();
+
+
+
+            //await SetupOverlays();
+        }
     }
 
-    public async Task OpenDiagram()
+    private async Task OpenDiagram()
     {
         await _bpmnJsModule.InvokeVoidAsync("openDiagram", _bpmnJsInstance, Xml);
 
         await _bpmnJsModule.InvokeVoidAsync("addMarker", _bpmnJsInstance, SequenceFlows);
+        // await _bpmnJsModule.InvokeVoidAsync("stepZoom", _bpmnJsInstance, 100);
+
+        //await _bpmnJsModule.InvokeVoidAsync("recenterDiagram", _bpmnJsInstance);
+    }
+
+
+    async Task SetupOverlays()
+    {
+        foreach (var overlayConfig in OverlayConfigs)
+        {
+            // Only setup overlays that do not have a overlayID (because they have not been created yet)
+            if (overlayConfig.State == "INIT" && overlayConfig.OverlayId == null)
+            {
+                overlayConfig.OverlayId = await _bpmnJsModule.InvokeAsync<string>("addOverlay", overlayConfig, _bpmnJsInstance);
+            }
+        }
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

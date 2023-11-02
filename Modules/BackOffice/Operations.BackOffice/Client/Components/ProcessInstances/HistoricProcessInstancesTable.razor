@@ -1,7 +1,7 @@
-﻿
-@using Color = MudBlazor.Color
-@using Operations.BackOffice.Client.Dto.ProcessInstances;
-@using Operations.BackOffice.Client.Services;
+﻿@using Operations.BackOffice.Client.Data.ProcessDefinitions;
+@using Operations.BackOffice.Client.Data.ProcessInstances;
+@using Operations.BackOffice.Client.Data.ProcessInstances.Dto;
+
 @inject NavigationManager NavigationManager
 
 <MudTable
@@ -9,7 +9,6 @@
           ServerData="@(new Func<TableState, Task<TableData<ProcessInstanceDto>>>(GetProcessInstancesFromServer))"
     Hover="true"
     RowsPerPage="PageSize"
-    @bind-Loading="@_isLoading"
     Elevation="0">
     <HeaderContent>
         <MudTh>State</MudTh>
@@ -24,20 +23,20 @@
         <MudTd DataLabel="State">
             @if (context.State == ProcessInstanceState.ACTIVE)
             {
-                <MudIcon Icon="@Icons.Outlined.PlayCircleOutline" Color="Color.Tertiary" Title="Active"/>
+                <MudIcon Icon="@Icons.Material.Outlined.PlayCircleOutline" Color="Color.Tertiary" Title="Active" />
             }
             else if (context.State == ProcessInstanceState.CANCELED)
             
             {
-                <MudIcon Icon="@Icons.Outlined.PauseCircleOutline" Color="Color.Default" Title="Canceled" />
+                <MudIcon Icon="@Icons.Material.Outlined.PauseCircleOutline" Color="Color.Default" Title="Canceled" />
             }
             else if (context.State == ProcessInstanceState.COMPLETED)
             {
-                <MudIcon Icon="@Icons.Outlined.CheckCircleOutline" Color="Color.Success" Title="Completed"/>
+                <MudIcon Icon="@Icons.Material.Outlined.CheckCircleOutline" Color="Color.Success" Title="Completed" />
             }
             else
             {
-                <MudIcon Icon="@Icons.Outlined.HelpOutline" Color="Color.Error" Title=@($"UNKNOWN:{context.State.ToString()}")/>
+                <MudIcon Icon="@Icons.Material.Outlined.HelpOutline" Color="Color.Error" Title=@($"UNKNOWN:{context.State.ToString()}")/>
             }
         </MudTd>
         <MudTd DataLabel="Instance ID">@context.Key</MudTd>
@@ -60,39 +59,20 @@
     public IProcessInstanceService ProcessInstanceService { get; set; }
 
     [Parameter]
-    public IProcessDefinitionService ProcessDefinitionService { get; set; }
-
-    [Parameter]
-    public long ProcessDefinitionId { get; set; }
+    public long ProcessDefinitionKey { get; set; }
 
     [Parameter]
     public int PageSize { get; set; } = 10;
 
-    private ProcessInstanceDto[] _instances;
-    private int _totalInstances;
-
-    bool _isLoading;
-
-
     private async Task<TableData<ProcessInstanceDto>> GetProcessInstancesFromServer(TableState state)
     {
-        _isLoading = true;
-        await InvokeAsync(StateHasChanged);
-
-        //TODO to remove
-        var definitions = await ProcessDefinitionService.GetProcessDefinitions();
-        var definition = definitions.FirstOrDefault(x => x.Key == ProcessDefinitionId);
-
-        var instances = await ProcessInstanceService.GetProcessInstances(definition.BpmnProcessId);
-
-        _instances = instances.Where(x => x.ProcessVersion == definition.Version).ToArray();
-        _isLoading = false;
-        await InvokeAsync(StateHasChanged);
-
+        var instances = await ProcessInstanceService.GetProcessInstances(ProcessDefinitionKey);
+        var totalInstances = instances.Length;
+        
         return new TableData<ProcessInstanceDto>()
         {
-            Items = _instances,
-            TotalItems = _totalInstances
+            Items = instances,
+            TotalItems = totalInstances
         };
     }
 

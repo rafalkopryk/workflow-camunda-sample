@@ -1,0 +1,110 @@
+﻿@using Operations.BackOffice.Client.Data.ProcessDefinitions;
+@using Operations.BackOffice.Client.Data.ProcessDefinitions.Dto;
+@using Size = MudBlazor.Size
+@using Color = MudBlazor.Color
+
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<MudTable
+    T="ProcessDefinitionDto"
+    ServerData="@(new Func<TableState, Task<TableData<ProcessDefinitionDto>>>(GetDefinitionsFromServer))"
+    Hover="true"
+    LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh/>
+        <MudTh>BPMN Process Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Latest Version</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Outlined.More" OnClick="@(() => ShowDefinitionVersions(context.BpmnProcessId))" Title="Versions" />
+        </MudTd>
+        <MudTd DataLabel="BPMN Process Id">@context.BpmnProcessId</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Latest Version">@context.Version.Value</MudTd>
+    </RowTemplate>
+
+    <ChildRowContent Context="parentContext">
+        @if (_selectedBpmnProcessId == parentContext.BpmnProcessId && _isDefinitionVersionsSelected)
+        {
+            <MudTr>
+                <td colspan="100">
+                    <MudCard Elevation="0" Outlined="true">
+                        <MudCardHeader>
+                            <CardHeaderContent>Definitions Versions for definition <code>@parentContext.BpmnProcessId</code></CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudTable Items="@DefinitionVersions"
+                                Elevation="0"
+                                Hover="false">
+
+                                <HeaderContent>
+                                    <MudTh>Definition Key</MudTh>
+                                    <MudTh>Version</MudTh>
+                                    <MudTh>Name</MudTh>
+                                    <MudTh></MudTh>
+                                </HeaderContent>
+
+                                <RowTemplate>
+                                    <MudTd DataLabel="Definition Key">@context.Key</MudTd>
+                                    <MudTd DataLabel="Version">@context.Version</MudTd>
+                                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                                    <MudTd>
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Definition Details"/>
+                                    </MudTd>
+                                </RowTemplate>
+
+                            </MudTable>
+                        </MudCardContent>
+                    </MudCard>
+                </td>
+
+            </MudTr>
+        }
+    </ChildRowContent>
+
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public IProcessDefinitionService ProcessDefinitionService { get; init; }
+
+    private ProcessDefinitionDto[] _definitions = Array.Empty<ProcessDefinitionDto>();
+
+    private ProcessDefinitionDto[] DefinitionVersions => _definitions.Where(x => x.BpmnProcessId == _selectedBpmnProcessId).OrderByDescending(x => x.Version).ToArray();
+
+    private string _selectedBpmnProcessId = string.Empty;
+    private bool _isDefinitionVersionsSelected;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task<TableData<ProcessDefinitionDto>> GetDefinitionsFromServer(TableState state)
+    {
+        _definitions = await ProcessDefinitionService.GetProcessDefinitions() ?? Array.Empty<ProcessDefinitionDto>();
+
+        var _parentDefinitions = _definitions!.OrderByDescending(x => x.Version)!.GroupBy(x => x.BpmnProcessId)!.ToDictionary(x => x.Key, x => x.First())!.Select(y => y.Value)!.ToArray();
+
+        return new TableData<ProcessDefinitionDto>()
+        {
+            Items = _parentDefinitions,
+            TotalItems = _parentDefinitions.Length,
+        };
+    }
+
+    void OnDetailsClick(long definitionKey)
+    {
+        NavigationManager.NavigateTo($"process-definitions/{definitionKey}");
+    }
+
+    private void ShowDefinitionVersions(string bpmnProcessId)
+    {
+        _isDefinitionVersionsSelected = !_isDefinitionVersionsSelected;
+        _selectedBpmnProcessId = bpmnProcessId;
+    }
+}

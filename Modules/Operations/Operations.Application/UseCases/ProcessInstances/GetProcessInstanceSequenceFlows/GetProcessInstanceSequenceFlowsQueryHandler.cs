@@ -17,9 +17,14 @@ internal class GetProcessInstanceSequenceFlowsQueryHandler : IRequestHandler<Get
 
     public async Task<Result<GetProcessInstanceSequenceFlowsQueryResponse>> Handle(GetProcessInstanceSequenceFlowsQuery request, CancellationToken cancellationToken)
     {
+        var luceneSyntax = new QueryLuceneBuilder()
+                .Append("value.processInstanceKey", request.ProcessInstanceKey)
+                .Append("value.bpmnElementType", "SEQUENCE_FLOW")
+                .Build();
+
         var result = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
-            .Index("zeebe-record_process-instance_*")
-            .QueryLuceneSyntax($"""value.processInstanceKey: "{request.ProcessInstanceKey}" AND value.bpmnElementType: "SEQUENCE_FLOW" """));
+            .Index("zeebe-record-process-instance")
+            .QueryLuceneSyntax(luceneSyntax));
 
         //.Query(q => q
         //    .Bool(b => b.Must(m => m

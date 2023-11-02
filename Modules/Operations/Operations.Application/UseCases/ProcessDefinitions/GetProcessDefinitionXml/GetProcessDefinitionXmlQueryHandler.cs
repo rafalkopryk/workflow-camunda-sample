@@ -17,10 +17,16 @@ internal class GetProcessDefinitionXmlQueryHandler : IRequestHandler<GetProcessD
 
     public async Task<Result<string>> Handle(GetProcessDefinitionXmlQuery request, CancellationToken cancellationToken)
     {
+        var luceneSyntax = new QueryLuceneBuilder()
+            .Append("intent", "CREATED")
+            .Append("valueType", "PROCESS")
+            .Append("value.processDefinitionKey", request.ProcessDefinitionKey)
+            .Build();
+
         var result = await _elasticsearchClient.SearchAsync<ProcessDefinitionDocument>(s => s
                 .Size(1)
-                .Index("zeebe-record_process_*")
-                    .QueryLuceneSyntax($"""intent: "CREATED" AND valueType: "PROCESS" AND value.processDefinitionKey: {request.ProcessDefinitionKey} """));
+                .Index("zeebe-record-process*")
+                    .QueryLuceneSyntax(luceneSyntax));
 
         var xmlBase64 = result.Documents.FirstOrDefault()?.Value?.Resource;
         var xmlString = Encoding.UTF8.GetString(Convert.FromBase64String(xmlBase64));
