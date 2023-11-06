@@ -28,7 +28,7 @@ public class ProcessDefinitionController : BaseController
 
     [HttpPost("search", Name = "SearchProcessDefinitions")]
     [ProducesResponseType(typeof(SearchProcessDefinitionsQueryResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> SearchProcessInstance([FromBody] SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> SearchProcessDefinitions([FromBody] SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(query);
         return result.Match(success => Ok(success), failure => Failure(failure));

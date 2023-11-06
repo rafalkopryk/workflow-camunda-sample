@@ -19,8 +19,31 @@
     <script src="https://unpkg.com/bpmn-js@15.0.0/dist/bpmn-navigated-viewer.production.min.js" type="module"></script>
 
     <style>
-        .highlight .djs-visual > :nth-child(1) {
-            stroke: red !important;
+        .bpmn-element-active .djs-visual > :nth-child(1) {
+            stroke: rgba(66, 180, 21, 0.7) !important;
+        }
+
+        .bpmn-badge-incident {
+            background-color: rgba(255, 47, 0, 0.7);
+            color: White;
+            border-radius: 5px;
+            font-family: Arial;
+            font-size: 24px;
+            padding: 5px;
+            min-height: 16px;
+            width: 50px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .bpmn-element-incident .djs-visual > :nth-child(1) {
+            stroke: rgba(255, 47, 0, 0.7) !important;
+        }
+
+        .bpmn-element-selected .djs-visual > :nth-child(1) {
+            stroke: rgba(0, 125, 255, 0.7) !important;
+            stroke-dasharray: 5;
+            stroke-width: 2px !important;
         }
     </style>
 </head>

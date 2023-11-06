@@ -1,0 +1,83 @@
+﻿@using Color = MudBlazor.Color
+@using Operations.BackOffice.Client.Data.Incidents.Dto;
+@using Operations.BackOffice.Client.Data.Incidents;
+
+@inject NavigationManager navigationManager;
+
+<MudTable T="ProcessIncidentDto"
+          ServerData="@(new Func<TableState, Task<TableData<ProcessIncidentDto>>>(GetDataFromServer))"
+          Hover="false"
+          Elevation="0">
+    <HeaderContent>
+        <MudTh></MudTh>
+        <MudTh>Message</MudTh>
+        <MudTh>Create Time</MudTh>
+        <MudTh>Activity Id</MudTh>
+
+        @if (ProcessInstanceId is null)
+        {
+            <MudTh>ProcessInstanceId</MudTh>
+            <MudTh></MudTh>
+        }
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="State">
+            @if (context.State == ProcessIncidenState.RESOLVED)
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.CheckCircleOutline" Color="Color.Success" Title="Resolved" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline" Color="Color.Error" Title="Open" />
+            }
+        </MudTd>
+        <MudTd DataLabel="Message">@context.Message</MudTd>
+        <MudTd DataLabel="Create Time">@context.CreationTime</MudTd>
+        <MudTd DataLabel="Activity Id">@context.ProcessElementId</MudTd>
+
+        @if (ProcessInstanceId is null)
+        {
+            <MudTd DataLabel="Message">@context.ProcessInstanceKey</MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Outlined.Info" OnClick="@(() => OnDetailsClick(context.ProcessInstanceKey.Value))" Title="Details" />
+            </MudTd>
+        }
+
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public IProcessIncidentService ProcessIncidentService { get; init; }
+
+    [Parameter]
+    public long? ProcessInstanceId { get; init; }
+
+    [Parameter]
+    public ProcessIncidenState? IncidenState { get; init; }
+
+
+    private async Task<TableData<ProcessIncidentDto>> GetDataFromServer(TableState state)
+    {
+        var result = await ProcessIncidentService.SearchProcessIncident(
+            new SearchProcessIncidentsQuery(
+                Filter: new ProcessIncidentDto
+                    {
+                        ProcessInstanceKey = ProcessInstanceId,
+                        State = IncidenState,
+                    },
+                Size: 1000));
+
+        return new TableData<ProcessIncidentDto>
+            {
+                Items = result.Items
+            };
+    }
+
+    void OnDetailsClick(long processInstanceId)
+    {
+        navigationManager.NavigateTo($"process-instances/{processInstanceId}");
+    }
+}

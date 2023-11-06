@@ -1,14 +1,9 @@
-﻿namespace Operations.BackOffice.Client.Data.ProcessInstances
+﻿using Operations.BackOffice.Client.Data.ProcessInstances.Dto;
+
+namespace Operations.BackOffice.Client.Data.ProcessInstances;
+public interface IProcessInstanceService
 {
+    Task<SearchProcessInstanceQueryResponse> SearchProcessInstance(SearchProcessInstanceQuery? query);
 
-    public interface IProcessInstanceService
-    {
-        Task<ProcessInstanceDto[]> GetProcessInstances(string bpmnProcessId);
-
-        Task<ProcessInstanceDto[]> GetProcessInstances(long processDefinitionKey);
-
-        Task<ProcessInstanceDto> GetProcessInstance(long processInstanceKey);
-
-        Task<string[]> GetProcessInstanceSequenceFlows(long processInstanceKey);
-    }
+    Task<string[]> GetProcessInstanceSequenceFlows(long processInstanceKey);
 }

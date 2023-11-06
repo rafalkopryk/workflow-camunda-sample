@@ -1,10 +1,15 @@
-﻿@inject IProcessDefinitionService ProcessDefinitionService
-@inject IProcessInstanceService ProcessInsatnceService
+﻿@inject IProcessDefinitionService processDefinitionService;
+@inject IProcessInstanceService processInstanceService;
+@inject IProcessIncidentService processIncidentsService;
 
 @page "/process-instances/{instanceId:long}"
 @using Operations.BackOffice.Client.Components.BPMNViewer
+@using Operations.BackOffice.Client.Components.ProcessIncident
+@using Operations.BackOffice.Client.Data.Incidents;
 @using Operations.BackOffice.Client.Data.ProcessDefinitions;
 @using Operations.BackOffice.Client.Data.ProcessInstances;
+@using Operations.BackOffice.Client.Data.Incidents.Dto;
+@using Operations.BackOffice.Client.Data.ProcessInstances.Dto;
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
     <MudGrid>
@@ -57,7 +62,7 @@
                     <MudCardContent Class="relative pa-0" Style="height: 500px; overflow:hidden;">
                         @if (_bpmnXml != null)
                         {
-                            <BPMNViewer Xml="@_bpmnXml" SequenceFlows="@_sequenceFlows"></BPMNViewer>
+                            <BPMNViewer Xml="@_bpmnXml" SequenceFlows="@_sequenceFlows" IncidentElementIds="@_incidentElementIds"></BPMNViewer>
                         }
                     </MudCardContent>
                 </MudCard>
@@ -70,6 +75,30 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudTabs>
+                            <MudTabPanel Text="Incidents">
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudCard>
+                                            <MudCardHeader>
+                                                <CardHeaderContent>Runtime</CardHeaderContent>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <ProcessIncidentsTable ProcessIncidentService="@processIncidentsService" ProcessInstanceId="@InstanceId" IncidenState="@ProcessIncidenState.ACTIVE" />
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudCard>
+                                            <MudCardHeader>
+                                                <CardHeaderContent>Historic</CardHeaderContent>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <ProcessIncidentsTable ProcessIncidentService="@processIncidentsService" ProcessInstanceId="@InstanceId" IncidenState="@ProcessIncidenState.RESOLVED" />
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
                         </MudTabs>
                     </MudCardContent>
                 </MudCard>
@@ -89,14 +118,29 @@
     private ProcessInstanceDto _instance;
     private string? _bpmnXml;
     private string[] _sequenceFlows = Array.Empty<string>();
+    private string[] _incidentElementIds = Array.Empty<string>();
+
 
     protected override async Task OnInitializedAsync()
     {
-        var processInstance = await ProcessInsatnceService.GetProcessInstance(InstanceId);
-        var sequenceFlows = await ProcessInsatnceService.GetProcessInstanceSequenceFlows(InstanceId);
+        var processInstance = (await processInstanceService.SearchProcessInstance(new SearchProcessInstanceQuery(
+            new ProcessInstanceDto
+                {
+                    Key = InstanceId,
+                }))).Items.First();
 
+        var sequenceFlows = await processInstanceService.GetProcessInstanceSequenceFlows(InstanceId);
+
+        var incidents = (await processIncidentsService.SearchProcessIncident(new SearchProcessIncidentsQuery(
+            Filter: new ProcessIncidentDto
+                {
+                    ProcessInstanceKey = InstanceId,
+                    State = ProcessIncidenState.ACTIVE,
+                }))).Items;
+
+        _incidentElementIds = incidents.Select(x => x.ProcessElementId).ToArray();
         _instance = processInstance;
         _sequenceFlows = sequenceFlows;
-        _bpmnXml = await ProcessDefinitionService.GetProcessDefinitionXml(processInstance.ProcessDefinitionKey!.Value);
+        _bpmnXml = await processDefinitionService.GetProcessDefinitionXml(processInstance.ProcessDefinitionKey!.Value);
     }
 }

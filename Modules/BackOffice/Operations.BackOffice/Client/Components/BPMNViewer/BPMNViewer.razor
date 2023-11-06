@@ -10,13 +10,19 @@
 
 @if (Xml != null)
 {
-    <div @ref="_bpmnJsElement"></div>
+    <div @ref="_bpmnJsElement" style="height:100%;"></div>
+
+    <span @ref="_incidenetIconReference" data-toggle="tooltip" data-placement="bottom" title="incident">
+        <MudBadge Color="Color.Error" Icon="@Icons.Material.Rounded.Error" Content="1" />
+    </span>
 }
 
 @code {
     private ElementReference _bpmnJsElement;
     private IJSObjectReference _bpmnJsModule;
     private IJSObjectReference _bpmnJsInstance;
+
+    private ElementReference _incidenetIconReference;
 
     [Parameter]
     public string? Xml { get; set; }
@@ -25,8 +31,7 @@
     public string[] SequenceFlows { get; set; } = Array.Empty<string>();
 
     [Parameter]
-    public List<OverlayConfig> OverlayConfigs { get; set; } = new();
-
+    public string[] IncidentElementIds { get; set; } = Array.Empty<string>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -45,10 +50,6 @@
         if (!firstRender && _bpmnJsInstance != null)
         {
             await OpenDiagram();
-
-
-
-            //await SetupOverlays();
         }
     }
 
@@ -56,22 +57,12 @@
     {
         await _bpmnJsModule.InvokeVoidAsync("openDiagram", _bpmnJsInstance, Xml);
 
-        await _bpmnJsModule.InvokeVoidAsync("addMarker", _bpmnJsInstance, SequenceFlows);
-        // await _bpmnJsModule.InvokeVoidAsync("stepZoom", _bpmnJsInstance, 100);
+        await _bpmnJsModule.InvokeVoidAsync("addElemenInstanceSequenceFlowsMarker", _bpmnJsInstance, SequenceFlows);
 
-        //await _bpmnJsModule.InvokeVoidAsync("recenterDiagram", _bpmnJsInstance);
-    }
-
-
-    async Task SetupOverlays()
-    {
-        foreach (var overlayConfig in OverlayConfigs)
+        foreach (var incidentElementId in IncidentElementIds)
         {
-            // Only setup overlays that do not have a overlayID (because they have not been created yet)
-            if (overlayConfig.State == "INIT" && overlayConfig.OverlayId == null)
-            {
-                overlayConfig.OverlayId = await _bpmnJsModule.InvokeAsync<string>("addOverlay", overlayConfig, _bpmnJsInstance);
-            }
+            await _bpmnJsModule.InvokeVoidAsync("addElementInstanceIncidentMarker", _bpmnJsInstance, incidentElementId);
+            await _bpmnJsModule.InvokeVoidAsync("addIncidentMarker", _bpmnJsInstance, incidentElementId, _incidenetIconReference);
         }
     }
 

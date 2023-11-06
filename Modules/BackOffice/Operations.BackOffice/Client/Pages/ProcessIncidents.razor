@@ -1,0 +1,29 @@
+﻿@inject IProcessIncidentService processIncidentService;
+
+@page "/process-incidents"
+@using Operations.BackOffice.Client.Components.BPMNViewer
+@using Operations.BackOffice.Client.Components.ProcessIncident
+@using Operations.BackOffice.Client.Components.ProcessInstances
+@using Operations.BackOffice.Client.Data.Incidents;
+@using Operations.BackOffice.Client.Data.Incidents.Dto;
+@using Operations.BackOffice.Client.Data.ProcessDefinitions;
+@using Operations.BackOffice.Client.Data.ProcessInstances;
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudGrid>        
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>Process Incidents</CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <ProcessIncidentsTable ProcessIncidentService="@processIncidentService" IncidenState="@ProcessIncidenState.ACTIVE" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    
+}

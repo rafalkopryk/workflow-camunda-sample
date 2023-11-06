@@ -44,7 +44,7 @@
         <MudTd DataLabel="Start Time">@context.StartDate</MudTd>
         <MudTd DataLabel="End Time">@context.EndDate</MudTd>
         <MudTd DataLabel="Actions">
-            <MudIconButton Icon="@Icons.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Process Instance Details"/>
+            <MudIconButton Icon="@Icons.Material.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Process Instance Details"/>
         </MudTd>
     </RowTemplate>
 
@@ -56,7 +56,7 @@
 @code {
 
     [Parameter]
-    public IProcessInstanceService ProcessInstanceService { get; set; }
+    public IProcessInstanceService ProcessInstanceService { get; init; }
 
     [Parameter]
     public long ProcessDefinitionKey { get; set; }
@@ -66,7 +66,12 @@
 
     private async Task<TableData<ProcessInstanceDto>> GetProcessInstancesFromServer(TableState state)
     {
-        var instances = await ProcessInstanceService.GetProcessInstances(ProcessDefinitionKey);
+        var instances = (await ProcessInstanceService.SearchProcessInstance(new SearchProcessInstanceQuery(
+            new ProcessInstanceDto
+            {
+                ProcessDefinitionKey = ProcessDefinitionKey,
+            }
+        ))).Items;
         var totalInstances = instances.Length;
         
         return new TableData<ProcessInstanceDto>()

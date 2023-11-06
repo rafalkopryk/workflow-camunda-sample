@@ -14,7 +14,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(BusinessRuleValidationExceptionProcessorBehavior<,>));
 
-        services.AddOpenTelemetry()
+        if (configuration.GetValue<bool>("otel:enabled"))
+        {
+            services.AddOpenTelemetry()
             .WithTracing(builder => builder
                 .AddAspNetCoreInstrumentation(x =>
                 {
@@ -42,6 +44,7 @@ public static class ServiceCollectionExtensions
                 {
                     configure.Endpoint = new Uri(configuration.GetSection("otel:url").Value);
                 }));
+        }
     }
 }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using Operations.BackOffice.Client;
 using Operations.BackOffice.Client.Components.BPMNViewer;
+using Operations.BackOffice.Client.Data.Incidents;
 using Operations.BackOffice.Client.Data.ProcessDefinitions;
 using Operations.BackOffice.Client.Data.ProcessInstances;
 
@@ -14,6 +15,7 @@ builder.RootComponents.RegisterCustomElement<BPMNViewer>("bpmn-viewer");
 
 builder.Services.AddScoped<IProcessInstanceService, ProcessInstanceService>();
 builder.Services.AddScoped<IProcessDefinitionService, ProcessDefinitionService>();
+builder.Services.AddScoped<IProcessIncidentService, ProcessIncidentService>();
 
 builder.Services.Configure<ExternalServicesOptions>(options => builder.Configuration.GetSection("externalServices").Bind(options));
 

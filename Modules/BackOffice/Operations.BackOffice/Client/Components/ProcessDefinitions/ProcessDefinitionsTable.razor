@@ -3,8 +3,7 @@
 @using Size = MudBlazor.Size
 @using Color = MudBlazor.Color
 
-@inject NavigationManager NavigationManager
-@inject IDialogService DialogService
+@inject NavigationManager navigationManager
 
 <MudTable
     T="ProcessDefinitionDto"
@@ -86,7 +85,7 @@
 
     private async Task<TableData<ProcessDefinitionDto>> GetDefinitionsFromServer(TableState state)
     {
-        _definitions = await ProcessDefinitionService.GetProcessDefinitions() ?? Array.Empty<ProcessDefinitionDto>();
+        _definitions = (await ProcessDefinitionService.SearchProcessDefinitions(new SearchProcessDefinitionsQuery())).Items ?? Array.Empty<ProcessDefinitionDto>();
 
         var _parentDefinitions = _definitions!.OrderByDescending(x => x.Version)!.GroupBy(x => x.BpmnProcessId)!.ToDictionary(x => x.Key, x => x.First())!.Select(y => y.Value)!.ToArray();
 
@@ -99,7 +98,7 @@
 
     void OnDetailsClick(long definitionKey)
     {
-        NavigationManager.NavigateTo($"process-definitions/{definitionKey}");
+        navigationManager.NavigateTo($"process-definitions/{definitionKey}");
     }
 
     private void ShowDefinitionVersions(string bpmnProcessId)

@@ -12,6 +12,7 @@ services:
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
        otel__url: http://otel:4317
+       otel__enabled: false
        ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-applications
@@ -32,6 +33,7 @@ services:
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
        otel__url: http://otel:4317
+       otel__enabled: false
        ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-calculations
@@ -50,6 +52,7 @@ services:
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
        otel__url: http://otel:4317
+       otel__enabled: false
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: utility-kafkaconnector
        EventBus__enableautocommit: "false"
@@ -76,7 +79,8 @@ services:
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
       # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1000
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_DELAY=1
       # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
@@ -151,31 +155,31 @@ services:
     depends_on:
       - elasticsearch
 
-  apm:
-    image: docker.elastic.co/apm/apm-server:7.17.5
-    container_name: apm
-    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-    cap_drop: ["ALL"]
-    ports:
-      - 8200:8200
-    depends_on:
-        - es01
-        - kibana
-    command: >
-      apm-server -e
-         -E output.elasticsearch.hosts=["elasticsearch:9200"]
+  # apm:
+  #   image: docker.elastic.co/apm/apm-server:7.17.5
+  #   container_name: apm
+  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+  #   cap_drop: ["ALL"]
+  #   ports:
+  #     - 8200:8200
+  #   depends_on:
+  #       - es01
+  #       - kibana
+  #   command: >
+  #     apm-server -e
+  #        -E output.elasticsearch.hosts=["elasticsearch:9200"]
 
-  otel:
-    container_name: otel
-    image: otel/opentelemetry-collector:latest
-    command: ["--config=/etc/otel-collector-config.yaml"]
-    volumes:
-      - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-    ports:
-      - "4318:4318"
-      - "4317:4317"
-    depends_on:
-      - apm
+  # otel:
+  #   container_name: otel
+  #   image: otel/opentelemetry-collector:latest
+  #   command: ["--config=/etc/otel-collector-config.yaml"]
+  #   volumes:
+  #     - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  #   ports:
+  #     - "4318:4318"
+  #     - "4317:4317"
+  #   depends_on:
+  #     - apm
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -230,6 +234,7 @@ services:
       dockerfile: Modules/Operations/Operations.WebApi/Dockerfile
     environment:
        otel__url: http://otel:4317
+       otel__enabled: false
        Elasticsearch__Endpoint: http://elasticsearch:9200
 
   operations.backoffice.server:

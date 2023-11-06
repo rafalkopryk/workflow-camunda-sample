@@ -5,8 +5,8 @@ export const options = {
   insecureSkipTLSVerify: true,
   noConnectionReuse: false,
   stages: [
-    { duration: '20s', target: 50 },
-    { duration: '20s', target: 50 },
+    { duration: '20s', target: 25 },
+    { duration: '20s', target: 25 },
     { duration: '20s', target: 0 },
   ],
   thresholds:{
@@ -16,7 +16,7 @@ export const options = {
 
 export default function () {
 
-  const url = 'https://localhost:49215/applications';
+  const url = 'https://localhost:63110/applications';
   let guid = generateGuid()
   const payload = JSON.stringify({
     applicationId: guid,

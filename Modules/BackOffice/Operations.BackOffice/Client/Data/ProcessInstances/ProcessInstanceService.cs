@@ -21,37 +21,6 @@ namespace Operations.BackOffice.Client.Data.ProcessInstances
             _options = options.Value;
         }
 
-        public async Task<ProcessInstanceDto[]> GetProcessInstances(string bpmnProcessId)
-        {
-            var response = await _httpClient.PostAsJsonAsync(
-                $"{_options.Operations.Url}/process-instances/search",
-                new SearchProcessInstanceQuery(new ProcessInstanceDto
-                {
-                    BpmnProcessId = bpmnProcessId,
-                }),
-                options: jsonSerializerOptions);
-
-            var queryResponse = await response.Content.ReadFromJsonAsync<SearchProcessInstanceQueryResponse>(options: jsonSerializerOptions);
-
-            return queryResponse.Items;
-        }
-
-        public async Task<ProcessInstanceDto[]> GetProcessInstances(long processDefinitionKey)
-        {
-            var response = await _httpClient.PostAsJsonAsync(
-                $"{_options.Operations.Url}/process-instances/search",
-                new SearchProcessInstanceQuery(new ProcessInstanceDto
-                {
-                    ProcessDefinitionKey = processDefinitionKey,
-                }),
-                options: jsonSerializerOptions);
-
-            var queryResponse = await response.Content.ReadFromJsonAsync<SearchProcessInstanceQueryResponse>(options: jsonSerializerOptions);
-
-            return queryResponse.Items;
-        }
-
-
         public async Task<string[]> GetProcessInstanceSequenceFlows(long processInstanceKey)
         {
             var sequenceFlows = await _httpClient.GetFromJsonAsync<GetProcessInstanceSequenceFlowsQueryResponse>(
@@ -60,19 +29,16 @@ namespace Operations.BackOffice.Client.Data.ProcessInstances
             return sequenceFlows.Items.ToArray();
         }
 
-        public async Task<ProcessInstanceDto> GetProcessInstance(long processInstanceKey)
+        public async Task<SearchProcessInstanceQueryResponse> SearchProcessInstance(SearchProcessInstanceQuery? query)
         {
             var response = await _httpClient.PostAsJsonAsync(
-                $"{_options.Operations.Url}/process-instances/search",
-                new SearchProcessInstanceQuery(new ProcessInstanceDto
-                {
-                    Key = processInstanceKey
-                }),
-                options: jsonSerializerOptions);
+               $"{_options.Operations.Url}/process-instances/search",
+               query,
+               options: jsonSerializerOptions);
 
             var queryResponse = await response.Content.ReadFromJsonAsync<SearchProcessInstanceQueryResponse>(options: jsonSerializerOptions);
 
-            return queryResponse.Items.FirstOrDefault();
+            return queryResponse;
         }
     }
 }

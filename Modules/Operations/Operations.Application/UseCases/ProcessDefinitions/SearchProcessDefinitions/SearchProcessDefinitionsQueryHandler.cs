@@ -1,6 +1,7 @@
-﻿using CSharpFunctionalExtensions;
-using Elastic.Clients.Elasticsearch;
+﻿using Azure.Core;
+using CSharpFunctionalExtensions;
 using MediatR;
+using Nest;
 using Operations.Application.UseCases.ProcessDefinitions.GetProcessDefinitionXml;
 using Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefinitions;
 using Operations.Application.UseCases.ProcessDefinitions.Shared.Documents;
@@ -9,25 +10,27 @@ namespace Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefini
 
 internal class SearchProcessDefinitionsQueryHandler : IRequestHandler<SearchProcessDefinitionsQuery, Result<SearchProcessDefinitionsQueryResponse>>
 {
-    private readonly ElasticsearchClient _elasticsearchClient;
+    private readonly ElasticClient _elasticsearchClient;
 
-    public SearchProcessDefinitionsQueryHandler(ElasticsearchClient elasticsearchClient)
+    public SearchProcessDefinitionsQueryHandler(ElasticClient elasticsearchClient)
     {
         _elasticsearchClient = elasticsearchClient;
     }
 
     public async Task<Result<SearchProcessDefinitionsQueryResponse>> Handle(SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
     {
-        var luceneSyntax = new QueryLuceneBuilder()
-            .Append("intent", "CREATED")
-            .Append("valueType", "PROCESS")
-            .Append("value.bpmnProcessId", query.Filter?.BpmnProcessId)
-            .Build();
-
         var result = await _elasticsearchClient.SearchAsync<ProcessDefinitionDocument>(s => s
             .Index("zeebe-record-process*")
-            .Size(999)
-            .QueryLuceneSyntax(luceneSyntax));
+            .Size(10000)
+            .Sort(sort => sort
+                .Descending("timestamp")
+                .Descending(_ => _.Value.Version))
+            .Query(q => +q   
+                 .Term(x => x.ValueType, "PROCESS") && +q
+                 .Term(x => x.Intent, "CREATED") && +q
+                 .Term(x => x.Value.BpmnProcessId, query.Filter?.BpmnProcessId) && +q
+                 .Term(x => x.Value.ProcessDefinitionKey, query.Filter?.Key) && +q
+                 .Term(x => x.Value.Version, query.Filter?.Version)));
 
         var processDefinitions = result.Documents.Select(document =>
         {

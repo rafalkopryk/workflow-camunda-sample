@@ -23,18 +23,6 @@ namespace Operations.BackOffice.Client.Data.ProcessDefinitions
             _options = options.Value;
         }
 
-        public async Task<ProcessDefinitionDto[]> GetProcessDefinitions()
-        {
-            var response = await _httpClient.PostAsJsonAsync(
-                $"{_options.Operations.Url}/process-definitions/search",
-                new SearchProcessDefinitionsQuery(null),
-                options: jsonSerializerOptions);
-
-            var queryResponse = await response.Content.ReadFromJsonAsync<SearchProcessDefinitionsQueryResponse>(options: jsonSerializerOptions);
-
-            return queryResponse.Items;
-        }
-
         public async Task<string> GetProcessDefinitionXml(long key)
         {
             var response = await _httpClient.GetStringAsync(
@@ -43,19 +31,16 @@ namespace Operations.BackOffice.Client.Data.ProcessDefinitions
             return response;
         }
 
-        public async Task<ProcessDefinitionDto[]> GetProcessDefinitions(string bpmnProcessId)
+        public async Task<SearchProcessDefinitionsQueryResponse> SearchProcessDefinitions(SearchProcessDefinitionsQuery query)
         {
             var response = await _httpClient.PostAsJsonAsync(
                 $"{_options.Operations.Url}/process-definitions/search",
-                new SearchProcessDefinitionsQuery(new ProcessDefinitionDto
-                {
-                    BpmnProcessId = bpmnProcessId
-                }),
+                query,
                 options: jsonSerializerOptions);
 
             var queryResponse = await response.Content.ReadFromJsonAsync<SearchProcessDefinitionsQueryResponse>(options: jsonSerializerOptions);
 
-            return queryResponse.Items;
+            return queryResponse;
         }
     }
 }

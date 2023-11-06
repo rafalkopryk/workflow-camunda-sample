@@ -17,7 +17,7 @@ namespace Credit.Front.Server.Controllers
         }
 
         [HttpGet("{key}/sequence-flows", Name = "GetProcessInstanceSequenceFlows")]
-        [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetProcessInstanceSequenceFlowsQueryResponse),StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSequenceFlows([FromRoute] long key, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetProcessInstanceSequenceFlowsQuery(key));
@@ -26,7 +26,7 @@ namespace Credit.Front.Server.Controllers
 
         [HttpPost("search", Name = "SearchProcessInstances")]
         [ProducesResponseType(typeof(SearchProcessInstanceQueryResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SearchProcessInstance([FromBody] SearchProcessInstanceQuery query, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchProcessInstances([FromBody] SearchProcessInstanceQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query);
             return result.Match(Ok, Failure);

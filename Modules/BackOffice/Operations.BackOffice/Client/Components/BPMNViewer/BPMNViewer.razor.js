@@ -24,73 +24,25 @@ export async function openDiagram(viewer, bpmnXML) {
     }
 }
 
-
-export function recenterDiagram(viewer) {
-
-    //let canvas = viewer.get('canvas');
-    //canvas.zoom("fit-viewport", "auto")
-    //canvas.zoom("fit-viewport", "auto") 
+export function addElemenInstanceSequenceFlowsMarker(viewer, sequenceFlows) { 
+    let canvas = viewer.get('canvas');
+    sequenceFlows.forEach(key => canvas.addMarker(key, 'bpmn-element-active'))
 }
 
-export function addMarker(viewer, progressIdsArray) {
-
-    try {
-
-        let canvas = viewer.get('canvas');
-        progressIdsArray.forEach(key => canvas.addMarker(key, 'highlight'))
-
-    } catch (err) {
-        
-    }
+export function addElementInstanceIncidentMarker(viewer, elementId) {
+    let canvas = viewer.get('canvas');
+    canvas.addMarker(elementId, 'bpmn-element-incident');
 }
 
+export function addIncidentMarker(viewer, elemenId, html) {
+    let canvas = viewer.get('canvas');
+    let overlays = viewer.get('overlays');
 
-export function stepZoom(viewer, value) {
-
-    try {
-
-        const zoomScroll = viewer.get('zoomScroll');
-
-        zoomScroll.stepZoom(value);
-    } catch (err) {
-
-    }
-}
-
-
-export function addOverlay(overlayConfig, bpmnJsInstance) {
-    let overlays = bpmnJsInstance.get('overlays')
-    //@TODO add issue to bpmnjs to ask for position allowing all 4 props and can provide null to ignore.
-
-    let position = {}
-    if (overlayConfig.positionTop != null) {
-        position.top = overlayConfig.positionTop
-    }
-    if (overlayConfig.positionLeft != null) {
-        position.left = overlayConfig.positionLeft
-    }
-    if (overlayConfig.positionBottom != null) {
-        position.bottom = overlayConfig.positionBottom
-    }
-    if (overlayConfig.positionRight != null) {
-        position.right = overlayConfig.positionRight
-    }
-    overlayConfig.htmlElementRef.style.display = ''
-
-    let id = overlays.add(overlayConfig.elementId,
-        {
-            position: position,
-            html: overlayConfig.htmlElementRef
-        }
-    )
-
-    return id
-}
-
-export function removeOverlays(overlayIds, bpmnJsInstance) {
-    let overlays = bpmnJsInstance.get("overlays")
-    overlayIds.forEach(id => {
-        console.log("removing " + id)
-        overlays.remove(id)
-    })
+    overlays.add(elemenId, {
+        position: {
+            top: -10,
+            right: 10
+        },
+        html: html
+    });
 }
