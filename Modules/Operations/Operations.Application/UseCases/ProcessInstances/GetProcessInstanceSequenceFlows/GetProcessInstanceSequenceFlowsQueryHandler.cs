@@ -18,11 +18,11 @@ internal class GetProcessInstanceSequenceFlowsQueryHandler : IRequestHandler<Get
     public async Task<Result<GetProcessInstanceSequenceFlowsQueryResponse>> Handle(GetProcessInstanceSequenceFlowsQuery request, CancellationToken cancellationToken)
     {
         var result = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
-            .Index("zeebe-record-process-instance")
+            .Index(ProcessInstanceKeyword.INDEX)
             .Size(1000)
             .Query(q => q
                  .Term(x => x.Value.ProcessInstanceKey, request.ProcessInstanceKey) && q
-                 .Term(x => x.Intent, "SEQUENCE_FLOW_TAKEN")));
+                 .Term(x => x.Intent, ProcessInstanceKeyword.INTENT_SEQUENCE_FLOW_TAKEN)));
 
         var sequenceFlows = result.Documents.Select(x => x.Value.ElementId).ToArray();
         return new GetProcessInstanceSequenceFlowsQueryResponse(sequenceFlows);

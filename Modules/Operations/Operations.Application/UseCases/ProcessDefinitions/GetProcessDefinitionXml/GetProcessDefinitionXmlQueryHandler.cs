@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using MediatR;
 using Nest;
+using Operations.Application.UseCases.ProcessDefinitions.Shared;
 using Operations.Application.UseCases.ProcessDefinitions.Shared.Documents;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Operations.Application.UseCases.ProcessDefinitions.GetProcessDefinitionXml;
 
@@ -20,10 +20,10 @@ internal class GetProcessDefinitionXmlQueryHandler : IRequestHandler<GetProcessD
     {
         var result = await _elasticsearchClient.SearchAsync<ProcessDefinitionDocument>(s => s
             .Size(1)
-            .Index("zeebe-record-process*")
+            .Index(ProcessDefinitionKeyword.INDEX)
             .Query(q => q
-                    .Term(x => x.ValueType, "PROCESS") && q
-                    .Term(x => x.Intent, "CREATED") && q
+                    .Term(x => x.ValueType, ProcessDefinitionKeyword.VALUETYPE) && q
+                    .Term(x => x.Intent, ProcessDefinitionKeyword.INTENT_CREATED) && q
                     .Term(x => x.Value.ProcessDefinitionKey, request.ProcessDefinitionKey)));
 
         var xmlBase64 = result.Documents.FirstOrDefault()?.Value?.Resource;

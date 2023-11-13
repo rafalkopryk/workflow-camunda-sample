@@ -1,15 +1,13 @@
-﻿using Operations.Application.UseCases.Incidents.Shared.Documents;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Operations.Application.Incidents.SearchProcessIncidents.Shared.Documents;
-
-public record ProcessIncidentDocument
+public record FlowNodeInstanceDocument
 {
     [JsonPropertyName("timestamp")]
+
     public long Timestamp { get; init; }
 
     [JsonPropertyName("value")]
-    public ProcessIncidentValueDocument Value { get; init; }
+    public FlowNodeInstanceValueDocument Value { get; init; }
 
     [JsonPropertyName("intent")]
     public string Intent { get; init; }

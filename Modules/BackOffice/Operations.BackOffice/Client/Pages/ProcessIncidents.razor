@@ -10,12 +10,12 @@
 @using Operations.BackOffice.Client.Data.ProcessInstances;
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
-    <MudGrid>        
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h3" GutterBottom="true">Process Incidents</MudText>
+        </MudItem>
         <MudItem xs="12">
             <MudCard>
-                <MudCardHeader>
-                    <CardHeaderContent>Process Incidents</CardHeaderContent>
-                </MudCardHeader>
                 <MudCardContent>
                     <ProcessIncidentsTable ProcessIncidentService="@processIncidentService" IncidenState="@ProcessIncidenState.ACTIVE" />
                 </MudCardContent>

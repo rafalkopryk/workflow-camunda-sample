@@ -1,0 +1,51 @@
+﻿@using Color = MudBlazor.Color
+@using Operations.BackOffice.Client.Data.Incidents.Dto;
+@using Operations.BackOffice.Client.Data.Incidents;
+@using Operations.BackOffice.Client.Data.ProcessFlowNodeInstances;
+@using Operations.BackOffice.Client.Data.ProcessFlowNodeInstances.Dto;
+
+@inject NavigationManager navigationManager;
+
+<MudTable T="FlowNodeInstanceDto"
+          ServerData="@(new Func<TableState, Task<TableData<FlowNodeInstanceDto>>>(GetDataFromServer))"
+          Hover="false"
+          Elevation="0">
+    <HeaderContent>
+        <MudTh>Element Id</MudTh>
+        <MudTh>Element Instance Key</MudTh>
+        <MudTh>State</MudTh>
+        <MudTh>Time</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Element Id">@context.FlowNodeId</MudTd>
+        <MudTd DataLabel="Element Instance Key">@context.Key</MudTd>
+        <MudTd DataLabel="State">@context.State</MudTd>
+        <MudTd DataLabel="Time">@(context.EndDate ?? context.StartDate)</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public IProcessFlowNodeInstanceService ProcessFlowNodeInstanceService { get; init; }
+
+    [Parameter]
+    public long ProcessInstanceId { get; init; }
+
+
+    private async Task<TableData<FlowNodeInstanceDto>> GetDataFromServer(TableState state)
+    {
+        var result = await ProcessFlowNodeInstanceService.SearchProcessFlowNodeInstance(
+            new SearchFlowNodeInstancesQuery(
+                Filter: new ()
+                    {
+                        ProcessInstanceKey = ProcessInstanceId,
+                    }));
+
+        return new TableData<FlowNodeInstanceDto>
+            {
+                Items = result.Items
+            };
+    }
+}

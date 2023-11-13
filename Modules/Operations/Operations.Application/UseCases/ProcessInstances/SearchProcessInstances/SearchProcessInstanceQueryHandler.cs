@@ -3,13 +3,15 @@ using MediatR;
 using Nest;
 using Operations.Application.UseCases.ProcessInstances.Shared.Dto;
 
-public record SearchProcessInstanceQuery(ProcessInstanceDto? Filter, int? Size = 50) : MediatR.IRequest<Result<SearchProcessInstanceQueryResponse>>;
+public record SearchProcessInstanceQuery(ProcessInstanceDto? Filter, long[]? SearchAfter, int? Size = 50) : MediatR.IRequest<Result<SearchProcessInstanceQueryResponse>>;
 
-public record SearchProcessInstanceQueryResponse(ProcessInstanceDto[] Items);
+public record SearchProcessInstanceQueryResponse(ProcessInstanceDto[] Items, object[] SortValues);
 
 internal class SearchProcessInstanceQueryHandler : IRequestHandler<SearchProcessInstanceQuery, Result<SearchProcessInstanceQueryResponse>>
 {
     private readonly ElasticClient _elasticsearchClient;
+
+
 
     public SearchProcessInstanceQueryHandler(ElasticClient elasticsearchClient)
     {
@@ -18,88 +20,87 @@ internal class SearchProcessInstanceQueryHandler : IRequestHandler<SearchProcess
 
     public async Task<Result<SearchProcessInstanceQueryResponse>> Handle(SearchProcessInstanceQuery query, CancellationToken cancellationToken)
     {
-        var intents = query.Filter?.State switch
+        var intentsQuery = query.Filter?.State switch
         {
-            ProcessInstanceState.COMPLETED => new[] { "ELEMENT_COMPLETED" },
-            ProcessInstanceState.CANCELED => new[] { "ELEMENT_TERMINATED" },
-            _ => new[] { "ELEMENT_TERMINATED", "ELEMENT_COMPLETED", "ELEMENT_ACTIVATED" }
+            ProcessInstanceState.COMPLETED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED },
+            ProcessInstanceState.CANCELED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED },
+            _ => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED }
         };
 
-        var scriptLogic = query.Filter?.State switch
+        var intentsFilter = query.Filter?.State switch
         {
-            ProcessInstanceState.COMPLETED => "params.completedElementsCount > 0",
-            ProcessInstanceState.CANCELED => "params.termiantedElementsCount > 0",
-            ProcessInstanceState.ACTIVE => "params.termiantedElementsCount == 0 && params.completedElementsCount == 0",
-            _ => "params.activatedElementsCount > 0"
+            ProcessInstanceState.COMPLETED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED },
+            ProcessInstanceState.CANCELED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED },
+            ProcessInstanceState.ACTIVE => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED },
+            _ => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED }
         };
 
-        var data = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
-            .Index("zeebe-record-process-instance")
-            .Size(0)
-            .Sort(sort => sort.Descending("timestamp"))
-            .Query(q => +q
-                .Term(t => t.Value.BpmnElementType, "PROCESS") && +q
-                .Terms(t => t.Field("intent").Terms(intents)) && +q
-                .Term(t => t.Value.BpmnProcessId, query.Filter?.BpmnProcessId) && +q
-                .Term(t => t.Value.ProcessDefinitionKey, query.Filter?.ProcessDefinitionKey) && +q
-                .Term(t => t.Value.ProcessInstanceKey, query.Filter?.Key))
-            .Aggregations(a => a
-                .Terms("processInstances", t => t
-                    .Field(f => f.Value.ProcessInstanceKey)
-                    .Size(query.Size * 100)
-                    .Order(o => o.KeyDescending())
-                    .Aggregations(aggs => aggs
-                        .Filter("terminatedElements", f => f.Filter(ff => ff.Term(t => t.Intent, "ELEMENT_TERMINATED")))
-                        .Filter("completedElements", f => f.Filter(ff => ff.Term(t => t.Intent, "ELEMENT_COMPLETED")))
-                        .Filter("activatedElements", f => f.Filter(ff => ff.Term(t => t.Intent, "ELEMENT_ACTIVATED")))
-                        .BucketSelector("min_bucket_selector", bs => bs
-                            .BucketsPath(bp => bp
-                                .Add("completedElementsCount", "completedElements._count")
-                                .Add("termiantedElementsCount", "terminatedElements._count")
-                                .Add("activatedElementsCount", "activatedElements._count"))
-                            .Script(scriptLogic))
-                        ))));
+        var processInstancesKeys = new List<long>();
+        var searchAfter = query.SearchAfter?.Cast<object>().ToArray();
+        while (true)
+        {
+            var data = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
+                .Index(ProcessInstanceKeyword.INDEX)
+                .Size(10000)
+                .Sort(sort => sort
+                    .Descending(_ => _.Value.ProcessInstanceKey)
+                    .Descending(_ => _.Timestamp))
+                .SearchAfter(searchAfter)
+                .Query(q => +q
+                    .Term(t => t.Value.BpmnElementType, ProcessInstanceKeyword.BPMN_ELEMENT_TYPE) && +q
+                    .Terms(t => t.Field(_ => _.Intent).Terms(intentsQuery)) && +q
+                    .Term(t => t.Value.BpmnProcessId, query.Filter?.BpmnProcessId) && +q
+                    .Term(t => t.Value.ProcessDefinitionKey, query.Filter?.ProcessDefinitionKey) && +q
+                    .Term(t => t.Value.ProcessInstanceKey, query.Filter?.Key)));
 
-        var processes = data.Aggregations.Terms("processInstances").Buckets.Select(x => new Element(
-                    long.Parse(x.Key),
-                    x.Filter("activatedElements")?.DocCount ?? 0,
-                    x.Filter("terminatedElements")?.DocCount ?? 0,
-                    x.Filter("completedElements")?.DocCount ?? 0))
-                .ToArray()
-                .Take(query.Size ?? 50);
+            var sizeToTake = query.Size!.Value - processInstancesKeys.Count;
+            var processInstancesKeysToTake = data.Documents.GroupBy(x => x.Value.ProcessInstanceKey).Select(x => x.First()).Where(x => intentsFilter.Contains(x.Intent)).Take(sizeToTake).Select(x => x.Value.ProcessInstanceKey).ToArray();
+            var hitsToTake = data.Hits.GroupBy(x => x.Source.Value.ProcessInstanceKey).Select(x => x.First()).Where(x => intentsFilter.Contains(x.Source.Intent)).Take(sizeToTake).ToArray();
 
-        var processIds = processes.Select(x => x.Key).ToArray();
+            processInstancesKeys.AddRange(processInstancesKeysToTake);
+
+            searchAfter = hitsToTake.LastOrDefault()?.Sorts.ToArray() ?? data.Hits?.LastOrDefault()?.Sorts.ToArray() ?? Array.Empty<object>();
+
+            if (processInstancesKeys.Count >= query.Size!.Value || searchAfter?.Length == 0)
+            {
+                break;
+            }
+        }
+
+        if (!processInstancesKeys.Any())
+        {
+            return new SearchProcessInstanceQueryResponse(Array.Empty<ProcessInstanceDto>(), searchAfter.Cast<object>().ToArray());
+        }
+
         var result = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
-           .Index("zeebe-record-process-instance")
-           .Size((query.Size ?? 50) * 10)
-           .Sort(sort => sort.Descending("timestamp"))
+           .Index(ProcessInstanceKeyword.INDEX)
+           .Size(query.Size! * 3)
+           .Sort(sort => sort.Descending(_ => _.Timestamp))
            .Query(q => +q
-               .Term(t => t.Value.BpmnElementType, "PROCESS") && +q
-               .Terms(t => t.Field("intent").Terms("ELEMENT_TERMINATED", "ELEMENT_COMPLETED", "ELEMENT_ACTIVATED")) && +q
-               .Terms(t => t.Field("value.processInstanceKey").Terms(processIds)
-               )));
+               .Term(t => t.Value.BpmnElementType, ProcessInstanceKeyword.BPMN_ELEMENT_TYPE) && +q
+               .Terms(t => t.Field(_ => _.Intent).Terms(ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED)) && +q
+               .Terms(t => t.Field(_ => _.Value.ProcessInstanceKey).Terms(processInstancesKeys))));
 
         var documentsPerProcessInstance = result.Documents.GroupBy(x => x.Value.ProcessInstanceKey).ToDictionary(x => x.Key, x => x.ToArray());
-        var processInstances = new List<ProcessInstanceDto>();
 
-        foreach (var documents in documentsPerProcessInstance)
+        var processInstances = documentsPerProcessInstance.Select(documents =>
         {
             var bpmnProcessId = documents.Value.First().Value.BpmnProcessId;
 
-            var processActivatedElement = documents.Value.FirstOrDefault(x => x.Intent == "ELEMENT_ACTIVATED" && x.Value.BpmnElementType == "PROCESS");
-            var processCompletedElement = documents.Value.FirstOrDefault(x => x.Intent == "ELEMENT_COMPLETED" && x.Value.BpmnElementType == "PROCESS");
-            var processTerminatedElement = documents.Value.FirstOrDefault(x => x.Intent == "ELEMENT_TERMINATED" && x.Value.BpmnElementType == "PROCESS");
+            var processActivatedElement = documents.Value.FirstOrDefault(x => x.Intent == ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED);
+            var processCompletedElement = documents.Value.FirstOrDefault(x => x.Intent == ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED);
+            var processTerminatedElement = documents.Value.FirstOrDefault(x => x.Intent == ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED);
 
             var startDate = processActivatedElement?.Timestamp;
-            var endDate =  processCompletedElement?.Timestamp ?? processTerminatedElement?.Timestamp;
+            var endDate = processCompletedElement?.Timestamp ?? processTerminatedElement?.Timestamp;
             var version = processActivatedElement?.Value?.Version ?? 0;
             var processDefinitionKey = processActivatedElement?.Value?.ProcessDefinitionKey ?? 0;
 
-            var processInstance = new ProcessInstanceDto
+            return new ProcessInstanceDto
             {
                 Key = documents.Key,
                 BpmnProcessId = bpmnProcessId,
-                StartDate = startDate is null 
+                StartDate = startDate is null
                     ? null
                     : DateTimeOffset.FromUnixTimeMilliseconds(startDate.Value),
                 EndDate = endDate is null
@@ -114,12 +115,9 @@ internal class SearchProcessInstanceQueryHandler : IRequestHandler<SearchProcess
                 ProcessVersion = version,
                 ProcessDefinitionKey = processDefinitionKey,
             };
+        })
+        .ToArray();
 
-            processInstances.Add(processInstance);
-        }
-
-        return new SearchProcessInstanceQueryResponse(processInstances.ToArray());
+        return new SearchProcessInstanceQueryResponse(processInstances.ToArray(), searchAfter.Cast<object>().ToArray());
     }
 }
-
-public record Element(long Key, long ActivatedElementCount, long TerminatedElementCount, long CompletedElementCount);

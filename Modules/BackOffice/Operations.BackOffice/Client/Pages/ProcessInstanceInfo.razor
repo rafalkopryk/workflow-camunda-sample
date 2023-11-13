@@ -1,24 +1,28 @@
 ﻿@inject IProcessDefinitionService processDefinitionService;
 @inject IProcessInstanceService processInstanceService;
 @inject IProcessIncidentService processIncidentsService;
+@inject IProcessFlowNodeInstanceService processFlowNodeInstanceService;
+
 
 @page "/process-instances/{instanceId:long}"
+@using Operations.BackOffice.Client.Components.AuditLogs
 @using Operations.BackOffice.Client.Components.BPMNViewer
 @using Operations.BackOffice.Client.Components.ProcessIncident
 @using Operations.BackOffice.Client.Data.Incidents;
 @using Operations.BackOffice.Client.Data.ProcessDefinitions;
+@using Operations.BackOffice.Client.Data.ProcessFlowNodeInstances;
 @using Operations.BackOffice.Client.Data.ProcessInstances;
 @using Operations.BackOffice.Client.Data.Incidents.Dto;
 @using Operations.BackOffice.Client.Data.ProcessInstances.Dto;
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-16">
     <MudGrid>
         <MudItem xs="12">
             <MudText Typo="Typo.h3" GutterBottom="true">Process Instance <code>@InstanceId</code> Details</MudText>
         </MudItem>
         @if (_instance != null)
         {
-            <MudItem xs="12" lg="4">
+            <MudItem xs="12" lg="3" xxl="2">
                 <MudCard>
                     <MudCardHeader>
                         <CardHeaderContent>Process Instance Attributes</CardHeaderContent>
@@ -36,7 +40,7 @@
                                 <MudField Label="Process State" Variant="Variant.Text" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.ContentCopy">@_instance.State</MudField>
                             </MudItem>
                             <MudItem xs="12">
-                                <MudField Label="Process Definition Id" Variant="Variant.Text" InnerPadding="false">@_instance.BpmnProcessId</MudField>
+                                <MudField Label="BPMN Process Id" Variant="Variant.Text" InnerPadding="false">@_instance.BpmnProcessId</MudField>
                             </MudItem>
                             <MudItem xs="12">
                                 <MudField Label="Started At" Variant="Variant.Text" InnerPadding="false">@_instance.StartDate</MudField>
@@ -49,7 +53,8 @@
                 </MudCard>
             </MudItem>
 
-            <MudItem xs="12" lg="8">
+
+            <MudItem xs="12" lg="9" xxl="10">
                 <MudCard>
                     <MudCardHeader Class="py-2 pr-2">
                         <CardHeaderContent>
@@ -75,6 +80,21 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudTabs>
+                            <MudTabPanel Text="Audit log">
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudCard>
+                                            <MudCardHeader>
+                                                <CardHeaderContent>Runtime</CardHeaderContent>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <AuditLogsTable ProcessFlowNodeInstanceService="@processFlowNodeInstanceService" ProcessInstanceId="@InstanceId"/>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
+
                             <MudTabPanel Text="Incidents">
                                 <MudGrid>
                                     <MudItem xs="12">
@@ -127,7 +147,8 @@
             new ProcessInstanceDto
                 {
                     Key = InstanceId,
-                }))).Items.First();
+                },
+                1))).Items.First();
 
         var sequenceFlows = await processInstanceService.GetProcessInstanceSequenceFlows(InstanceId);
 

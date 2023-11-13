@@ -1,0 +1,136 @@
+﻿@inject IProcessDefinitionService processDefinitionService;
+@inject IProcessInstanceService processInstanceService;
+@inject NavigationManager navigationManager;
+
+@page "/process-instances"
+
+@using Operations.BackOffice.Client.Data.ProcessDefinitions;
+@using Operations.BackOffice.Client.Data.ProcessDefinitions.Dto;
+@using Operations.BackOffice.Client.Data.ProcessInstances.Dto;
+@using Operations.BackOffice.Client.Components.BPMNViewer;
+@using Operations.BackOffice.Client.Components.ProcessInstances;
+@using Operations.BackOffice.Client.Data.ProcessInstances;
+@using MudBlazor;
+@using Operations.BackOffice.Client.Utils;
+
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-16">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h3" GutterBottom="true">Process Instances</MudText>
+        </MudItem>
+
+        <MudItem xs="12" lg="3" xxl="2">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>Filter</CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudSelect T="string" Label="BPMN Process Id" AnchorOrigin="Origin.BottomCenter" Value="@_bpmnProcessId" ValueChanged="async (value) => await OnBpmnProcessIdChanged(value)" Clearable>
+                                @foreach (var bpmnProcessId in BpmnProcessIds)
+                                {
+                                    <MudSelectItem Value="@bpmnProcessId" />
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudSelect T="int?" Label="Version" AnchorOrigin="Origin.BottomCenter" Value="@_bpmnProcessVersion" ValueChanged="async (value) => await OnBpmnProcessDefinitionChanged(value)" Clearable>
+                                @foreach (var processDefinitionDto in ProcessDefinitionVersions)
+                                {
+                                    <MudSelectItem Value="@processDefinitionDto.Version">@processDefinitionDto.Version</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudRadioGroup @bind-SelectedOption="@_bpmnProcessInstanceState" >
+                                <MudRadio Option="@ProcessInstanceState.ACTIVE">ACTIVE</MudRadio>
+                                <MudRadio Option="@ProcessInstanceState.COMPLETED">COMPLETED</MudRadio>
+                                <MudRadio Option="@ProcessInstanceState.CANCELED">CANCELED</MudRadio>
+                            </MudRadioGroup>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="9" xxl="10">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>BPMN Diagram</CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Style="height: 550px">
+                    @if (_bpmnXml != null)
+                    {
+                        <BPMNViewer Xml="@_bpmnXml"></BPMNViewer>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">There is no Process selected</MudText>
+                        <MudText Typo="Typo.body1" GutterBottom="true" Align="Align.Center">To see a Diagram, select a Process in the Filters panel</MudText>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>Process Instances for definition <code>@(_bpmnProcessId ?? "ALL")</code></CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <HistoricProcessInstancesTable BpmnProcessId="@_bpmnProcessId" ProcessDefinitionKey=@CurrentProcessDefinition?.Key ProcessState="@_bpmnProcessInstanceState" ProcessInstanceService="@processInstanceService" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+    </MudGrid>
+</MudContainer>
+@code {
+    private string? _bpmnXml;
+    private string? _bpmnProcessId;
+    private int? _bpmnProcessVersion;
+    private ProcessInstanceState _bpmnProcessInstanceState { get; set; } = ProcessInstanceState.ACTIVE;
+
+    private Dictionary<string, ProcessDefinitionDto[]> _processDefinitions = new Dictionary<string, ProcessDefinitionDto[]>();
+
+    private ProcessDefinitionDto[] ProcessDefinitionVersions => _processDefinitions.FirstOrDefault(x => x.Key == _bpmnProcessId).Value ?? Array.Empty<ProcessDefinitionDto>();
+    private ProcessDefinitionDto? CurrentProcessDefinition => ProcessDefinitionVersions.FirstOrDefault(x => x.Version == _bpmnProcessVersion);
+    private string[] BpmnProcessIds => _processDefinitions?.Select(x => x.Key).ToArray() ?? Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var processDefinitionKey = navigationManager.TryGetQueryString<long>("processDefinitionKey", out var outValue)
+           ? outValue
+           : (long?)default;
+
+        var definitions = (await processDefinitionService.SearchProcessDefinitions(new SearchProcessDefinitionsQuery())).Items ?? Array.Empty<ProcessDefinitionDto>();
+        _processDefinitions = definitions!.GroupBy(x => x.BpmnProcessId)!.ToDictionary(x => x.Key, y => y.OrderByDescending(_ => _.Version)!.ToArray());
+
+        if (processDefinitionKey != null)
+        {
+            var processDefinition = definitions.FirstOrDefault(x => x.Key == processDefinitionKey);
+
+            _bpmnProcessVersion = processDefinition?.Version;
+            _bpmnProcessId = processDefinition?.BpmnProcessId;
+
+            _bpmnXml = await processDefinitionService.GetProcessDefinitionXml(CurrentProcessDefinition!.Key!.Value);
+        }
+    }
+
+    private async Task OnBpmnProcessIdChanged(string value)
+    {
+        _bpmnProcessId = value;
+        _bpmnProcessVersion = null;
+        _bpmnXml = null;
+    }
+
+    private async Task OnBpmnProcessDefinitionChanged(int? value)
+    {
+        _bpmnProcessVersion = value;
+
+        _bpmnXml = value != null
+            ? await processDefinitionService.GetProcessDefinitionXml(CurrentProcessDefinition!.Key!.Value)
+            : null;
+    }
+}

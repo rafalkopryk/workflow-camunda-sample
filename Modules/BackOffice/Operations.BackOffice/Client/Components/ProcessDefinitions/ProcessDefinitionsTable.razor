@@ -41,18 +41,18 @@
                                 Hover="false">
 
                                 <HeaderContent>
-                                    <MudTh>Definition Key</MudTh>
+                                    <MudTh>Key</MudTh>
                                     <MudTh>Version</MudTh>
                                     <MudTh>Name</MudTh>
                                     <MudTh></MudTh>
                                 </HeaderContent>
 
                                 <RowTemplate>
-                                    <MudTd DataLabel="Definition Key">@context.Key</MudTd>
+                                    <MudTd DataLabel="Key">@context.Key</MudTd>
                                     <MudTd DataLabel="Version">@context.Version</MudTd>
                                     <MudTd DataLabel="Name">@context.Name</MudTd>
                                     <MudTd>
-                                        <MudIconButton Icon="@Icons.Material.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key.Value))" Title="Definition Details"/>
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Info" OnClick="@(() => OnDetailsClick(context.Key!.Value))" Title="Definition Details"/>
                                     </MudTd>
                                 </RowTemplate>
 
@@ -96,9 +96,9 @@
         };
     }
 
-    void OnDetailsClick(long definitionKey)
+    void OnDetailsClick(long key)
     {
-        navigationManager.NavigateTo($"process-definitions/{definitionKey}");
+        navigationManager.NavigateTo($"process-instances?processDefinitionKey={key}");
     }
 
     private void ShowDefinitionVersions(string bpmnProcessId)

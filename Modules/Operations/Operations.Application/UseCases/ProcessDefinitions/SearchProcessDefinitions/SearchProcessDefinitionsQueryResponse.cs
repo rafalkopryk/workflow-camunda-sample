@@ -2,4 +2,4 @@
 
 namespace Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefinitions;
 
-public record SearchProcessDefinitionsQueryResponse(ProcessDefinitionDto[] Items);
+public record SearchProcessDefinitionsQueryResponse(ProcessDefinitionDto[] Items, object[] SortValues);

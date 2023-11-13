@@ -1,0 +1,3 @@
+﻿namespace Operations.BackOffice.Client.Data.ProcessFlowNodeInstances.Dto;
+
+public record SearchFlowNodeInstancesQuery(SearchFlowNodeInstancesFlowNodeInstanceDto Filter);

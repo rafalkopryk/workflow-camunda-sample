@@ -4,7 +4,7 @@
 
 @inject NavigationManager NavigationManager
 
-<MudTable
+<MudTable @ref="_processInstanceTable"
     T="ProcessInstanceDto"
           ServerData="@(new Func<TableState, Task<TableData<ProcessInstanceDto>>>(GetProcessInstancesFromServer))"
     Hover="true"
@@ -13,7 +13,7 @@
     <HeaderContent>
         <MudTh>State</MudTh>
         <MudTh>Instance ID</MudTh>
-        <MudTh>Business Key</MudTh>
+        <MudTh>BPMN Process Id</MudTh>
         <MudTh>Start Time</MudTh>
         <MudTh>End Time</MudTh>
         <MudTh></MudTh>
@@ -26,7 +26,6 @@
                 <MudIcon Icon="@Icons.Material.Outlined.PlayCircleOutline" Color="Color.Tertiary" Title="Active" />
             }
             else if (context.State == ProcessInstanceState.CANCELED)
-            
             {
                 <MudIcon Icon="@Icons.Material.Outlined.PauseCircleOutline" Color="Color.Default" Title="Canceled" />
             }
@@ -40,7 +39,7 @@
             }
         </MudTd>
         <MudTd DataLabel="Instance ID">@context.Key</MudTd>
-        <MudTd DataLabel="Business Key">@context.BpmnProcessId</MudTd>
+        <MudTd DataLabel="BPMN Process Id">@context.BpmnProcessId</MudTd>
         <MudTd DataLabel="Start Time">@context.StartDate</MudTd>
         <MudTd DataLabel="End Time">@context.EndDate</MudTd>
         <MudTd DataLabel="Actions">
@@ -59,10 +58,30 @@
     public IProcessInstanceService ProcessInstanceService { get; init; }
 
     [Parameter]
-    public long ProcessDefinitionKey { get; set; }
+    public long? ProcessDefinitionKey { get; set; }
+
+    [Parameter]
+    public string? BpmnProcessId { get; set; }
+
+    [Parameter]
+    public ProcessInstanceState? ProcessState { get; set; }
 
     [Parameter]
     public int PageSize { get; set; } = 10;
+
+    private MudTable<ProcessInstanceDto> _processInstanceTable;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            return;
+        }
+
+        await _processInstanceTable.ReloadServerData();
+    }
+
 
     private async Task<TableData<ProcessInstanceDto>> GetProcessInstancesFromServer(TableState state)
     {
@@ -70,7 +89,10 @@
             new ProcessInstanceDto
             {
                 ProcessDefinitionKey = ProcessDefinitionKey,
-            }
+                BpmnProcessId = BpmnProcessId,
+                State = ProcessState
+            },
+            PageSize
         ))).Items;
         var totalInstances = instances.Length;
         

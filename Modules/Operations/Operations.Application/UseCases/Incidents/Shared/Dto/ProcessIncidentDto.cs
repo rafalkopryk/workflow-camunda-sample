@@ -15,5 +15,4 @@ public enum ProcessIncidenState
 {
     ACTIVE,
     RESOLVED,
-    PENDING,
 }

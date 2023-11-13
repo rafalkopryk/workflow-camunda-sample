@@ -65,17 +65,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credit.Front.Shared", "Modu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Operations", "Operations", "{9465F07B-BE44-4914-93BC-DCDF4A588111}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operations.WebApi", "Modules\Operations\Operations.WebApi\Operations.WebApi.csproj", "{00CB9801-49E5-4DB2-A44F-84216049A869}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operations.WebApi", "Modules\Operations\Operations.WebApi\Operations.WebApi.csproj", "{00CB9801-49E5-4DB2-A44F-84216049A869}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operations.Application", "Modules\Operations\Operations.Application\Operations.Application.csproj", "{DEC99E36-2E2F-4C69-994D-3098914F1E20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operations.Application", "Modules\Operations\Operations.Application\Operations.Application.csproj", "{DEC99E36-2E2F-4C69-994D-3098914F1E20}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BackOffice", "BackOffice", "{58FCB0C8-5657-4BE1-98B9-6E01DBD054B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operations.BackOffice.Server", "Modules\BackOffice\Operations.BackOffice\Server\Operations.BackOffice.Server.csproj", "{BE051702-8180-47A8-87EC-4F1C6D5826BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operations.BackOffice.Server", "Modules\BackOffice\Operations.BackOffice\Server\Operations.BackOffice.Server.csproj", "{BE051702-8180-47A8-87EC-4F1C6D5826BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operations.BackOffice.Client", "Modules\BackOffice\Operations.BackOffice\Client\Operations.BackOffice.Client.csproj", "{D952433F-7C44-44AE-8B32-79D86BEDA4B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operations.BackOffice.Client", "Modules\BackOffice\Operations.BackOffice\Client\Operations.BackOffice.Client.csproj", "{D952433F-7C44-44AE-8B32-79D86BEDA4B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operations.BackOffice.Shared", "Modules\BackOffice\Operations.BackOffice\Shared\Operations.BackOffice.Shared.csproj", "{D1FDF660-D770-43F0-B754-5D9F14B00986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Operations.BackOffice.Shared", "Modules\BackOffice\Operations.BackOffice\Shared\Operations.BackOffice.Shared.csproj", "{D1FDF660-D770-43F0-B754-5D9F14B00986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
