@@ -8,6 +8,12 @@ using OpenTelemetry.Trace;
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((ctx, services) =>
     {
+        services.Configure<HostOptions>(options =>
+        {
+            options.ServicesStartConcurrently = true;
+            options.ServicesStopConcurrently = false;
+        });
+
         services.AddZeebe(
            options => ctx.Configuration.GetSection("Zeebe").Bind(options),
            builder => builder
