@@ -8,15 +8,10 @@ using Operations.Application.UseCases.ProcessDefinitions.Shared.Documents;
 
 namespace Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefinition;
 
-internal class SearchProcessDefinitionsQueryHandler : IRequestHandler<SearchProcessDefinitionsQuery, Result<SearchProcessDefinitionsQueryResponse>>
+internal class SearchProcessDefinitionsQueryHandler(ElasticClient elasticsearchClient) : IRequestHandler<SearchProcessDefinitionsQuery, Result<SearchProcessDefinitionsQueryResponse>>
 {
-    private readonly ElasticClient _elasticsearchClient;
-
-    public SearchProcessDefinitionsQueryHandler(ElasticClient elasticsearchClient)
-    {
-        _elasticsearchClient = elasticsearchClient;
-    }
-
+    private readonly ElasticClient _elasticsearchClient = elasticsearchClient;
+    
     public async Task<Result<SearchProcessDefinitionsQueryResponse>> Handle(SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
     {
         var searchAfter = query.SearchAfter?.Cast<object>().ToArray();

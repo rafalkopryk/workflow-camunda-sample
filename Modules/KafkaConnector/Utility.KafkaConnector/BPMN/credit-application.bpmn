@@ -60,7 +60,7 @@
           </zeebe:ioMapping>
           <zeebe:taskHeaders />
         </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1xkz0sb</bpmn:incoming>
+        <bpmn:incoming>Flow_1gvhb5f</bpmn:incoming>
         <bpmn:outgoing>Flow_15dryqn</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:intermediateCatchEvent id="Event_DecisionGenerated" name="Decision Generated" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 256 416&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; preserveAspectRatio=&#39;xMidYMid&#39;%3E%3Cpath d=&#39;M201.816 230.216c-16.186 0-30.697 7.171-40.634 18.461l-25.463-18.026c2.703-7.442 4.255-15.433 4.255-23.797 0-8.219-1.498-16.076-4.112-23.408l25.406-17.835c9.936 11.233 24.409 18.365 40.548 18.365 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184-29.875 0-54.184 24.305-54.184 54.184 0 5.348.808 10.505 2.258 15.389l-25.423 17.844c-10.62-13.175-25.911-22.374-43.333-25.182v-30.64c24.544-5.155 43.037-26.962 43.037-53.019C124.171 24.305 99.862 0 69.987 0 40.112 0 15.803 24.305 15.803 54.184c0 25.708 18.014 47.246 42.067 52.769v31.038C25.044 143.753 0 172.401 0 206.854c0 34.621 25.292 63.374 58.355 68.94v32.774c-24.299 5.341-42.552 27.011-42.552 52.894 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-25.883-18.253-47.553-42.552-52.894v-32.775a69.965 69.965 0 0 0 42.6-24.776l25.633 18.143c-1.423 4.84-2.22 9.946-2.22 15.24 0 29.879 24.309 54.184 54.184 54.184 29.875 0 54.184-24.305 54.184-54.184 0-29.879-24.309-54.184-54.184-54.184zm0-126.695c14.487 0 26.27 11.788 26.27 26.271s-11.783 26.27-26.27 26.27-26.27-11.787-26.27-26.27c0-14.483 11.783-26.271 26.27-26.271zm-158.1-49.337c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27zm52.541 307.278c0 14.483-11.783 26.27-26.27 26.27s-26.271-11.787-26.271-26.27c0-14.483 11.784-26.27 26.271-26.27s26.27 11.787 26.27 26.27zm-26.272-117.97c-20.205 0-36.642-16.434-36.642-36.638 0-20.205 16.437-36.642 36.642-36.642 20.204 0 36.641 16.437 36.641 36.642 0 20.204-16.437 36.638-36.641 36.638zm131.831 67.179c-14.487 0-26.27-11.788-26.27-26.271s11.783-26.27 26.27-26.27 26.27 11.787 26.27 26.27c0 14.483-11.783 26.271-26.27 26.271z&#39; style=&#39;fill:%23231f20&#39;/%3E%3C/svg%3E">
@@ -82,7 +82,7 @@
       <bpmn:endEvent id="Event_1np4qug">
         <bpmn:incoming>Flow_00e5q6w</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1gvhb5f" sourceRef="Event_0f0c09x" targetRef="Activity_1ysev86" />
+      <bpmn:sequenceFlow id="Flow_1gvhb5f" sourceRef="Event_0f0c09x" targetRef="Activity_Simulation" />
       <bpmn:sequenceFlow id="Flow_15dryqn" sourceRef="Activity_Simulation" targetRef="Event_SimulationFinished" />
       <bpmn:sequenceFlow id="Flow_0oe7ocx" sourceRef="Event_SimulationFinished" targetRef="Activity_Decision" />
       <bpmn:sequenceFlow id="Flow_15rrgi1" sourceRef="Activity_Decision" targetRef="Event_DecisionGenerated" />
@@ -116,14 +116,6 @@
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0oe7ocx</bpmn:incoming>
         <bpmn:outgoing>Flow_15rrgi1</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_1xkz0sb" sourceRef="Activity_1ysev86" targetRef="Activity_Simulation" />
-      <bpmn:serviceTask id="Activity_1ysev86">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="Error" retries="0" />
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1gvhb5f</bpmn:incoming>
-        <bpmn:outgoing>Flow_1xkz0sb</bpmn:outgoing>
       </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_1eslz18" sourceRef="Activity_ApplicationDecision" targetRef="Gateway_Decision" />
@@ -336,8 +328,8 @@
         <dc:Bounds x="260" y="55" width="910" height="210" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0ickd1d" bpmnElement="Activity_Simulation">
-        <dc:Bounds x="620" y="114" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_1sni1bl" bpmnElement="Event_0f0c09x">
+        <dc:Bounds x="302" y="136" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1rwq84m" bpmnElement="Event_DecisionGenerated">
         <dc:Bounds x="1012" y="136" width="36" height="36" />
@@ -357,18 +349,15 @@
       <bpmndi:BPMNShape id="Activity_1w5714u_di" bpmnElement="Activity_Decision">
         <dc:Bounds x="860" y="114" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1sni1bl" bpmnElement="Event_0f0c09x">
-        <dc:Bounds x="302" y="136" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0glrl0c_di" bpmnElement="Activity_1ysev86">
-        <dc:Bounds x="410" y="114" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0ickd1d" bpmnElement="Activity_Simulation">
+        <dc:Bounds x="480" y="114" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_0u0fn4l" bpmnElement="Flow_1gvhb5f">
         <di:waypoint x="338" y="154" />
-        <di:waypoint x="410" y="154" />
+        <di:waypoint x="480" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1h598a6" bpmnElement="Flow_15dryqn">
-        <di:waypoint x="720" y="154" />
+        <di:waypoint x="580" y="154" />
         <di:waypoint x="772" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1cppodf" bpmnElement="Flow_0oe7ocx">
@@ -382,10 +371,6 @@
       <bpmndi:BPMNEdge id="BPMNEdge_03yo8vu" bpmnElement="Flow_00e5q6w">
         <di:waypoint x="1048" y="154" />
         <di:waypoint x="1102" y="154" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1xkz0sb_di" bpmnElement="Flow_1xkz0sb">
-        <di:waypoint x="510" y="154" />
-        <di:waypoint x="620" y="154" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0mp3je3_di" bpmnElement="Event_ContractSigned">
         <dc:Bounds x="1352" y="147" width="36" height="36" />
