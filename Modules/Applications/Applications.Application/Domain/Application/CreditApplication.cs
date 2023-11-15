@@ -1,4 +1,6 @@
-﻿using Common.Application.Dictionary;
+﻿using Common.Application;
+using Common.Application.Dictionary;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace Applications.Application.Domain.Application;
 
@@ -30,28 +32,23 @@ public class CreditApplication
             Declaration = declaration,
             States = new List<State>
             {
-                State.ApplicationRegistered(SystemClock.Now),
+                State.ApplicationRegistered(DateTimeProvider.Shared.GetLocalNow()),
             }
         };
     }
 
-    public void ForwardTo(State state)
-    {
-        States.Add(state);
-    }
-
     public void GenerateDecision(Decision decision)
     {
-        States.Add(State.DecisionGenerated(State, decision, SystemClock.Now));
+        States.Add(State.DecisionGenerated(State, decision, DateTimeProvider.Shared.GetLocalNow()));
     }
 
     public void SignContract()
     {
-        States.Add(State.ContractSigned(State, SystemClock.Now));
+        States.Add(State.ContractSigned(State, DateTimeProvider.Shared.GetLocalNow()));
     }
 
     public void CloseApplication()
     {
-        States.Add(State.ApplicationClosed(State, SystemClock.Now));
+        States.Add(State.ApplicationClosed(State, DateTimeProvider.Shared.GetLocalNow()));
     }
 }

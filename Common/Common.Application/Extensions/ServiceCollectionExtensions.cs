@@ -13,6 +13,8 @@ public static class ServiceCollectionExtensions
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string serviceName)
     {
+        services.AddSingleton(DateTimeProvider.Shared);
+
         services.Configure<HostOptions>(options =>
         {
             options.ServicesStartConcurrently = true;
