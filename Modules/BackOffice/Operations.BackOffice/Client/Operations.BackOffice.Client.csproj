@@ -15,6 +15,7 @@
     <None Include="Components\AuditLogs\AuditLogsTable.razor" />
     <None Include="Components\ProcessIncident\ProcessIncidentsTable.razor" />
     <None Include="Pages\ProcessesInstances.razor" />
+    <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 using Applications.Application.Extensions;
 using Common.Application.Extensions;
+using OpenTelemetry.Resources;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -14,7 +15,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-builder.Services.AddInfrastructure(builder.Configuration, "Credit.Applications");
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("Credit.Applications", serviceVersion: "1.0.0")
+    .AddTelemetrySdk();
+
+builder.Logging.ConfigureLogger(builder.Configuration, resourceBuilder);
+builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
 builder.Services.AddApplication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -22,7 +28,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors();
-
 
 var app = builder.Build();
 

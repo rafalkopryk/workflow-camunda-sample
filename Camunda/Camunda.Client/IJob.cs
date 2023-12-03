@@ -14,7 +14,7 @@ public interface IJob
     long ElementInstanceKey { get; }
     string Worker { get; }
     int Retries { get; }
-    DateTime Deadline { get; }
+    DateTimeOffset Deadline { get; }
     string Variables { get; }
     string CustomHeaders { get; }
 

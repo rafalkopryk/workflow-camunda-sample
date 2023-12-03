@@ -12,7 +12,7 @@ internal record InternalJob : IJob
     public long ElementInstanceKey { get; init; }
     public string Worker { get; init; }
     public int Retries { get; init; }
-    public DateTime Deadline { get; init; }
+    public DateTimeOffset Deadline { get; init; }
     public string Variables { get; init; }
     public string CustomHeaders { get; init; }
 }

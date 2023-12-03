@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace Camunda.Client;
 
@@ -35,29 +36,40 @@ internal class ZeebeWorker<T> : BackgroundService
                 TenantIds = { _serviceTaskConfiguration.TenatIds },
             };
 
-            using var activity = Diagnostics.Consumer.Start(jobType);
+            using var activity = Diagnostics.Consumer.StartStreamActivatedJobs(jobType);
 
             try
             {
-                using var call = _client.StreamActivatedJobs(request, cancellationToken: stoppingToken);
+                using var call = _client.StreamActivatedJobs(
+                    request,
+                    deadline: TimeProvider.System.GetUtcNow().AddMinutes(1).UtcDateTime,
+                    cancellationToken: stoppingToken);
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
-                    await HandleJob(response, stoppingToken);
+                    await HandleJob(response, CancellationToken.None);
                 }
+            }
+            catch (RpcException ex) when (ex.Status.StatusCode == Grpc.Core.StatusCode.DeadlineExceeded)
+            {
+                continue;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
-                
+
                 activity?.RecordException(ex);
             }
         }
     }
 
-    private async ValueTask HandleJob(ActivatedJob activatedJob, CancellationToken cancellationToken)
+    private async ValueTask HandleJob(ActivatedJob activatedJob, CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
             await Task.FromCanceled(cancellationToken);
+
+        using var activity = Diagnostics.Consumer.StartHandleTask(activatedJob.ElementId);
+        TagList tagLists = [new KeyValuePair<string, object?>("job", activatedJob.Type), new KeyValuePair<string, object?>("elementId", activatedJob.ElementId)];
+        Diagnostics.StreamMessagesCounter.Add(1, tagLists);
 
         try
         {
@@ -65,7 +77,7 @@ internal class ZeebeWorker<T> : BackgroundService
             {
                 BpmnProcessId = activatedJob.BpmnProcessId,
                 CustomHeaders = activatedJob.CustomHeaders,
-                Deadline = DateTimeOffset.FromUnixTimeMilliseconds(activatedJob.Deadline).LocalDateTime,
+                Deadline = DateTimeOffset.FromUnixTimeMilliseconds(activatedJob.Deadline).ToLocalTime(),
                 Variables = activatedJob.Variables,
                 ElementId = activatedJob.ElementId,
                 ElementInstanceKey = activatedJob.ElementInstanceKey,
@@ -95,16 +107,27 @@ internal class ZeebeWorker<T> : BackgroundService
         }
         catch (Exception ex)
         {
+            activity?.RecordException(ex);
+
             _logger.LogError(ex, "Error during subscribe job {jobType}", activatedJob.Type);
 
-            var retryBackOff = _serviceTaskConfiguration.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
-            await _client.FailJobAsync(new FailJobRequest
+            try
             {
-                ErrorMessage = ex.Message,
-                JobKey = activatedJob.Key,
-                Retries = activatedJob.Retries - 1,
-                RetryBackOff = retryBackOff,
-            });
+                var retryBackOff = _serviceTaskConfiguration.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
+                await _client.FailJobAsync(new FailJobRequest
+                {
+                    ErrorMessage = ex.Message,
+                    JobKey = activatedJob.Key,
+                    Retries = activatedJob.Retries - 1,
+                    RetryBackOff = retryBackOff,
+                });
+            }
+            catch (Exception)
+            {
+                activity?.RecordException(ex);
+                _logger.LogError(ex, "Error during fail job {jobType}", activatedJob.Type);
+                throw;
+            }
         }
     }
 }

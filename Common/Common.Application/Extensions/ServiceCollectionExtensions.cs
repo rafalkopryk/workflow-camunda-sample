@@ -8,10 +8,26 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Common.Kafka;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Metrics;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Logs;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string serviceName)
+    public static void ConfigureLogger(this ILoggingBuilder loggingBuilder, IConfiguration configuration, ResourceBuilder resourceBuilder)
+    {
+        if (configuration.GetValue<bool>("otel:enabled"))
+        {
+            loggingBuilder.AddOpenTelemetry(options => options
+            .SetResourceBuilder(resourceBuilder)
+            .AddOtlpExporter(configure =>
+            {
+                configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
+            }));
+        }
+    }
+
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
     {
         services.AddSingleton(DateTimeProvider.Shared);
 
@@ -26,33 +42,37 @@ public static class ServiceCollectionExtensions
         if (configuration.GetValue<bool>("otel:enabled"))
         {
             services.AddOpenTelemetry()
-            .WithTracing(builder => builder
-                .AddAspNetCoreInstrumentation(x =>
-                {
-                    x.Filter = (filter) =>
+                .WithTracing(builder => builder
+                    .AddAspNetCoreInstrumentation(x =>
                     {
-                        var swagger = filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
-                        var result = swagger;
-                        return !result;
-                    };
-                    x.RecordException = true;
-                })
-                .AddKafkaInstrumentation()
-                .AddGrpcClientInstrumentation()
-                .AddSqlClientInstrumentation(x =>
-                {
-                    x.SetDbStatementForText = true;
-                    x.SetDbStatementForStoredProcedure = true;
-                    x.RecordException = true;
-                })
-                .SetErrorStatusOnException()
-                .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                        .AddService(serviceName: serviceName, serviceVersion: "1.0.0")
-                        .AddTelemetrySdk())
-                .AddOtlpExporter(configure =>
-                {
-                    configure.Endpoint = new Uri(configuration.GetSection("otel:url").Value);
-                }));
+                        x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
+                        x.RecordException = true;
+                    })
+                    .AddKafkaInstrumentation()
+                    .AddGrpcClientInstrumentation()
+                    .AddSqlClientInstrumentation(x =>
+                    {
+                        x.SetDbStatementForText = true;
+                        x.SetDbStatementForStoredProcedure = true;
+                        x.RecordException = true;
+                    })
+                    .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
+                    .SetErrorStatusOnException()
+                    .SetResourceBuilder(resourceBuilder)
+                    .AddOtlpExporter(configure =>
+                    {
+                        configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
+                    }))
+                .WithMetrics(builder => builder
+                    .AddAspNetCoreInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddProcessInstrumentation()
+                    .SetResourceBuilder(resourceBuilder)
+                    .AddOtlpExporter(configure =>
+                    {
+                        configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
+                    }));
+
         }
     }
 }

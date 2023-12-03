@@ -11,8 +11,10 @@ services:
       - zeebe
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       otel__url: http://otel:4317
-       otel__enabled: false
+       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
+       OTEL__METRICS__EXPORTER: "otlp" 
+       OTEL__LOGS__EXPORTER: "otlp" 
+       otel__enabled: true
        ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-applications
@@ -32,8 +34,10 @@ services:
 
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       otel__url: http://otel:4317
-       otel__enabled: false
+       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
+       OTEL__METRICS__EXPORTER: "otlp" 
+       OTEL__LOGS__EXPORTER: "otlp" 
+       otel__enabled: true
        ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-calculations
@@ -51,8 +55,10 @@ services:
       - zeebe
     environment:
        Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       otel__url: http://otel:4317
-       otel__enabled: false
+       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
+       OTEL__METRICS__EXPORTER: "otlp" 
+       OTEL__LOGS__EXPORTER: "otlp" 
+       otel__enabled: true
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: utility-kafkaconnector
        EventBus__enableautocommit: "false"
@@ -78,6 +84,8 @@ services:
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_AUTHENTICATION_USERNAME=${ELASTIC_USER}
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_AUTHENTICATION_PASSWORD=${ELASTIC_PASSWORD}
       # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1000
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_DELAY=1
@@ -105,7 +113,11 @@ services:
     environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ELASTICSEARCH_USERNAME=${ELASTIC_USER}
+      - CAMUNDA_OPERATE_ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_USERNAME=${ELASTIC_USER}
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - management.endpoints.web.exposure.include=health
       - management.endpoint.health.probes.enabled=true
     healthcheck:
@@ -118,20 +130,38 @@ services:
       - zeebe
       - elasticsearch
 
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    volumes:
+        - certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: >
+        bash -c '
+        echo "Waiting for Elasticsearch availability";
+        until curl -s http://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        echo "Setting kibana_system password";
+        until curl -s -X POST  -u "${ELASTIC_USER}:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" http://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        echo "All done!";'
 
   elasticsearch: # https://hub.docker.com/_/elasticsearch
+    depends_on:
+      - setup
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     container_name: elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
-      - bootstrap.memory_lock=true
+      - node.name=elasticsearch
+      - path.logs=/var/log/
+      - cluster.name=elasticsearch
       - discovery.type=single-node
-      - xpack.security.enabled=false
-      # allow running with low disk space
-      - cluster.routing.allocation.disk.threshold_enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTICSEARCH_USERNAME=${ELASTIC_USER}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
     ulimits:
       memlock:
         soft: -1
@@ -148,6 +178,12 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTIC_APM_ACTIVE=true
+      - ELASTIC_APM_SERVER_URL=http://apm:8200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     ports:
       - 5602:5601
     volumes:
@@ -155,19 +191,23 @@ services:
     depends_on:
       - elasticsearch
 
-  # apm:
-  #   image: docker.elastic.co/apm/apm-server:7.17.5
-  #   container_name: apm
-  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-  #   cap_drop: ["ALL"]
-  #   ports:
-  #     - 8200:8200
-  #   depends_on:
-  #       - es01
-  #       - kibana
-  #   command: >
-  #     apm-server -e
-  #        -E output.elasticsearch.hosts=["elasticsearch:9200"]
+  apm:
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
+    container_name: apm
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+      - 8200:8200
+    depends_on:
+        - elasticsearch
+        - kibana
+    command: >
+       apm-server -e
+         -E output.elasticsearch.protocol=http
+         -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+         -E output.elasticsearch.username=${ELASTIC_USER}
+         -E output.elasticsearch.password=${ELASTIC_PASSWORD}
+         -E output.elasticsearch.ssl.enabled=false
 
   # otel:
   #   container_name: otel
@@ -233,9 +273,11 @@ services:
       context: .
       dockerfile: Modules/Operations/Operations.WebApi/Dockerfile
     environment:
-       otel__url: http://otel:4317
-       otel__enabled: false
-       Elasticsearch__Endpoint: http://elasticsearch:9200
+       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
+       OTEL__METRICS__EXPORTER: "otlp" 
+       OTEL__LOGS__EXPORTER: "otlp" 
+       otel__enabled: true
+       Elasticsearch__Endpoint: http://${ELASTIC_USER}:${ELASTIC_PASSWORD}@elasticsearch:9200
 
   operations.backoffice.server:
     image: ${DOCKER_REGISTRY-}operationsbackofficeserver
@@ -247,6 +289,8 @@ volumes:
   zeebe:
   elastic:
   kibana:
+  certs:
+    driver: local
 
 
 

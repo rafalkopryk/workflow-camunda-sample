@@ -1,13 +1,18 @@
 using Calculations.Application.Extensions;
 using Common.Application.Extensions;
-using Google;
+using OpenTelemetry.Resources;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddInfrastructure(builder.Configuration, "Credit.Calculations");
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("Credit.Calculations", serviceVersion: "1.0.0")
+    .AddTelemetrySdk();
+
+builder.Logging.ConfigureLogger(builder.Configuration, resourceBuilder);
+builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

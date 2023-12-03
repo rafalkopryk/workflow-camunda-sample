@@ -32,7 +32,7 @@ public class ZeebeBuilder : IZeebeBuilder
     public IZeebeBuilder AddWorker<T>(ServiceTaskConfiguration serviceTaskConfiguration, Action<IServiceCollection> configure = null) where T : class, IJobHandler
     {
         configure?.Invoke(_services);
-        _services.AddScoped(typeof(T));
+        _services.AddSingleton(typeof(T));
         _services.AddHostedService(x =>
         {
             var client = x.GetRequiredService<Gateway.GatewayClient>();
