@@ -11,6 +11,9 @@ using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
+using MassTransit.Logging;
+using MassTransit.Monitoring;
+using Camunda.Client;
 
 public static class ServiceCollectionExtensions
 {
@@ -29,7 +32,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
     {
-        services.AddSingleton(DateTimeProvider.Shared);
+        services.AddSingleton(TimeProvider.System);
 
         services.Configure<HostOptions>(options =>
         {
@@ -57,8 +60,10 @@ public static class ServiceCollectionExtensions
                         x.RecordException = true;
                     })
                     .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
+                    .AddSource(DiagnosticHeaders.DefaultListenerName)
                     .SetErrorStatusOnException()
                     .SetResourceBuilder(resourceBuilder)
+                    .AddZeebeWorkerInstrumentation()
                     .AddOtlpExporter(configure =>
                     {
                         configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
@@ -67,7 +72,9 @@ public static class ServiceCollectionExtensions
                     .AddAspNetCoreInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddProcessInstrumentation()
+                    .AddMeter(InstrumentationOptions.MeterName)
                     .SetResourceBuilder(resourceBuilder)
+                    .AddZeebeWorkerInstrumentation()
                     .AddOtlpExporter(configure =>
                     {
                         configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);

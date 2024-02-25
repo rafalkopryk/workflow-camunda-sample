@@ -2,14 +2,9 @@
 
 namespace Camunda.Client;
 
-internal class JobClient : IJobClient
+internal class JobClient(Gateway.GatewayClient client) : IJobClient
 {
-    private readonly Gateway.GatewayClient _client;
-
-    public JobClient(Gateway.GatewayClient client)
-    {
-        _client = client;
-    }
+    private readonly Gateway.GatewayClient _client = client;
 
     public async Task CompleteJobCommand(IJob activatedJob, string variables)
     {
@@ -20,22 +15,24 @@ internal class JobClient : IJobClient
         });
     }
 
-    public async Task FailCommand(long jobKey, string errorMessage)
+    public async Task FailCommand(long jobKey, string errorMessage, string veriables)
     {
         await _client.FailJobAsync(new FailJobRequest
         {
             JobKey = jobKey,
             ErrorMessage = errorMessage,
+            Variables = veriables
         });
     }
 
-    public async Task ThrowErrorCommand(long jobKey, string errorCode, string errorMessage)
+    public async Task ThrowErrorCommand(long jobKey, string errorCode, string errorMessage, string variables)
     {
         await _client.ThrowErrorAsync(new ThrowErrorRequest
         {
             JobKey = jobKey,
             ErrorCode = errorCode,
             ErrorMessage = errorMessage,
+            Variables= variables
         });
     }
 }

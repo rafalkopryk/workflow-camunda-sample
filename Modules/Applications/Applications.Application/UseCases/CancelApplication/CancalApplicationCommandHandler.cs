@@ -7,16 +7,15 @@ using MediatR;
 
 namespace Applications.Application.UseCases.CancelApplication;
 
-internal class CancalApplicationCommandHandler : IRequestHandler<CancelApplicationCommand, Result>
+internal class CancalApplicationCommandHandler(
+    CreditApplicationDbContext creditApplicationDbContext,
+    IEventBusProducer eventBusProducer,
+    TimeProvider timeProvider
+    ) : IRequestHandler<CancelApplicationCommand, Result>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext;
-    private readonly IEventBusProducer _eventBusProducer;
-
-    public CancalApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IEventBusProducer eventBusProducer)
-    {
-        _creditApplicationDbContext = creditApplicationDbContext;
-        _eventBusProducer = eventBusProducer;
-    }
+    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
+    private readonly IEventBusProducer _eventBusProducer = eventBusProducer;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<Result> Handle(CancelApplicationCommand command, CancellationToken cancellationToken)
     {
@@ -24,7 +23,7 @@ internal class CancalApplicationCommandHandler : IRequestHandler<CancelApplicati
         if (creditApplication is null)
             return Result.Failure(ErrorCode.ResourceNotFound);
 
-        creditApplication.CloseApplication();
+        creditApplication.CloseApplication(_timeProvider);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

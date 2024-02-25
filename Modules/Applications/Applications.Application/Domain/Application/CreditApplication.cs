@@ -1,6 +1,4 @@
-﻿using Common.Application;
-using Common.Application.Dictionary;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+﻿using Common.Application.Dictionary;
 
 namespace Applications.Application.Domain.Application;
 
@@ -21,7 +19,8 @@ public class CreditApplication
         decimal amount,
         int creditPeriodInMonths,
         CustomerPersonalData customerPersonalData,
-        Declaration declaration)
+        Declaration declaration,
+        TimeProvider timeProvider)
     {
         return new CreditApplication
         {
@@ -32,23 +31,23 @@ public class CreditApplication
             Declaration = declaration,
             States = new List<State>
             {
-                State.ApplicationRegistered(DateTimeProvider.Shared.GetLocalNow()),
+                State.ApplicationRegistered(timeProvider.GetLocalNow()),
             }
         };
     }
 
-    public void GenerateDecision(Decision decision)
+    public void GenerateDecision(Decision decision, TimeProvider timeProvider)
     {
-        States.Add(State.DecisionGenerated(State, decision, DateTimeProvider.Shared.GetLocalNow()));
+        States.Add(State.DecisionGenerated(State, decision, timeProvider.GetLocalNow()));
     }
 
-    public void SignContract()
+    public void SignContract(TimeProvider timeProvider)
     {
-        States.Add(State.ContractSigned(State, DateTimeProvider.Shared.GetLocalNow()));
+        States.Add(State.ContractSigned(State, timeProvider.GetLocalNow()));
     }
 
-    public void CloseApplication()
+    public void CloseApplication(TimeProvider timeProvider)
     {
-        States.Add(State.ApplicationClosed(State, DateTimeProvider.Shared.GetLocalNow()));
+        States.Add(State.ApplicationClosed(State, timeProvider.GetLocalNow()));
     }
 }

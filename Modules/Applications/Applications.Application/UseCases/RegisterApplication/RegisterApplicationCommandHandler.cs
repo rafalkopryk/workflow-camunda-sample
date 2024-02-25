@@ -1,24 +1,24 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Camunda.Client;
 using Common.Application.Errors;
-using Common.Application.Serializer;
 using CSharpFunctionalExtensions;
-using GatewayProtocol;
 using MediatR;
-using System.Text.Json;
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
-internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterApplicationCommand, Result>
-{
-    private readonly Gateway.GatewayClient _client;
-    private readonly CreditApplicationDbContext _creditApplicationDbContext;
+[ZeebeMessage(Name = "Message_ApplicationRegistered", TimeToLiveInMs = 24 * 3600 * 1000)]
+public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
-    public RegisterApplicationCommandHandler(Gateway.GatewayClient client, CreditApplicationDbContext creditApplicationDbContext)
-    {
-        _client = client;
-        _creditApplicationDbContext = creditApplicationDbContext;
-    }
+internal class RegisterApplicationCommandHandler(
+    IMessageClient client,
+    CreditApplicationDbContext creditApplicationDbContext,
+    TimeProvider timeProvider
+    ) : IRequestHandler<RegisterApplicationCommand, Result>
+{
+    private readonly IMessageClient _client = client;
+    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<Result> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
@@ -31,27 +31,21 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
 
         await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken);
 
-        await _client.PublishMessageAsync(new PublishMessageRequest
-        {
-            Name = "applicationRegistered",
-            MessageId = command.ApplicationId,
-            Variables = JsonSerializer.Serialize(
-                new
-                {
-                    creditApplication.ApplicationId,
-                    creditApplication.Amount,
-                    creditApplication.CreditPeriodInMonths,
-                    creditApplication.Declaration.AverageNetMonthlyIncome,
-                }, JsonSerializerCustomOptions.CamelCase),
-            TimeToLive = (long)TimeSpan.FromHours(12).TotalMilliseconds
-        });
+        await _client.Publish(
+            null!,
+            new ApplicationRegistered(
+                creditApplication.ApplicationId,
+                creditApplication.Amount,
+                creditApplication.CreditPeriodInMonths,
+                creditApplication.Declaration.AverageNetMonthlyIncome),
+            creditApplication.ApplicationId);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
 
-    private static CreditApplication CreateCreditApplication(RegisterApplicationCommand request)
+    private CreditApplication CreateCreditApplication(RegisterApplicationCommand request)
     {
         return CreditApplication.Create(
             request.ApplicationId,
@@ -66,6 +60,7 @@ internal class RegisterApplicationCommandHandler : IRequestHandler<RegisterAppli
             new Declaration
             {
                 AverageNetMonthlyIncome = request.CreditApplication.Declaration.AverageNetMonthlyIncome
-            });
+            },
+            _timeProvider);
     }
 }

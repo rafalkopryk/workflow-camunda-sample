@@ -8,21 +8,20 @@ namespace Applications.Application.UseCases.SetDecision;
 [EventEnvelope(Topic = "command.credit.applications.decision.v1")]
 public record SetDecisionCommand(string ApplicationId, Decision Decision) : INotification;
 
-internal class SetDecisionCommandCommandHandler : INotificationHandler<SetDecisionCommand>
+internal class SetDecisionCommandCommandHandler(
+    CreditApplicationDbContext creditApplicationDbContext,
+    IEventBusProducer eventBusProducer,
+    TimeProvider timeProvider
+    ) : INotificationHandler<SetDecisionCommand>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext;
-    private readonly IEventBusProducer _eventBusProducer;
-
-    public SetDecisionCommandCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IEventBusProducer eventBusProducer)
-    {
-        _creditApplicationDbContext = creditApplicationDbContext;
-        _eventBusProducer = eventBusProducer;
-    }
+    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
+    private readonly IEventBusProducer _eventBusProducer = eventBusProducer;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task Handle(SetDecisionCommand notification, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
-        creditApplication.GenerateDecision(notification.Decision);
+        creditApplication.GenerateDecision(notification.Decision, _timeProvider);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

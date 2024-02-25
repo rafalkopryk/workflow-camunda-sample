@@ -24,6 +24,11 @@ public class ZeebeBuilder : IZeebeBuilder
             RetryBackOffInMs = attribute.RetryBackOffInMs,
             TimeoutInMs = attribute.TimeoutInMs,
             TenatIds = attribute.TenatIds,
+            PoolingDelayInMs = attribute.PoolingDelayInMs,
+            PoolingMaxJobsToActivate = attribute.PoolingMaxJobsToActivate,
+            PoolingRequestTimeoutInMs = attribute.PoolingRequestTimeoutInMs,
+            UseStream = attribute.UseStream,
+            StreamTimeoutInSec = attribute.StreamTimeoutInSec,
         };
         AddWorker<T>(serviceTaskConfiguration);
         return this;
@@ -32,13 +37,27 @@ public class ZeebeBuilder : IZeebeBuilder
     public IZeebeBuilder AddWorker<T>(ServiceTaskConfiguration serviceTaskConfiguration, Action<IServiceCollection> configure = null) where T : class, IJobHandler
     {
         configure?.Invoke(_services);
-        _services.AddSingleton(typeof(T));
+        _services.AddScoped(typeof(T));
+
+        if (serviceTaskConfiguration.UseStream)
+        {
+            _services.AddHostedService(x =>
+            {
+                var client = x.GetRequiredService<Gateway.GatewayClient>();
+                var logger = x.GetRequiredService<ILogger<StreamZeebeWorker<T>>>();
+                var jobExecutor = x.GetRequiredService<JobExecutor>();
+
+                return new StreamZeebeWorker<T>(client, serviceTaskConfiguration, jobExecutor, logger);
+            });
+        }
+        
         _services.AddHostedService(x =>
         {
             var client = x.GetRequiredService<Gateway.GatewayClient>();
-            var serviceScope = x.GetRequiredService<IServiceScopeFactory>();
-            var logger = x.GetRequiredService<ILogger<ZeebeWorker<T>>>();
-            return new ZeebeWorker<T>(client, serviceScope, serviceTaskConfiguration, logger);
+            var logger = x.GetRequiredService<ILogger<PoolZeebeWorker<T>>>();
+            var jobExecutor = x.GetRequiredService<JobExecutor>();
+
+            return new PoolZeebeWorker<T>(client, serviceTaskConfiguration, jobExecutor, logger);
         });
 
         return this;

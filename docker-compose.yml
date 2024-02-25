@@ -46,26 +46,6 @@ services:
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
 
-  utility.kafkaconnector:
-    image: ${DOCKER_REGISTRY-}utilitykafkaconnector
-    build:
-      context: .
-      dockerfile: Modules/KafkaConnector/Utility.KafkaConnector/Dockerfile
-    depends_on:
-      - zeebe
-    environment:
-       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
-       OTEL__METRICS__EXPORTER: "otlp" 
-       OTEL__LOGS__EXPORTER: "otlp" 
-       otel__enabled: true
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: utility-kafkaconnector
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
-
   db:
     image: "mcr.microsoft.com/mssql/server"
     container_name: db
@@ -209,18 +189,6 @@ services:
          -E output.elasticsearch.password=${ELASTIC_PASSWORD}
          -E output.elasticsearch.ssl.enabled=false
 
-  # otel:
-  #   container_name: otel
-  #   image: otel/opentelemetry-collector:latest
-  #   command: ["--config=/etc/otel-collector-config.yaml"]
-  #   volumes:
-  #     - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-  #   ports:
-  #     - "4318:4318"
-  #     - "4317:4317"
-  #   depends_on:
-  #     - apm
-
   kafka:
     image: confluentinc/cp-kafka:latest
     ports:
@@ -246,20 +214,20 @@ services:
     ports:
       - "2181:2181"
  
-  # kafka-ui:
-  #   image: provectuslabs/kafka-ui:latest
-  #   container_name: kafka-ui
-  #   ports:
-  #     - "8087:8080"
-  #   restart: always
-  #   environment:
-  #     - KAFKA_CLUSTERS_0_NAME=local
-  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-  #     - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-  #     - DYNAMIC_CONFIG_ENABLED=true
-  #   depends_on:
-  #       - kafka
-  #       - zookeeper
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8087:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - DYNAMIC_CONFIG_ENABLED=true
+    depends_on:
+        - kafka
+        - zookeeper
 
   credit.front.server:
     image: ${DOCKER_REGISTRY-}creditfrontserver
@@ -285,14 +253,29 @@ services:
       context: .
       dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
 
+  processes.worker:
+    image: ${DOCKER_REGISTRY-}processesworker
+    build:
+      context: .
+      dockerfile: Modules/Processes/Processes.Worker/Dockerfile
+    depends_on:
+      - zeebe
+    environment:
+       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
+       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
+       OTEL__METRICS__EXPORTER: "otlp" 
+       OTEL__LOGS__EXPORTER: "otlp" 
+       otel__enabled: true
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: credit-processes
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
+
 volumes:
   zeebe:
   elastic:
   kibana:
   certs:
     driver: local
-
-
-
-
-

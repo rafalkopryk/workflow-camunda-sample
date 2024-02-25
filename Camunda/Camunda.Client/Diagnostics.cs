@@ -1,4 +1,6 @@
 ﻿namespace Camunda.Client;
+
+using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -18,6 +20,12 @@ internal static class Diagnostics
             return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
         }
 
+        internal static Activity StartPoolActivatedJobs(string jobType)
+        {
+            var activityName = $"ZeebeWorker JobPool ACTIVATED from {jobType}";
+            return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
+        }
+
         internal static Activity StartHandleTask(string elementId)
         {
             var activityName = $"ZeebeWorker Task RECEIVE from {elementId}";
@@ -25,15 +33,22 @@ internal static class Diagnostics
         }
     }
 
-    public static Activity AddDefaultOpenTelemetryTags<TKey, TValue>(
-        this Activity activity,
-        string job)
+    public static void AddtOpenTelemetryTags(this Activity? activity, IJob job)
     {
         activity?.AddTag(MessagingAttributes.SYSTEM, "zeebe");
 
-        activity?.AddTag(MessagingAttributes.DESTINATION, job);
-        activity?.AddTag(MessagingAttributes.DESTINATION_KIND, "topic");
+        activity?.AddTag(MessagingAttributes.DESTINATION_NAME, job.Type);
+        activity?.AddTag(MessagingAttributes.DESTINATION, job.Type);
 
-        return activity;
+        activity?.AddTag(MessagingAttributes.OPERATION, "receive");
+        activity?.AddTag(MessagingAttributes.ZEEBE_PROCESS_INSTANCE_KEY, job.ProcessInstanceKey);
+        activity?.AddTag(MessagingAttributes.ZEEBE_BPMN_PROCESS_ID, job.BpmnProcessId);
+        activity?.AddTag(MessagingAttributes.ZEEBE_ELEMENT_ID, job.ElementId);
+    }
+
+    public static void AddException(this Activity? activity, Exception ex)
+    {
+        activity?.RecordException(ex);
+        activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
     }
 }

@@ -9,16 +9,15 @@ namespace Applications.Application.UseCases.SignContract;
 [EventEnvelope(Topic = "event.credit.applications.contractSigned.v1")]
 public record ContractSigned(string ApplicationId) : INotification;
 
-internal class SignContractCommandHandler : IRequestHandler<SignContractCommand, Result>
+internal class SignContractCommandHandler(
+    CreditApplicationDbContext creditApplicationDbContext,
+    IEventBusProducer eventBusProducer,
+    TimeProvider timeProvider
+    ) : IRequestHandler<SignContractCommand, Result>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext;
-    private readonly IEventBusProducer _eventBusProducer;
-
-    public SignContractCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IEventBusProducer eventBusProducer)
-    {
-        _creditApplicationDbContext = creditApplicationDbContext;
-        _eventBusProducer = eventBusProducer;
-    }
+    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
+    private readonly IEventBusProducer _eventBusProducer = eventBusProducer;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<Result> Handle(SignContractCommand command, CancellationToken cancellationToken)
     {
@@ -26,7 +25,7 @@ internal class SignContractCommandHandler : IRequestHandler<SignContractCommand,
         if (creditApplication is null)
             return Result.Failure(ErrorCode.ResourceNotFound);
 
-        creditApplication.SignContract();
+        creditApplication.SignContract(timeProvider);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

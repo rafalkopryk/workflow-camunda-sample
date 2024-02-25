@@ -9,7 +9,8 @@
         "utility.kafkaconnector": "StartDebugging",
         "credit.front.server": "StartDebugging",
         "operations.webapi": "StartDebugging",
-        "operations.backoffice.server": "StartDebugging"
+        "operations.backoffice.server": "StartDebugging",
+        "processes.worker": "StartDebugging"
       }
     }
   }

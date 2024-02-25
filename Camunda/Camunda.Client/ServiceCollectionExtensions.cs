@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     public static void AddZeebe(
         this IServiceCollection services,
         Action<ZeebeOptions> options,
-        Action<ZeebeBuilder> configure)
+        Action<ZeebeBuilder>? configure = null)
     {
         var zeebeOptions = new ZeebeOptions();
         options?.Invoke(zeebeOptions);
@@ -52,6 +52,8 @@ public static class ServiceCollectionExtensions
         var zeebeBuilder = new ZeebeBuilder(services);
         configure?.Invoke(zeebeBuilder);
 
-        services.AddScoped<IJobClient, JobClient>();
+        services.AddSingleton<IJobClient, JobClient>();
+        services.AddSingleton<IMessageClient, MessageClient>();
+        services.AddSingleton<JobExecutor>();
     }
 }
