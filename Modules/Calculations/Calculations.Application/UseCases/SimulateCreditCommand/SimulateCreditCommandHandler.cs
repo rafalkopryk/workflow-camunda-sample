@@ -2,27 +2,29 @@
 
 using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
+using Common.Application;
 using Common.Application.Dictionary;
 
-using Common.Kafka;
+using MassTransit;
 using MediatR;
 
-[EventEnvelope(Topic = "command.credit.calculations.simulation.v1")]
+[EntityName("command.credit.calculations.simulation.v1")]
+[MessageUrn("command.credit.calculations.simulation.v1")]
 public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : INotification;
 
-[EventEnvelope(Topic = "event.credit.calculations.simulationFinished.v1")]
+[EntityName("event.credit.calculations.simulationFinished.v1")]
+[MessageUrn("event.credit.calculations.simulationFinished.v1")]
 public record SimulationCreditFinished(string ApplicationId, string Decision) : INotification;
 
-internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCreditCommand>
+internal class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, BusProxy eventBusProducer) : INotificationHandler<SimulateCreditCommand>, IConsumer<SimulateCreditCommand>
 {
-    private readonly CreditCalculationDbContext _creditCalculationDbContext;
+    private readonly CreditCalculationDbContext _creditCalculationDbContext = creditCalculationDbContext;
 
-    private readonly IEventBusProducer _eventBusProducer;
+    private readonly BusProxy _eventBusProducer = eventBusProducer;
 
-    public SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IEventBusProducer eventBusProducer)
+    public async Task Consume(ConsumeContext<SimulateCreditCommand> context)
     {
-        _creditCalculationDbContext = creditCalculationDbContext;
-        _eventBusProducer = eventBusProducer;
+        await Handle(context.Message, context.CancellationToken);
     }
 
     public async Task Handle(SimulateCreditCommand notification, CancellationToken cancellationToken)
@@ -47,6 +49,6 @@ internal class SimulateCreditCommandHandler : INotificationHandler<SimulateCredi
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
+        await _eventBusProducer.Publish(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
     }
 }

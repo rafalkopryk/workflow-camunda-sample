@@ -6,8 +6,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
-      - "8084:8080"
-      - "63110:443"
+      - "8080"
+      - "63111:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
@@ -23,30 +23,34 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  operations.webapi:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-    ports:
-      - "8083:80"
-      - "443"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+#   operations.webapi:
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ASPNETCORE_URLS=https://+:443;http://+:80
+#     ports:
+#       - "8083:80"
+#       - "7002:443"
+#     volumes:
+#       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+#       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  operations.backoffice.server:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-    ports:
-      - "8090:80"
-      - "443"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+#   operations.backoffice.server:
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ASPNETCORE_URLS=https://+:443;http://+:80
+#     ports:
+#       - "8090:80"
+#       - "443"
+#     volumes:
+#       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+#       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  processes.worker:
-    environment:
-      - DOTNET_ENVIRONMENT=Development
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+  # processes.worker:
+  #   environment:
+  #     - DOTNET_ENVIRONMENT=Development
+  #   volumes:
+  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+
+  # creditprocessfunctions:
+  #   environment:
+  #     - ASPNETCORyu8dsweE_ENVIRONMENT=Development

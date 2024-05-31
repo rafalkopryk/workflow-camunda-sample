@@ -14,9 +14,24 @@ public class CreditCalculationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        if (Database.IsCosmos())
+        {
+            modelBuilder.HasManualThroughput(400);
+        }
+
         modelBuilder.Entity<CreditCalculation>(entity =>
         {
-            entity.ToTable("CreditCalculation");
+            if (Database.IsCosmos())
+            {
+                entity.ToContainer("Calculations");
+                entity.HasNoDiscriminator();
+            }
+
+            if (Database.IsSqlServer())
+            {
+                entity.ToTable("CreditCalculation");
+            }
+
             entity.HasKey(creditApplication => creditApplication.CalcualtionId);
         });
     }

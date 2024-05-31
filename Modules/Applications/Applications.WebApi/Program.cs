@@ -19,24 +19,26 @@ var resourceBuilder = ResourceBuilder.CreateDefault()
     .AddService("Credit.Applications", serviceVersion: "1.0.0")
     .AddTelemetrySdk();
 
-builder.Logging.ConfigureLogger(builder.Configuration, resourceBuilder);
 builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
 builder.Services.AddApplication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApiDocument();
 
 builder.Services.AddCors();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+
+app.UseOpenApi();
+app.UseSwaggerUi();
+app.UseReDoc(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.Path = "/redoc";
+});
 
 app.UseHttpsRedirection();
 
@@ -50,6 +52,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.ConfigureApplication();
+await app.ConfigureApplication();
 
-app.Run();
+await app.RunAsync();

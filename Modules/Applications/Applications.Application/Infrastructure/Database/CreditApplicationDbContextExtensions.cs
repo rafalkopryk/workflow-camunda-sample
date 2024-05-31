@@ -1,4 +1,5 @@
 ﻿using Applications.Application.Domain.Application;
+using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.Infrastructure.Database;
@@ -12,7 +13,10 @@ internal static class CreditApplicationDbContextExtensions
 
     public static async Task<CreditApplication?> GetCreditApplicationAsync(this CreditApplicationDbContext dbContext, string applicationId)
     {
-        return await GetApplication(dbContext, applicationId);
+        return await dbContext.Applications.FirstOrDefaultAsync(x => x.ApplicationId == applicationId);
+
+
+        //return await GetApplication(dbContext, applicationId);
     }
 
     private static readonly Func<CreditApplicationDbContext, string, Task<bool>> HasApplication =
@@ -22,6 +26,8 @@ internal static class CreditApplicationDbContextExtensions
 
     public static async Task<bool> HasCreditApplicationAsync(this CreditApplicationDbContext dbContext, string applicationId)
     {
-        return await HasApplication(dbContext, applicationId);
+        return (await dbContext.Applications.CountAsync(x => x.ApplicationId == applicationId)) > 0;
+
+        //return await HasApplication(dbContext, applicationId);
     }
 }

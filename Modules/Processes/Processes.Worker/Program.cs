@@ -14,7 +14,6 @@ var resourceBuilder = ResourceBuilder.CreateDefault()
     .AddService("Credit.Processes", serviceVersion: "1.0.0")
     .AddTelemetrySdk();
 
-builder.Logging.ConfigureLogger(builder.Configuration, resourceBuilder);
 builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
 builder.Services.AddApplication(builder.Configuration);
 

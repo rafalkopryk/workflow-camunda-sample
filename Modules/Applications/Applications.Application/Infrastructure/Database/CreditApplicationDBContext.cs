@@ -14,14 +14,28 @@ public class CreditApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        if (Database.IsCosmos())
+        {
+            modelBuilder.HasManualThroughput(400);
+        }
+
         modelBuilder.Entity<CreditApplication>(entity =>
         {
-            entity.ToTable("CreditApplication", c => c.IsTemporal());
-            entity.HasKey(creditApplication => creditApplication.ApplicationId);
+            if (Database.IsCosmos())
+            {
+                entity.ToContainer("CreditApplication");
+                entity.HasNoDiscriminator();
+            }
 
+            if (Database.IsSqlServer())
+            {
+                entity.ToTable("CreditApplication");
+            }
+
+            entity.HasKey(creditApplication => creditApplication.ApplicationId);
             entity.OwnsOne(creditApplication => creditApplication.CustomerPersonalData, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
             entity.OwnsOne(creditApplication => creditApplication.Declaration, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
-            entity.OwnsMany(creditApplication => creditApplication.States, ownedNavigationBuilder  => ownedNavigationBuilder.ToJson());
+            entity.OwnsMany(creditApplication => creditApplication.States, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
         });
     }
 }

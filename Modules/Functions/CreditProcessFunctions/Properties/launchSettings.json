@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "CreditProcessFunctions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7148"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 30840,
+      "useSSL": false
+    }
+  }
+}

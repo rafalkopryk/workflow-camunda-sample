@@ -10,7 +10,8 @@
         "credit.front.server": "StartDebugging",
         "operations.webapi": "StartDebugging",
         "operations.backoffice.server": "StartDebugging",
-        "processes.worker": "StartDebugging"
+        "processes.worker": "StartDebugging",
+        "creditprocessfunctions": "StartDebugging"
       }
     }
   }

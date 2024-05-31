@@ -1,22 +1,28 @@
 ﻿using Applications.Application.Infrastructure.Database;
+using Common.Application;
 using Common.Application.Dictionary;
-using Common.Kafka;
-using MediatR;
+using MassTransit;
 
 namespace Applications.Application.UseCases.SetDecision;
 
-[EventEnvelope(Topic = "command.credit.applications.decision.v1")]
-public record SetDecisionCommand(string ApplicationId, Decision Decision) : INotification;
+[EntityName("command.credit.applications.decision.v1")]
+[MessageUrn("command.credit.applications.decision.v1")]
+public record SetDecisionCommand(string ApplicationId, Decision Decision);
 
 internal class SetDecisionCommandCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
-    IEventBusProducer eventBusProducer,
+    BusProxy eventBusProducer,
     TimeProvider timeProvider
-    ) : INotificationHandler<SetDecisionCommand>
+    ) : IConsumer<SetDecisionCommand>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
-    private readonly IEventBusProducer _eventBusProducer = eventBusProducer;
+    private readonly BusProxy _eventBusProducer = eventBusProducer;
     private readonly TimeProvider _timeProvider = timeProvider;
+
+    public async Task Consume(ConsumeContext<SetDecisionCommand> context)
+    {
+        await Handle(context.Message, context.CancellationToken);
+    }
 
     public async Task Handle(SetDecisionCommand notification, CancellationToken cancellationToken)
     {
@@ -25,9 +31,10 @@ internal class SetDecisionCommandCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId), cancellationToken);
+        await _eventBusProducer.Publish(new DecisionGenerated(notification.ApplicationId, notification.Decision), cancellationToken);
     }
 }
 
-[EventEnvelope(Topic = "event.credit.applications.decisionGenerated.v1")]
-public record DecisionGenerated(string ApplicationId) : INotification;
+[EntityName("event.credit.applications.decisionGenerated.v1")]
+[MessageUrn("event.credit.applications.decisionGenerated.v1")]
+public record DecisionGenerated(string ApplicationId, Decision Decision);

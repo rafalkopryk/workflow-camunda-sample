@@ -1,16 +1,23 @@
 ﻿using Camunda.Client;
 using Common.Kafka;
+using MassTransit;
 using MediatR;
 
 namespace Processes.Application.UseCases.CreditApplications.Contract;
 
 [ZeebeMessage(Name = "Message_ContractSigned")]
-[EventEnvelope(Topic = "event.credit.applications.contractSigned.v1")]
+[EntityName("event.credit.applications.contractSigned.v1")]
+[MessageUrn("event.credit.applications.contractSigned.v1")]
 public record ContractSigned(string ApplicationId) : INotification;
 
-internal class ContractSignedEventHandler(IMessageClient messageClient) : INotificationHandler<ContractSigned>
+internal class ContractSignedEventHandler(IMessageClient messageClient) : INotificationHandler<ContractSigned>, IConsumer<ContractSigned>
 {
     private readonly IMessageClient _client = messageClient;
+
+    public async Task Consume(ConsumeContext<ContractSigned> context)
+    {
+        await Handle(context.Message, context.CancellationToken);
+    }
 
     public async Task Handle(ContractSigned notification, CancellationToken cancellationToken)
     {

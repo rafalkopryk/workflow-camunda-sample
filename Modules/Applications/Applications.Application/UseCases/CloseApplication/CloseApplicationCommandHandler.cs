@@ -1,23 +1,29 @@
 ﻿using Applications.Application.Infrastructure.Database;
-using Common.Kafka;
-using MediatR;
+using Common.Application;
+using MassTransit;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[EventEnvelope(Topic = "command.credit.applications.close.v1")]
-public record CloseApplicationCommand(string ApplicationId) : INotification;
+[EntityName("command.credit.applications.close.v1")]
+[MessageUrn("command.credit.applications.close.v1")]
+public record CloseApplicationCommand(string ApplicationId);
 
 internal class CloseApplicationCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
-    IEventBusProducer eventBusProducer,
+    BusProxy eventBusProducer,
     TimeProvider timeProvider
-    ) : INotificationHandler<CloseApplicationCommand>
+    ): IConsumer<CloseApplicationCommand>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
 
-    private readonly IEventBusProducer _eventBusProducer = eventBusProducer;
+    private readonly BusProxy _eventBusProducer = eventBusProducer;
 
     private readonly TimeProvider timeProvider = timeProvider;
+
+    public async Task Consume(ConsumeContext<CloseApplicationCommand> context)
+    {
+        await Handle(context.Message, context.CancellationToken);
+    }
 
     public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
     {
@@ -26,9 +32,10 @@ internal class CloseApplicationCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId), cancellationToken);
+        await _eventBusProducer.Publish(new ApplicationClosed(notification.ApplicationId), cancellationToken);
     }
 }
 
-[EventEnvelope(Topic = "event.credit.applications.applicationClosed.v1")]
-public record ApplicationClosed(string ApplicationId) : INotification;
+[EntityName("event.credit.applications.applicationClosed.v1")]
+[MessageUrn("event.credit.applications.applicationClosed.v1")]
+public record ApplicationClosed(string ApplicationId);

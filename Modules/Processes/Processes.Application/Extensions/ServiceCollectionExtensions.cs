@@ -1,5 +1,6 @@
 ﻿using Camunda.Client;
-using Common.Kafka;
+using Common.Application.Extensions;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Processes.Application.UseCases.CreditApplications.Close;
@@ -29,13 +30,74 @@ public static class ServiceCollectionExtensions
                 .AddWorker<DecisionJobHandler>()
                 .AddWorker<CloseApplicationJobHandler>());
 
-        services.AddKafka(
-           options => configuration.GetSection("EventBus").Bind(options),
-           options => configuration.GetSection("EventBus").Bind(options),
-           builder => builder
-               .UseTopic<SimulationFinished>()
-               .UseTopic<DecisionGenerated>()
-               .UseTopic<ContractSigned>()
-               .UseTopic<ApplicationClosed>());
+        services.AddMassTransit(x =>
+        {
+            x.SetKebabCaseEndpointNameFormatter();
+
+            x.AddConsumer<SimulationFinishedEventHandler>();
+            x.AddConsumer<DecisionGeneratedEventHandler>();
+            x.AddConsumer<ContractSignedEventHandler>();
+            x.AddConsumer<ApplicationClosedEventHandler>();
+            x.AddConsumer<ApplicationRegisteredEventHandler>();
+
+            if (configuration.IsKafka())
+            {
+                x.AddRider(configure =>
+                {
+                    configure.UsingKafka((context, cfg) =>
+                    {
+                        cfg.Host(configuration.GetkafkaConnectionString());
+                        cfg.TopicEndpoint<SimulationFinished>("event.credit.calculations.simulationFinished.v1", configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<SimulationFinishedEventHandler>(context);
+                        });
+
+                        cfg.TopicEndpoint<DecisionGenerated>("command.credit.applications.decision.v1", configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<DecisionGeneratedEventHandler>(context);
+                        });
+
+                        cfg.TopicEndpoint<ContractSigned>("event.credit.applications.decisionGenerated.v1", configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<ContractSignedEventHandler>(context);
+                        });
+
+                        cfg.TopicEndpoint<ApplicationClosed>("event.credit.applications.applicationClosed.v1", configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<ApplicationClosedEventHandler>(context);
+                        });
+
+                        cfg.TopicEndpoint<ApplicationRegistered>("event.credit.applications.applicationRegistered.v1", configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<ApplicationRegisteredEventHandler>(context);
+                        });
+                    });
+                });
+            }
+            else
+            {
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Host(configuration.GetAzServiceBusConnectionString());
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            }
+        });
     }
 }

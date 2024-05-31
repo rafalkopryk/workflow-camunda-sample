@@ -14,25 +14,15 @@ using OpenTelemetry.Logs;
 using MassTransit.Logging;
 using MassTransit.Monitoring;
 using Camunda.Client;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
+using OpenTelemetry;
 
 public static class ServiceCollectionExtensions
 {
-    public static void ConfigureLogger(this ILoggingBuilder loggingBuilder, IConfiguration configuration, ResourceBuilder resourceBuilder)
-    {
-        if (configuration.GetValue<bool>("otel:enabled"))
-        {
-            loggingBuilder.AddOpenTelemetry(options => options
-            .SetResourceBuilder(resourceBuilder)
-            .AddOtlpExporter(configure =>
-            {
-                configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
-            }));
-        }
-    }
-
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
     {
         services.AddSingleton(TimeProvider.System);
+        services.AddTransient<BusProxy>();
 
         services.Configure<HostOptions>(options =>
         {
@@ -42,45 +32,45 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(BusinessRuleValidationExceptionProcessorBehavior<,>));
 
-        if (configuration.GetValue<bool>("otel:enabled"))
-        {
-            services.AddOpenTelemetry()
-                .WithTracing(builder => builder
-                    .AddAspNetCoreInstrumentation(x =>
-                    {
-                        x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
-                        x.RecordException = true;
-                    })
-                    .AddKafkaInstrumentation()
-                    .AddGrpcClientInstrumentation()
-                    .AddSqlClientInstrumentation(x =>
-                    {
-                        x.SetDbStatementForText = true;
-                        x.SetDbStatementForStoredProcedure = true;
-                        x.RecordException = true;
-                    })
-                    .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
-                    .AddSource(DiagnosticHeaders.DefaultListenerName)
-                    .SetErrorStatusOnException()
-                    .SetResourceBuilder(resourceBuilder)
-                    .AddZeebeWorkerInstrumentation()
-                    .AddOtlpExporter(configure =>
-                    {
-                        configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
-                    }))
-                .WithMetrics(builder => builder
-                    .AddAspNetCoreInstrumentation()
-                    .AddRuntimeInstrumentation()
-                    .AddProcessInstrumentation()
-                    .AddMeter(InstrumentationOptions.MeterName)
-                    .SetResourceBuilder(resourceBuilder)
-                    .AddZeebeWorkerInstrumentation()
-                    .AddOtlpExporter(configure =>
-                    {
-                        configure.Endpoint = new Uri(configuration.GetSection("OTEL:EXPORTER:OTLP:ENDPOINT").Value);
-                    }));
+        var openTelemetryBuilder = services.AddOpenTelemetry();
 
+        if (configuration.UseAzureMonitor())
+        {
+            openTelemetryBuilder.UseAzureMonitor(configureAzureMonitor => configureAzureMonitor.ConnectionString = configuration.GetAzureMonitorEndpoint());
         }
+
+        if (configuration.UseOtlpExporter())
+        {
+            openTelemetryBuilder.UseOtlpExporter();
+        }
+
+        openTelemetryBuilder
+            .WithTracing(builder => builder
+                .AddAspNetCoreInstrumentation(x =>
+                {
+                    x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
+                    x.RecordException = true;
+                })
+                .AddKafkaInstrumentation()
+                .AddGrpcClientInstrumentation()
+                .AddSqlClientInstrumentation(x =>
+                {
+                    x.SetDbStatementForText = true;
+                    x.SetDbStatementForStoredProcedure = true;
+                    x.RecordException = true;
+                })
+                .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
+                .AddSource(DiagnosticHeaders.DefaultListenerName)
+                .SetErrorStatusOnException()
+                .SetResourceBuilder(resourceBuilder)
+                .AddZeebeWorkerInstrumentation())
+            .WithMetrics(builder => builder
+                .AddAspNetCoreInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddProcessInstrumentation()
+                .AddMeter(InstrumentationOptions.MeterName)
+                .SetResourceBuilder(resourceBuilder)
+                .AddZeebeWorkerInstrumentation());
     }
 }
 

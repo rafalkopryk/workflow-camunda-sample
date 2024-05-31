@@ -7,15 +7,20 @@ services:
       context: .
       dockerfile: Modules/Applications/Applications.WebApi/Dockerfile
     depends_on:
-      - db
       - zeebe
     environment:
-       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
-       OTEL__METRICS__EXPORTER: "otlp" 
-       OTEL__LOGS__EXPORTER: "otlp" 
-       otel__enabled: true
-       ConnectionStrings__Default: "server=db;Database=Credit_Applications;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
+       OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+       OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+       OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+       
+       ConnectionStrings__Default: ${CREDIT_APPLICATIONS_CONNECTION_STRING}       
+       ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
+       ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
+       
+       DatabaseProvider: "SqlServer"
+       ServiceBusProvider: "kafka"
+       
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-applications
        EventBus__enableautocommit: "false"
@@ -31,14 +36,19 @@ services:
     depends_on:
       - db
       - zeebe
-
     environment:
-       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
-       OTEL__METRICS__EXPORTER: "otlp" 
-       OTEL__LOGS__EXPORTER: "otlp" 
-       otel__enabled: true
-       ConnectionStrings__Default: "server=db;Database=Credit_Calcualtions;User=sa;Password=S3cur3P@ssW0rd!;TrustServerCertificate=True;"
+       OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+       OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+       OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+
+       ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
+       ConnectionStrings__Default: ${CREDIT_CALCULATIONS_CONNECTION_STRING}       
+       ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
+       
+       DatabaseProvider: "SqlServer"
+       ServiceBusProvider: "kafka"
+       
        EventBus__bootstrapservers: kafka:9092
        EventBus__groupid: credit-calculations
        EventBus__enableautocommit: "false"
@@ -63,7 +73,7 @@ services:
       - "9600:9600"
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=${ELASTIC_ADDRESS}
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_AUTHENTICATION_USERNAME=${ELASTIC_USER}
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_AUTHENTICATION_PASSWORD=${ELASTIC_PASSWORD}
       # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
@@ -91,11 +101,11 @@ services:
     ports:
       - "8085:8080"
     environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
-      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
-      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=${ZEEBE_ADDRESS}
+      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=${ELASTIC_ADDRESS}
       - CAMUNDA_OPERATE_ELASTICSEARCH_USERNAME=${ELASTIC_USER}
       - CAMUNDA_OPERATE_ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
-      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=${ELASTIC_ADDRESS}
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_USERNAME=${ELASTIC_USER}
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - management.endpoints.web.exposure.include=health
@@ -159,7 +169,7 @@ services:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     container_name: kibana
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=${ELASTIC_ADDRESS}
       - ELASTIC_APM_ACTIVE=true
       - ELASTIC_APM_SERVER_URL=http://apm:8200
       - ELASTICSEARCH_USERNAME=kibana_system
@@ -170,24 +180,24 @@ services:
       - kibana:/usr/share/kibana/data
     depends_on:
       - elasticsearch
-
-  apm:
-    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
-    container_name: apm
-    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-    cap_drop: ["ALL"]
-    ports:
-      - 8200:8200
-    depends_on:
-        - elasticsearch
-        - kibana
-    command: >
-       apm-server -e
-         -E output.elasticsearch.protocol=http
-         -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-         -E output.elasticsearch.username=${ELASTIC_USER}
-         -E output.elasticsearch.password=${ELASTIC_PASSWORD}
-         -E output.elasticsearch.ssl.enabled=false
+ 
+  # apm:
+  #   image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
+  #   container_name: apm
+  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+  #   cap_drop: ["ALL"]
+  #   ports:
+  #     - 8200:8200
+  #   depends_on:
+  #       - elasticsearch
+  #       - kibana
+  #   command: >
+  #      apm-server -e
+  #        -E output.elasticsearch.protocol=http
+  #        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+  #        -E output.elasticsearch.username=${ELASTIC_USER}
+  #        -E output.elasticsearch.password=${ELASTIC_PASSWORD}
+  #        -E output.elasticsearch.ssl.enabled=false
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -234,44 +244,56 @@ services:
     build:
       context: .
       dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
+  
+  # operations.webapi:
+  #   image: ${DOCKER_REGISTRY-}operationswebapi
+  #   build:
+  #     context: .
+  #     dockerfile: Modules/Operations/Operations.WebApi/Dockerfile
+  #   environment:
+  #      OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+  #      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+  #      OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+  #      OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+  #      ConnectionStrings__Elasticsearch: ${ELASTIC_ADDRESS}
 
-  operations.webapi:
-    image: ${DOCKER_REGISTRY-}operationswebapi
-    build:
-      context: .
-      dockerfile: Modules/Operations/Operations.WebApi/Dockerfile
-    environment:
-       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
-       OTEL__METRICS__EXPORTER: "otlp" 
-       OTEL__LOGS__EXPORTER: "otlp" 
-       otel__enabled: true
-       Elasticsearch__Endpoint: http://${ELASTIC_USER}:${ELASTIC_PASSWORD}@elasticsearch:9200
+  # operations.backoffice.server:
+  #   image: ${DOCKER_REGISTRY-}operationsbackofficeserver
+  #   build:
+  #     context: .
+  #     dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
 
-  operations.backoffice.server:
-    image: ${DOCKER_REGISTRY-}operationsbackofficeserver
-    build:
-      context: .
-      dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
+  # processes.worker:
+  #   image: ${DOCKER_REGISTRY-}processesworker
+  #   build:
+  #     context: .
+  #     dockerfile: Modules/Processes/Processes.Worker/Dockerfile
+  #   depends_on:
+  #     - zeebe
+  #   environment:
+  #      OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+  #      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+  #      OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+  #      OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+       
+  #      Zeebe__Endpoint: ${ZEEBE_ADDRESS}
+  #      ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
+       
+  #      ServiceBusProvider: "kafka"
+       
+  #      EventBus__bootstrapservers: kafka:9092
+  #      EventBus__groupid: credit-processes
+  #      EventBus__enableautocommit: "false"
+  #      EventBus__statisticsintervalms: 5000
+  #      EventBus__autooffsetreset: earliest
+  #      EventBus__enablepartitioneof: "true"
 
-  processes.worker:
-    image: ${DOCKER_REGISTRY-}processesworker
-    build:
-      context: .
-      dockerfile: Modules/Processes/Processes.Worker/Dockerfile
-    depends_on:
-      - zeebe
-    environment:
-       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-       OTEL__EXPORTER__OTLP__ENDPOINT: http://apm:8200
-       OTEL__METRICS__EXPORTER: "otlp" 
-       OTEL__LOGS__EXPORTER: "otlp" 
-       otel__enabled: true
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: credit-processes
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
+  # creditprocessfunctions:
+  #   image: ${DOCKER_REGISTRY-}creditprocessfunctions
+  #   build:
+  #     context: .
+  #     dockerfile: Modules/Functions/CreditProcessFunctions/Dockerfile
+
 
 volumes:
   zeebe:

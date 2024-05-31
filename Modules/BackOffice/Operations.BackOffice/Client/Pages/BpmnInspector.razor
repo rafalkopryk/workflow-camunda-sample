@@ -1,5 +1,6 @@
 ﻿@page "/inspector"
 @page "/"
+@using Operations.BackOffice.Client.Components.BPMNViewer
 @using Operations.BackOffice.Client.Data.ProcessInstances;
 
 @inject IProcessInstanceService processInstanceService;
@@ -20,7 +21,7 @@
 
 @if (_bpmnFile != null)
 {
-    <bpmn-viewer xml="@_bpmnFile"></bpmn-viewer>
+    <BPMNViewer xml="@_bpmnFile"></BPMNViewer>
 }
 
 @code {

@@ -60,10 +60,3 @@ public class JsonKafkaSerializerFactory : IKafkaSerializerFactory
         }
     }
 }
-
-//EventBus__bootstrapservers: kafka:9092
-//       EventBus__groupid: utility-kafkaconnector
-//       EventBus__enableautocommit: "false"
-//       EventBus__statisticsintervalms: 5000
-//       EventBus__autooffsetreset: earliest
-//       EventBus__enablepartitioneof: "true"

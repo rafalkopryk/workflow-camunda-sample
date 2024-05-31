@@ -52,6 +52,8 @@ internal class StreamZeebeWorker<T>(
                 _logger.LogError(ex, "Error during read stream {jobType}", jobType);
 
                 activity?.AddException(ex);
+
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
     }
