@@ -2,30 +2,23 @@
 
 using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
-using Common.Application;
 using Common.Application.Dictionary;
 
-using MassTransit;
-using MediatR;
+using Wolverine;
+using Wolverine.Attributes;
 
-[EntityName("command.credit.calculations.simulation.v1")]
-[MessageUrn("command.credit.calculations.simulation.v1")]
+
+[MessageIdentity("simulation", Version = 1)]
 public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
-[EntityName("event.credit.calculations.simulationFinished.v1")]
-[MessageUrn("event.credit.calculations.simulationFinished.v1")]
+[MessageIdentity("simulationFinished", Version = 1)]
 public record SimulationCreditFinished(string ApplicationId, string Decision);
 
-internal class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, BusProxy eventBusProducer) : IConsumer<SimulateCreditCommand>
+public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IMessageBus eventBusProducer)
 {
     private readonly CreditCalculationDbContext _creditCalculationDbContext = creditCalculationDbContext;
 
-    private readonly BusProxy _eventBusProducer = eventBusProducer;
-
-    public async Task Consume(ConsumeContext<SimulateCreditCommand> context)
-    {
-        await Handle(context.Message, context.CancellationToken);
-    }
+    private readonly IMessageBus _eventBusProducer = eventBusProducer;
 
     public async Task Handle(SimulateCreditCommand notification, CancellationToken cancellationToken)
     {
@@ -49,6 +42,6 @@ internal class SimulateCreditCommandHandler(CreditCalculationDbContext creditCal
 
         await _creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.Publish(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), cancellationToken);
+        await _eventBusProducer.PublishAsync(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()));
     }
 }

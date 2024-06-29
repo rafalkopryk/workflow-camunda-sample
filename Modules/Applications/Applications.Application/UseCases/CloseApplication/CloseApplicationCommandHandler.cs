@@ -1,45 +1,39 @@
 ﻿using Applications.Application.Infrastructure.Database;
-using Common.Application;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
+using Wolverine;
+using Wolverine.Attributes;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
-[EntityName("command.credit.applications.close.v1")]
-[MessageUrn("command.credit.applications.close.v1")]
+
+[MessageIdentity("close", Version = 1)]
 public record CloseApplicationCommand(string ApplicationId);
 
-public class CloseApplicationCommandHandler: IConsumer<CloseApplicationCommand>
+public class CloseApplicationCommandHandler
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    private readonly BusProxy _eventBusProducer;
+    private readonly IMessageBus _eventBusProducer;
 
     private readonly TimeProvider _timeProvider;
 
-    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext, BusProxy eventBusProducer, TimeProvider timeProvider)
+    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext, IMessageBus eventBusProducer, TimeProvider timeProvider)
     {
         _creditApplicationDbContext = creditApplicationDbContext;
         _eventBusProducer = eventBusProducer;
         _timeProvider = timeProvider;
     }
 
-    public async Task Consume(ConsumeContext<CloseApplicationCommand> context)
-    {
-        await Handle(context.Message, context.CancellationToken);
-    }
-
-    public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
+    public async Task Handle(CloseApplicationCommand notification)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
         creditApplication.CloseApplication(_timeProvider);
 
-        await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
+        await _creditApplicationDbContext.SaveChangesAsync();
 
-        await _eventBusProducer.Publish(new ApplicationClosed(notification.ApplicationId), cancellationToken);
+        await _eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId));
     }
 }
 
-[EntityName("event.credit.applications.applicationClosed.v1")]
-[MessageUrn("event.credit.applications.applicationClosed.v1")]
+[MessageIdentity("applicationClosed", Version = 1)]
 public record ApplicationClosed(string ApplicationId);

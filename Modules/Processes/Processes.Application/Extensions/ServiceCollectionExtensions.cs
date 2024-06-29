@@ -3,12 +3,16 @@ using Common.Application.Extensions;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Oakton.Resources;
 using Processes.Application.UseCases.CreditApplications.Close;
 using Processes.Application.UseCases.CreditApplications.Contract;
 using Processes.Application.UseCases.CreditApplications.Decision;
 using Processes.Application.UseCases.CreditApplications.Simulation;
 using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
+using Wolverine;
+using Wolverine.Attributes;
+using Wolverine.Kafka;
 
 namespace Processes.Application.Extensions;
 public static class ServiceCollectionExtensions
@@ -29,104 +33,32 @@ public static class ServiceCollectionExtensions
                 .AddWorker<SimulationJobHandler>()
                 .AddWorker<DecisionJobHandler>()
                 .AddWorker<CloseApplicationJobHandler>());
-
-        services.AddMassTransit(x =>
-        {
-            if (configuration.IsKafka())
-            {
-                x.UsingInMemory();
-
-                x.AddRider(rider =>
-                {
-                    rider.AddProducer<string, SimulationCommand>();
-                    rider.AddProducer<string, DecisionCommand>();
-                    rider.AddProducer<string, CloseApplicationCommand>();
-
-                    rider.AddConsumer<SimulationFinishedEventHandler>();
-                    rider.AddConsumer<DecisionGeneratedEventHandler>();
-                    rider.AddConsumer<ContractSignedEventHandler>();
-                    rider.AddConsumer<ApplicationClosedEventHandler>();
-                    rider.AddConsumer<ApplicationRegisteredEventHandler>();
-
-                    rider.UsingKafka((context, k) =>
-                    {
-                        k.Host(configuration.GetkafkaConnectionString());
-                        k.TopicEndpoint<SimulationFinished>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                            e.ConfigureConsumer<SimulationFinishedEventHandler>(context);
-                        });
-
-                        k.TopicEndpoint<DecisionGenerated>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                            e.ConfigureConsumer<DecisionGeneratedEventHandler>(context);
-                        });
-
-                        k.TopicEndpoint<ContractSigned>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                            e.ConfigureConsumer<ContractSignedEventHandler>(context);
-                        });
-
-                        k.TopicEndpoint<ApplicationClosed>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                            e.ConfigureConsumer<ApplicationClosedEventHandler>(context);
-                        });
-
-                        k.TopicEndpoint<ApplicationRegistered>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                            //e.Handler<ApplicationRegistered>(async data =>
-                            //{
-                            //    var client = context.GetMessageClient();
-                            //    await client.Publish(null, data.Message, data.Message.ApplicationId);
-                            //});
-
-                            e.ConfigureConsumer<ApplicationRegisteredEventHandler>(context);
-                        });
-                    });
-                });
-            }
-            else
-            {
-                x.SetKebabCaseEndpointNameFormatter();
-
-                x.AddConsumer<SimulationFinishedEventHandler>();
-                x.AddConsumer<DecisionGeneratedEventHandler>();
-                x.AddConsumer<ContractSignedEventHandler>();
-                x.AddConsumer<ApplicationClosedEventHandler>();
-                x.AddConsumer<ApplicationRegisteredEventHandler>();
-
-                x.UsingAzureServiceBus((context, cfg) =>
-                {
-                    cfg.Host(configuration.GetAzServiceBusConnectionString());
-
-                    cfg.ConfigureEndpoints(context);
-                });
-            }
-        });
     }
-}
 
-
-
-
-public static class ServiceScopeProviderExtensions
-{
-    public static IMessageClient GetMessageClient(this IServiceProvider provider)
+    public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
-        return provider.GetRequiredService<IMessageClient>();
+        opts.UseKafka(configuration.GetkafkaConnectionString())
+            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
+
+        opts.PublishMessage<CloseApplicationCommand>().ToKafkaTopic("applications").TelemetryEnabled(true);
+        opts.PublishMessage<SimulationCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+        opts.PublishMessage<DecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+
+        opts.ListenToKafkaTopic("applications")
+            .ProcessInline().TelemetryEnabled(true);
+
+        opts.ListenToKafkaTopic("simulations")
+            .ProcessInline().TelemetryEnabled(true);
+
+        opts.ListenToKafkaTopic("contracts")
+            .ProcessInline().TelemetryEnabled(true);
+
+        opts.ListenToKafkaTopic("decisions")
+            .ProcessInline().TelemetryEnabled(true);
+
+        opts.Services.AddResourceSetupOnStartup();
+
+        opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
     }
 }

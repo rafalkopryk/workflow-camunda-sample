@@ -3,6 +3,7 @@ using Common.Application.Extensions;
 using OpenTelemetry.Resources;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument();
+
+builder.Host.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
 var app = builder.Build();
 

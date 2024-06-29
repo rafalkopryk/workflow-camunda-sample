@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MassTransit;
 using Common.Application.Extensions;
 using Applications.Application.UseCases.RegisterApplication;
-using Processes.Application.Extensions;
 using Applications.Application.UseCases.SignContract;
+using Wolverine;
+using Oakton.Resources;
+using Wolverine.Kafka;
 
 public static class ServiceCollectionExtensions
 {
@@ -22,64 +23,30 @@ public static class ServiceCollectionExtensions
             : services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Applications.WebApi")));
 
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
+    }
 
-        services.AddMassTransit(x =>
-        {
-            if (configuration.IsKafka())
-            {
-                x.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+    public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
+    {
+        opts.UseKafka(configuration.GetkafkaConnectionString())
+            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
-                x.AddRider(rider =>
-                {
-                    rider.AddProducer<string, ApplicationRegistered>();
-                    rider.AddProducer<string, DecisionGenerated>();
-                    rider.AddProducer<string, ContractSigned>();
-                    rider.AddProducer<string, ApplicationClosed>();
+        //opts.PublishAllMessages().ToKafkaTopic("applications");
 
-                    rider.AddConsumer<SetDecisionCommandCommandHandler>();
-                    rider.AddConsumer<CloseApplicationCommandHandler>();
+        opts.PublishMessage<ApplicationRegistered>().ToKafkaTopic("applications").TelemetryEnabled(true);
+        opts.PublishMessage<ApplicationClosed>().ToKafkaTopic("applications").TelemetryEnabled(true);
+        opts.PublishMessage<DecisionGenerated>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+        opts.PublishMessage<ContractSigned>().ToKafkaTopic("contracts").TelemetryEnabled(true);
 
-                    rider.UsingKafka((context, k) =>
-                    {
-                        k.Host(configuration.GetkafkaConnectionString());
-                        k.TopicEndpoint<SetDecisionCommand>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        opts.ListenToKafkaTopic("applications")
+            .ProcessInline().TelemetryEnabled(true);
 
-                            e.ConfigureConsumer<SetDecisionCommandCommandHandler>(context);
-                        });
+        opts.ListenToKafkaTopic("decisions")
+            .ProcessInline().TelemetryEnabled(true);
 
-                        k.TopicEndpoint<CloseApplicationCommand>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        opts.Services.AddResourceSetupOnStartup();
 
-                            e.ConfigureConsumer<CloseApplicationCommandHandler>(context);
-                        });
-                    });
-                });
-            }
-            else
-            {
-                x.SetKebabCaseEndpointNameFormatter();
-
-                x.AddConsumer<SetDecisionCommandCommandHandler>();
-                x.AddConsumer<CloseApplicationCommandHandler>();
-
-                x.UsingAzureServiceBus((context, cfg) =>
-                {
-                    cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                    cfg.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                    cfg.Host(configuration.GetAzServiceBusConnectionString());
-
-                    cfg.ConfigureEndpoints(context);
-                });
-            }
-        });
-
-        services.AddMassTransitHostedService(true);
+        opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
     }
 
     public static async Task ConfigureApplication(this IHost host)

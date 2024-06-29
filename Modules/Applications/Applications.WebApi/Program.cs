@@ -1,8 +1,15 @@
 using Applications.Application.Extensions;
+using Applications.Application.UseCases.CloseApplication;
+using Applications.Application.UseCases.RegisterApplication;
+using Applications.Application.UseCases.SetDecision;
+using Applications.Application.UseCases.SignContract;
 using Common.Application.Extensions;
+using Oakton.Resources;
 using OpenTelemetry.Resources;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Wolverine;
+using Wolverine.Kafka;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +34,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument();
 
 builder.Services.AddCors();
+
+builder.Host.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
 var app = builder.Build();
 

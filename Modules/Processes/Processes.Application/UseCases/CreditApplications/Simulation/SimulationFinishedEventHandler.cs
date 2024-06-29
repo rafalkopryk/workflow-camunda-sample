@@ -1,19 +1,18 @@
 ﻿using Camunda.Client;
-using MassTransit;
+using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Simulation;
 
 [ZeebeMessage(Name = "Message_SimulationFinished")]
-[EntityName("event.credit.calculations.simulationFinished.v1")]
-[MessageUrn("event.credit.calculations.simulationFinished.v1")]
+[MessageIdentity("simulationFinished", Version=1)]
 public record SimulationFinished(string ApplicationId, string Decision);
 
-internal class SimulationFinishedEventHandler(IMessageClient messageClient) : IConsumer<SimulationFinished>
+public class SimulationFinishedEventHandler(IMessageClient messageClient)
 {
     private readonly IMessageClient _client = messageClient;
 
-    public async Task Consume(ConsumeContext<SimulationFinished> context)
+    public async Task Handle(SimulationFinished message)
     {
-        await _client.Publish(context.Message.ApplicationId, context.Message);
+        await _client.Publish(message.ApplicationId, message);
     }
 }

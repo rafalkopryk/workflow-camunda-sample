@@ -8,7 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Common.Application.Extensions;
-using Processes.Application.Extensions;
+using Wolverine;
+using Wolverine.Kafka;
+using Oakton.Resources;
 
 public static class ServiceCollectionExtensions
 {
@@ -20,48 +22,67 @@ public static class ServiceCollectionExtensions
 
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
 
-        services.AddMassTransit(x =>
-        {
-            x.SetKebabCaseEndpointNameFormatter();
+        //services.AddMassTransit(x =>
+        //{
+        //    x.SetKebabCaseEndpointNameFormatter();
 
-            if (configuration.IsKafka())
-            {
-                x.AddRider(rider =>
-                {
-                    rider.AddProducer<string, SimulationCreditFinished>();
+        //    if (configuration.IsKafka())
+        //    {
+        //        x.AddRider(rider =>
+        //        {
+        //            rider.AddProducer<string, SimulationCreditFinished>();
 
-                    rider.AddConsumer<SimulateCreditCommandHandler>();
+        //            rider.AddConsumer<SimulateCreditCommandHandler>();
 
-                    rider.UsingKafka((context, k) =>
-                    {
-                        k.Host(configuration.GetkafkaConnectionString());
-                        k.TopicEndpoint<SimulateCreditCommand>(configuration.GetkafkaConsumer(), e =>
-                        {
-                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        //            rider.UsingKafka((context, k) =>
+        //            {
+        //                k.Host(configuration.GetkafkaConnectionString());
+        //                k.TopicEndpoint<SimulateCreditCommand>(configuration.GetkafkaConsumer(), e =>
+        //                {
+        //                    e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        //                    e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
 
-                            e.ConfigureConsumer<SimulateCreditCommandHandler>(context);
-                        });
-                    });
-                });
-            }
-            else
-            {
-                x.SetKebabCaseEndpointNameFormatter();
-                x.AddConsumer<SimulateCreditCommandHandler>();
+        //                    e.ConfigureConsumer<SimulateCreditCommandHandler>(context);
+        //                });
+        //            });
+        //        });
+        //    }
+        //    else
+        //    {
+        //        x.SetKebabCaseEndpointNameFormatter();
+        //        x.AddConsumer<SimulateCreditCommandHandler>();
 
-                x.UsingAzureServiceBus((context, cfg) =>
-                {
-                    cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                    cfg.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        //        x.UsingAzureServiceBus((context, cfg) =>
+        //        {
+        //            cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+        //            cfg.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
 
-                    cfg.Host(configuration.GetAzServiceBusConnectionString());
+        //            cfg.Host(configuration.GetAzServiceBusConnectionString());
                     
-                    cfg.ConfigureEndpoints(context);
-                });
-            }
-        });
+        //            cfg.ConfigureEndpoints(context);
+        //        });
+        //    }
+        //});
     }
+
+    public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
+    {
+        opts.UseKafka(configuration.GetkafkaConnectionString())
+            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
+
+        //opts.PublishAllMessages().ToKafkaTopic("applications");
+
+        opts.PublishMessage<SimulationCreditFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+
+        opts.ListenToKafkaTopic("simulations")
+            .ProcessInline().TelemetryEnabled(true);
+
+        opts.Services.AddResourceSetupOnStartup();
+
+        opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
+    }
+
 
     public static async Task ConfigureApplication(this IHost host)
     {

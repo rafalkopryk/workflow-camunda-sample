@@ -1,20 +1,19 @@
 ﻿using Camunda.Client;
-using MassTransit;
-using MediatR;
+using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Decision;
 
 [ZeebeMessage(Name = "Message_DecisionGenerated")]
-[EntityName("event.credit.applications.decisionGenerated.v1")]
-[MessageUrn("event.credit.applications.decisionGenerated.v1")]
-public record DecisionGenerated(string ApplicationId);
+[MessageIdentity("decisionGenerated", Version = 1)]
+public record DecisionGenerated(string ApplicationId, string Decision);
 
-internal class DecisionGeneratedEventHandler(IMessageClient messageClient) : IConsumer<DecisionGenerated>
+[WolverineHandler]
+public class DecisionGeneratedEventHandler(IMessageClient messageClient)
 {
     private readonly IMessageClient _client = messageClient;
 
-    public async Task Consume(ConsumeContext<DecisionGenerated> context)
+    public async Task Handle(DecisionGenerated message)
     {
-        await _client.Publish(context.Message.ApplicationId, context.Message);
+        await _client.Publish(message.ApplicationId, message);
     }
 }

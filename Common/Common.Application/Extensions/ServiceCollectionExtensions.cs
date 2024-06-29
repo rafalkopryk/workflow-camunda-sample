@@ -21,7 +21,6 @@ public static class ServiceCollectionExtensions
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
     {
         services.AddSingleton(TimeProvider.System);
-        services.AddSingleton<BusProxy>();
 
         services.Configure<HostOptions>(options =>
         {

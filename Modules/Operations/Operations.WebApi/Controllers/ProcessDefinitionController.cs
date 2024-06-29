@@ -19,7 +19,7 @@ public class ProcessDefinitionController : BaseController
 
     [HttpGet("{processDefinitionKey}/xml", Name = "GetProcessDefinitionXml")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProcessDefinitionsXml([FromRoute] long processDefinitionKey, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetProcessDefinitionXmlQuery(processDefinitionKey));

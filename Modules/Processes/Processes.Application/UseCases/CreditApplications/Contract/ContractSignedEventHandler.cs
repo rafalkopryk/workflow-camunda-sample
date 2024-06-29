@@ -1,19 +1,18 @@
 ﻿using Camunda.Client;
-using MassTransit;
+using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Contract;
 
 [ZeebeMessage(Name = "Message_ContractSigned")]
-[EntityName("event.credit.applications.contractSigned.v1")]
-[MessageUrn("event.credit.applications.contractSigned.v1")]
+[MessageIdentity("contractSigned", Version = 1)]
 public record ContractSigned(string ApplicationId);
 
-internal class ContractSignedEventHandler(IMessageClient messageClient) :  IConsumer<ContractSigned>
+public class ContractSignedEventHandler(IMessageClient messageClient) 
 {
     private readonly IMessageClient _client = messageClient;
 
-    public async Task Consume(ConsumeContext<ContractSigned> context)
+    public async Task Handle(ContractSigned message)
     {
-        await _client.Publish(context.Message.ApplicationId, context.Message);
+        await _client.Publish(message.ApplicationId, message);
     }
 }

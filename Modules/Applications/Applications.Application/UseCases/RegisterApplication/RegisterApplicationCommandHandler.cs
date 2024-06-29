@@ -1,26 +1,23 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using Camunda.Client;
-using Common.Application;
 using Common.Application.Errors;
 using CSharpFunctionalExtensions;
-using MassTransit;
 using MediatR;
+using Wolverine;
+using Wolverine.Attributes;
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
-[ZeebeMessage(Name = "Message_ApplicationRegistered", TimeToLiveInMs = 24 * 3600 * 1000)]
-[EntityName("event.credit.applications.applicationRegistered.v1")]
-[MessageUrn("event.credit.applications.applicationRegistered.v1")]
+[MessageIdentity("applicationRegistered", Version = 1)]
 public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
 internal class RegisterApplicationCommandHandler(
-    BusProxy bus,
+    IMessageBus bus,
     CreditApplicationDbContext creditApplicationDbContext,
     TimeProvider timeProvider
     ) : IRequestHandler<RegisterApplicationCommand, Result>
 {
-    private readonly BusProxy _bus = bus;
+    private readonly IMessageBus _bus = bus;
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
 
@@ -37,13 +34,12 @@ internal class RegisterApplicationCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _bus.Publish(
+        await _bus.PublishAsync(
             new ApplicationRegistered(
                 creditApplication.ApplicationId,
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
-                creditApplication.Declaration.AverageNetMonthlyIncome),
-            cancellationToken);
+                creditApplication.Declaration.AverageNetMonthlyIncome));
 
         return Result.Success();
     }

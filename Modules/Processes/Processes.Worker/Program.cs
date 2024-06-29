@@ -1,23 +1,24 @@
 using OpenTelemetry.Resources;
 using Common.Application.Extensions;
 using Processes.Application.Extensions;
+using Wolverine;
 
-var builder = Host.CreateApplicationBuilder(args);
+var host = Host.CreateDefaultBuilder(args)
+    .UseWolverine((ctx, opts) => opts.ConfigureWolverine(ctx.Configuration))
+    .ConfigureServices((ctx, services)  => 
+    {
+        services.Configure<HostOptions>(options =>
+        {
+            options.ServicesStartConcurrently = true;
+            options.ServicesStopConcurrently = false;
+        });
 
-builder.Services.Configure<HostOptions>(options =>
-{
-    options.ServicesStartConcurrently = true;
-    options.ServicesStopConcurrently = false;
-});
+        var resourceBuilder = ResourceBuilder.CreateDefault()
+            .AddService("Credit.Processes", serviceVersion: "1.0.0")
+            .AddTelemetrySdk();
 
-var resourceBuilder = ResourceBuilder.CreateDefault()
-    .AddService("Credit.Processes", serviceVersion: "1.0.0")
-    .AddTelemetrySdk();
+        services.AddInfrastructure(ctx.Configuration, resourceBuilder);
+        services.AddApplication(ctx.Configuration);
+    }).Build();
 
-builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
-builder.Services.AddApplication(builder.Configuration);
-
-var configuration = builder.Configuration;
-
-var host = builder.Build();
 await host.RunAsync();

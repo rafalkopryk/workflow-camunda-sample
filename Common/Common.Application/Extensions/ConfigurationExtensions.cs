@@ -51,6 +51,20 @@ public static class ConfigurationExtensions
         return config;
     }
 
+    public static ProducerConfig? GetkafkaProducer(this IConfiguration configuration)
+    {
+        var section = configuration.GetSection("EventBus");
+        var config = new ProducerConfig
+        {
+            BootstrapServers = section.GetValue<string>("bootstrapservers"),
+            Acks = Acks.All,
+            StatisticsIntervalMs = section.GetValue<int>("statisticsintervalms"),
+            AllowAutoCreateTopics = true,
+        };
+
+        return config;
+    }
+
     public static bool UseAzureMonitor(this IConfiguration configuration)
     {
         return configuration.GetValue<bool>("OTEL_EXPORTER_AZUREMONITOR__ENABLED");

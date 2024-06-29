@@ -1,24 +1,23 @@
 ﻿using Applications.Application.Infrastructure.Database;
-using Common.Application;
 using Common.Application.Errors;
 using CSharpFunctionalExtensions;
-using MassTransit;
 using MediatR;
+using Wolverine;
+using Wolverine.Attributes;
 
 namespace Applications.Application.UseCases.SignContract;
 
-[EntityName("event.credit.applications.contractSigned.v1")]
-[MessageUrn("event.credit.applications.contractSigned.v1")]
+[MessageIdentity("contractSigned", Version = 1)]
 public record ContractSigned(string ApplicationId);
 
 internal class SignContractCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
-    BusProxy publishEndpoint,
+    IMessageBus publishEndpoint,
     TimeProvider timeProvider
     ) : IRequestHandler<SignContractCommand, Result>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
-    private readonly BusProxy _publishEndpoint = publishEndpoint;
+    private readonly IMessageBus _publishEndpoint = publishEndpoint;
     private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<Result> Handle(SignContractCommand command, CancellationToken cancellationToken)
@@ -31,7 +30,7 @@ internal class SignContractCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _publishEndpoint.Publish(new ContractSigned(creditApplication.ApplicationId), cancellationToken);
+        await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.ApplicationId));
 
         return Result.Success();
     }

@@ -1,19 +1,18 @@
 ﻿using Camunda.Client;
-using MassTransit;
+using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Close;
 
 [ZeebeMessage(Name = "Message_ApplicationClosed")]
-[EntityName("event.credit.applications.applicationClosed.v1")]
-[MessageUrn("event.credit.applications.applicationClosed.v1")]
+[MessageIdentity("applicationClosed", Version = 1)]
 public record ApplicationClosed(string ApplicationId);
 
-internal class ApplicationClosedEventHandler(IMessageClient messageClient) : IConsumer<ApplicationClosed>
+public class ApplicationClosedEventHandler(IMessageClient messageClient) 
 {
     private readonly IMessageClient _client = messageClient;
 
-    public async Task Consume(ConsumeContext<ApplicationClosed> context)
+    public async Task Handle(ApplicationClosed message)
     {
-        await _client.Publish(context.Message.ApplicationId, context.Message);
+        await _client.Publish(message.ApplicationId, message);
     }
 }
