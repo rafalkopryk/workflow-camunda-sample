@@ -2,7 +2,6 @@
 
 using Calculations.Application.Infrastructure.Database;
 using Calculations.Application.UseCases.SimulateCreditCommand;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

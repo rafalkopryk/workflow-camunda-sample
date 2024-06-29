@@ -10,8 +10,6 @@ using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
-using MassTransit.Logging;
-using MassTransit.Monitoring;
 using Camunda.Client;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry;
@@ -57,7 +55,7 @@ public static class ServiceCollectionExtensions
                     x.RecordException = true;
                 })
                 .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
-                .AddSource(DiagnosticHeaders.DefaultListenerName)
+                .AddSource("Wolverine")
                 .SetErrorStatusOnException()
                 .SetResourceBuilder(resourceBuilder)
                 .AddZeebeWorkerInstrumentation())
@@ -65,7 +63,6 @@ public static class ServiceCollectionExtensions
                 .AddAspNetCoreInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddProcessInstrumentation()
-                .AddMeter(InstrumentationOptions.MeterName)
                 .SetResourceBuilder(resourceBuilder)
                 .AddZeebeWorkerInstrumentation());
     }

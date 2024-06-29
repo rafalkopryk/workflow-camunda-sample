@@ -1,6 +1,5 @@
 ﻿using Camunda.Client;
 using Common.Application.Extensions;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oakton.Resources;

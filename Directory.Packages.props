@@ -10,9 +10,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="CSharpFunctionalExtensions" Version="2.41.0" />
-    <PackageVersion Include="MassTransit" Version="8.2.3" />
-    <PackageVersion Include="MassTransit.Azure.ServiceBus.Core" Version="8.2.3" />
-    <PackageVersion Include="MassTransit.Kafka" Version="8.2.3" />
     <PackageVersion Include="MediatR" Version="12.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />

@@ -1,5 +1,4 @@
 ﻿using Applications.Application.Infrastructure.Database;
-using MassTransit;
 using Wolverine;
 using Wolverine.Attributes;
 
