@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Common.Application.Extensions;
+using Processes.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -23,17 +24,18 @@ public static class ServiceCollectionExtensions
         {
             x.SetKebabCaseEndpointNameFormatter();
 
-            x.AddConsumer<SimulateCreditCommandHandler>();
-
-
             if (configuration.IsKafka())
             {
-                x.AddRider(configure =>
+                x.AddRider(rider =>
                 {
-                    configure.UsingKafka((context, cfg) =>
+                    rider.AddProducer<string, SimulationCreditFinished>();
+
+                    rider.AddConsumer<SimulateCreditCommandHandler>();
+
+                    rider.UsingKafka((context, k) =>
                     {
-                        cfg.Host(configuration.GetkafkaConnectionString());
-                        cfg.TopicEndpoint<SimulateCreditCommand>("command.credit.calculations.simulation.v1", configuration.GetkafkaConsumer(), e =>
+                        k.Host(configuration.GetkafkaConnectionString());
+                        k.TopicEndpoint<SimulateCreditCommand>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -45,6 +47,9 @@ public static class ServiceCollectionExtensions
             }
             else
             {
+                x.SetKebabCaseEndpointNameFormatter();
+                x.AddConsumer<SimulateCreditCommandHandler>();
+
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);

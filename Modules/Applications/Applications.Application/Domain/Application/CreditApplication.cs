@@ -29,10 +29,10 @@ public class CreditApplication
             CreditPeriodInMonths = creditPeriodInMonths,
             CustomerPersonalData = customerPersonalData,
             Declaration = declaration,
-            States = new List<State>
-            {
+            States =
+            [
                 State.ApplicationRegistered(timeProvider.GetLocalNow()),
-            }
+            ]
         };
     }
 

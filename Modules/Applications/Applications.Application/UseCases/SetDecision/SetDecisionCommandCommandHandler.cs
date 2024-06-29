@@ -9,15 +9,18 @@ namespace Applications.Application.UseCases.SetDecision;
 [MessageUrn("command.credit.applications.decision.v1")]
 public record SetDecisionCommand(string ApplicationId, Decision Decision);
 
-internal class SetDecisionCommandCommandHandler(
-    CreditApplicationDbContext creditApplicationDbContext,
-    BusProxy eventBusProducer,
-    TimeProvider timeProvider
-    ) : IConsumer<SetDecisionCommand>
+public class SetDecisionCommandCommandHandler : IConsumer<SetDecisionCommand>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
-    private readonly BusProxy _eventBusProducer = eventBusProducer;
-    private readonly TimeProvider _timeProvider = timeProvider;
+    private readonly CreditApplicationDbContext _creditApplicationDbContext;
+    private readonly BusProxy _eventBusProducer;
+    private readonly TimeProvider _timeProvider;
+
+    public SetDecisionCommandCommandHandler(CreditApplicationDbContext creditApplicationDbContext, BusProxy eventBusProducer, TimeProvider timeProvider)
+    {
+        _creditApplicationDbContext = creditApplicationDbContext;
+        _eventBusProducer = eventBusProducer;
+        _timeProvider = timeProvider;
+    }
 
     public async Task Consume(ConsumeContext<SetDecisionCommand> context)
     {

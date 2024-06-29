@@ -37,8 +37,17 @@ public static class ConfigurationExtensions
 
     public static ConsumerConfig? GetkafkaConsumer(this IConfiguration configuration)
     {
-        ConsumerConfig? config = null;
-        configuration.GetSection("EventBus").Bind(config);
+        var section = configuration.GetSection("EventBus");
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = section.GetValue<string>("bootstrapservers"),
+            GroupId = section.GetValue<string>("groupid"),
+            EnableAutoCommit = section.GetValue<bool>("enableautocommit"),
+            StatisticsIntervalMs = section.GetValue<int>("statisticsintervalms"),
+            AutoOffsetReset = section.GetValue<AutoOffsetReset>("autooffsetreset"),
+            EnablePartitionEof = section.GetValue<bool>("enablepartitioneof"),
+        };
+
         return config;
     }
 
@@ -49,11 +58,11 @@ public static class ConfigurationExtensions
 
     public static string GetAzureMonitorEndpoint(this IConfiguration configuration)
     {
-        return configuration.GetValue<string>("OTEL_EXPORTER_AZUREMONITOR__ENDPOINT");
+        return configuration.GetValue<string>("OTEL_EXPORTER_OTLP_ENDPOINT");
     }
 
     public static bool UseOtlpExporter(this IConfiguration configuration)
     {
-        return configuration.GetValue<bool>("OTEL_EXPORTER_OTLP__ENABLED");
+        return configuration.GetValue<bool>("OTEL_EXPORTER_OTLP_ENABLED");
     }
 }

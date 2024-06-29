@@ -32,22 +32,26 @@ public static class ServiceCollectionExtensions
 
         services.AddMassTransit(x =>
         {
-            x.SetKebabCaseEndpointNameFormatter();
-
-            x.AddConsumer<SimulationFinishedEventHandler>();
-            x.AddConsumer<DecisionGeneratedEventHandler>();
-            x.AddConsumer<ContractSignedEventHandler>();
-            x.AddConsumer<ApplicationClosedEventHandler>();
-            x.AddConsumer<ApplicationRegisteredEventHandler>();
-
             if (configuration.IsKafka())
             {
-                x.AddRider(configure =>
+                x.UsingInMemory();
+
+                x.AddRider(rider =>
                 {
-                    configure.UsingKafka((context, cfg) =>
+                    rider.AddProducer<string, SimulationCommand>();
+                    rider.AddProducer<string, DecisionCommand>();
+                    rider.AddProducer<string, CloseApplicationCommand>();
+
+                    rider.AddConsumer<SimulationFinishedEventHandler>();
+                    rider.AddConsumer<DecisionGeneratedEventHandler>();
+                    rider.AddConsumer<ContractSignedEventHandler>();
+                    rider.AddConsumer<ApplicationClosedEventHandler>();
+                    rider.AddConsumer<ApplicationRegisteredEventHandler>();
+
+                    rider.UsingKafka((context, k) =>
                     {
-                        cfg.Host(configuration.GetkafkaConnectionString());
-                        cfg.TopicEndpoint<SimulationFinished>("event.credit.calculations.simulationFinished.v1", configuration.GetkafkaConsumer(), e =>
+                        k.Host(configuration.GetkafkaConnectionString());
+                        k.TopicEndpoint<SimulationFinished>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -55,7 +59,7 @@ public static class ServiceCollectionExtensions
                             e.ConfigureConsumer<SimulationFinishedEventHandler>(context);
                         });
 
-                        cfg.TopicEndpoint<DecisionGenerated>("command.credit.applications.decision.v1", configuration.GetkafkaConsumer(), e =>
+                        k.TopicEndpoint<DecisionGenerated>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -63,7 +67,7 @@ public static class ServiceCollectionExtensions
                             e.ConfigureConsumer<DecisionGeneratedEventHandler>(context);
                         });
 
-                        cfg.TopicEndpoint<ContractSigned>("event.credit.applications.decisionGenerated.v1", configuration.GetkafkaConsumer(), e =>
+                        k.TopicEndpoint<ContractSigned>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -71,7 +75,7 @@ public static class ServiceCollectionExtensions
                             e.ConfigureConsumer<ContractSignedEventHandler>(context);
                         });
 
-                        cfg.TopicEndpoint<ApplicationClosed>("event.credit.applications.applicationClosed.v1", configuration.GetkafkaConsumer(), e =>
+                        k.TopicEndpoint<ApplicationClosed>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -79,10 +83,16 @@ public static class ServiceCollectionExtensions
                             e.ConfigureConsumer<ApplicationClosedEventHandler>(context);
                         });
 
-                        cfg.TopicEndpoint<ApplicationRegistered>("event.credit.applications.applicationRegistered.v1", configuration.GetkafkaConsumer(), e =>
+                        k.TopicEndpoint<ApplicationRegistered>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            //e.Handler<ApplicationRegistered>(async data =>
+                            //{
+                            //    var client = context.GetMessageClient();
+                            //    await client.Publish(null, data.Message, data.Message.ApplicationId);
+                            //});
 
                             e.ConfigureConsumer<ApplicationRegisteredEventHandler>(context);
                         });
@@ -91,6 +101,14 @@ public static class ServiceCollectionExtensions
             }
             else
             {
+                x.SetKebabCaseEndpointNameFormatter();
+
+                x.AddConsumer<SimulationFinishedEventHandler>();
+                x.AddConsumer<DecisionGeneratedEventHandler>();
+                x.AddConsumer<ContractSignedEventHandler>();
+                x.AddConsumer<ApplicationClosedEventHandler>();
+                x.AddConsumer<ApplicationRegisteredEventHandler>();
+
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     cfg.Host(configuration.GetAzServiceBusConnectionString());
@@ -99,5 +117,16 @@ public static class ServiceCollectionExtensions
                 });
             }
         });
+    }
+}
+
+
+
+
+public static class ServiceScopeProviderExtensions
+{
+    public static IMessageClient GetMessageClient(this IServiceProvider provider)
+    {
+        return provider.GetRequiredService<IMessageClient>();
     }
 }

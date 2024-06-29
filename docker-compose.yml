@@ -101,7 +101,7 @@ services:
     ports:
       - "8085:8080"
     environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
-      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=${ZEEBE_ADDRESS}
+      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=${ELASTIC_ADDRESS}
       - CAMUNDA_OPERATE_ELASTICSEARCH_USERNAME=${ELASTIC_USER}
       - CAMUNDA_OPERATE_ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
@@ -263,30 +263,32 @@ services:
   #     context: .
   #     dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
 
-  # processes.worker:
-  #   image: ${DOCKER_REGISTRY-}processesworker
-  #   build:
-  #     context: .
-  #     dockerfile: Modules/Processes/Processes.Worker/Dockerfile
-  #   depends_on:
-  #     - zeebe
-  #   environment:
-  #      OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
-  #      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
-  #      OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
-  #      OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+  processes.worker:
+    image: ${DOCKER_REGISTRY-}processesworker
+    build:
+      context: .
+      dockerfile: Modules/Processes/Processes.Worker/Dockerfile
+    depends_on:
+      - zeebe
+    environment:
+       OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+       OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+       OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
        
-  #      Zeebe__Endpoint: ${ZEEBE_ADDRESS}
-  #      ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
+       Zeebe__Endpoint: ${ZEEBE_ADDRESS}
+       ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
-  #      ServiceBusProvider: "kafka"
+       ServiceBusProvider: "kafka"
        
-  #      EventBus__bootstrapservers: kafka:9092
-  #      EventBus__groupid: credit-processes
-  #      EventBus__enableautocommit: "false"
-  #      EventBus__statisticsintervalms: 5000
-  #      EventBus__autooffsetreset: earliest
-  #      EventBus__enablepartitioneof: "true"
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: credit-processes
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
+
+
 
   # creditprocessfunctions:
   #   image: ${DOCKER_REGISTRY-}creditprocessfunctions

@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
 using Common.Application.Extensions;
+using Applications.Application.UseCases.RegisterApplication;
+using Processes.Application.Extensions;
+using Applications.Application.UseCases.SignContract;
 
 public static class ServiceCollectionExtensions
 {
@@ -22,38 +25,48 @@ public static class ServiceCollectionExtensions
 
         services.AddMassTransit(x =>
         {
-            x.SetKebabCaseEndpointNameFormatter();
-
-            //x.AddConsumer<SetDecisionCommandCommandHandler>();
-            x.AddConsumer<CloseApplicationCommandHandler>();
-
             if (configuration.IsKafka())
             {
-                x.AddRider(configure =>
+                x.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+
+                x.AddRider(rider =>
                 {
-                    configure.UsingKafka((context, cfg) =>
+                    rider.AddProducer<string, ApplicationRegistered>();
+                    rider.AddProducer<string, DecisionGenerated>();
+                    rider.AddProducer<string, ContractSigned>();
+                    rider.AddProducer<string, ApplicationClosed>();
+
+                    rider.AddConsumer<SetDecisionCommandCommandHandler>();
+                    rider.AddConsumer<CloseApplicationCommandHandler>();
+
+                    rider.UsingKafka((context, k) =>
                     {
-                        cfg.Host(configuration.GetkafkaConnectionString());
-                        cfg.TopicEndpoint<CloseApplicationCommand>("command.credit.applications.close.v1", configuration.GetkafkaConsumer(), e =>
+                        k.Host(configuration.GetkafkaConnectionString());
+                        k.TopicEndpoint<SetDecisionCommand>(configuration.GetkafkaConsumer(), e =>
+                        {
+                            e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+                            e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
+
+                            e.ConfigureConsumer<SetDecisionCommandCommandHandler>(context);
+                        });
+
+                        k.TopicEndpoint<CloseApplicationCommand>(configuration.GetkafkaConsumer(), e =>
                         {
                             e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
                             e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
 
                             e.ConfigureConsumer<CloseApplicationCommandHandler>(context);
                         });
-
-                        //cfg.TopicEndpoint<SetDecisionCommand>("command.credit.applications.decision.v1", configuration.GetkafkaConsumer(), e =>
-                        //{
-                        //    e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-                        //    e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-                        //    e.ConfigureConsumer<SetDecisionCommandCommandHandler>(context);
-                        //});
                     });
                 });
             }
             else
             {
+                x.SetKebabCaseEndpointNameFormatter();
+
+                x.AddConsumer<SetDecisionCommandCommandHandler>();
+                x.AddConsumer<CloseApplicationCommandHandler>();
+
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
@@ -65,6 +78,8 @@ public static class ServiceCollectionExtensions
                 });
             }
         });
+
+        services.AddMassTransitHostedService(true);
     }
 
     public static async Task ConfigureApplication(this IHost host)

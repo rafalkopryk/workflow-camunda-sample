@@ -9,7 +9,7 @@ namespace Applications.Application.UseCases.SignContract;
 
 [EntityName("event.credit.applications.contractSigned.v1")]
 [MessageUrn("event.credit.applications.contractSigned.v1")]
-public record ContractSigned(string ApplicationId) : INotification;
+public record ContractSigned(string ApplicationId);
 
 internal class SignContractCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,

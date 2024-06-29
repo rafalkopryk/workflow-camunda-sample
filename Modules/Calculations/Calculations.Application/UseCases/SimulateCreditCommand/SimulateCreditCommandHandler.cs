@@ -10,13 +10,13 @@ using MediatR;
 
 [EntityName("command.credit.calculations.simulation.v1")]
 [MessageUrn("command.credit.calculations.simulation.v1")]
-public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : INotification;
+public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
 [EntityName("event.credit.calculations.simulationFinished.v1")]
 [MessageUrn("event.credit.calculations.simulationFinished.v1")]
-public record SimulationCreditFinished(string ApplicationId, string Decision) : INotification;
+public record SimulationCreditFinished(string ApplicationId, string Decision);
 
-internal class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, BusProxy eventBusProducer) : INotificationHandler<SimulateCreditCommand>, IConsumer<SimulateCreditCommand>
+internal class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, BusProxy eventBusProducer) : IConsumer<SimulateCreditCommand>
 {
     private readonly CreditCalculationDbContext _creditCalculationDbContext = creditCalculationDbContext;
 

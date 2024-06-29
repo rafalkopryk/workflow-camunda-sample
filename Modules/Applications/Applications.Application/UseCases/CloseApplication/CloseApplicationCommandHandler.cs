@@ -1,6 +1,7 @@
 ﻿using Applications.Application.Infrastructure.Database;
 using Common.Application;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 
 namespace Applications.Application.UseCases.CloseApplication;
 
@@ -8,17 +9,20 @@ namespace Applications.Application.UseCases.CloseApplication;
 [MessageUrn("command.credit.applications.close.v1")]
 public record CloseApplicationCommand(string ApplicationId);
 
-internal class CloseApplicationCommandHandler(
-    CreditApplicationDbContext creditApplicationDbContext,
-    BusProxy eventBusProducer,
-    TimeProvider timeProvider
-    ): IConsumer<CloseApplicationCommand>
+public class CloseApplicationCommandHandler: IConsumer<CloseApplicationCommand>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
+    private readonly CreditApplicationDbContext _creditApplicationDbContext;
 
-    private readonly BusProxy _eventBusProducer = eventBusProducer;
+    private readonly BusProxy _eventBusProducer;
 
-    private readonly TimeProvider timeProvider = timeProvider;
+    private readonly TimeProvider _timeProvider;
+
+    public CloseApplicationCommandHandler(CreditApplicationDbContext creditApplicationDbContext, BusProxy eventBusProducer, TimeProvider timeProvider)
+    {
+        _creditApplicationDbContext = creditApplicationDbContext;
+        _eventBusProducer = eventBusProducer;
+        _timeProvider = timeProvider;
+    }
 
     public async Task Consume(ConsumeContext<CloseApplicationCommand> context)
     {
@@ -28,7 +32,7 @@ internal class CloseApplicationCommandHandler(
     public async Task Handle(CloseApplicationCommand notification, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
-        creditApplication.CloseApplication(timeProvider);
+        creditApplication.CloseApplication(_timeProvider);
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 

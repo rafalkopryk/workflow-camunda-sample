@@ -60,3 +60,4 @@ public class JsonKafkaSerializerFactory : IKafkaSerializerFactory
         }
     }
 }
+

@@ -13,12 +13,12 @@ public class BusProxy(IServiceScopeFactory serviceScopeFactory, IConfiguration c
     public async Task Publish<T>(T message, CancellationToken cancellationToken) where T : class
     {
         using var serviceScope = _serviceScopeFactory.CreateScope();
-        //if (!_configuration.IsKafka())
-        //{
-        //    var bus = serviceScope.ServiceProvider.GetRequiredService<IBus>();
-        //    await bus.Publish(message, cancellationToken);
-        //    return;
-        //}
+        if (!_configuration.IsKafka())
+        {
+            var bus = serviceScope.ServiceProvider.GetRequiredService<IBus>();
+            await bus.Publish(message, cancellationToken);
+            return;
+        }
 
         var topicProducer = serviceScope.ServiceProvider.GetRequiredService<ITopicProducer<T>>();
         await topicProducer.Produce(message, cancellationToken);

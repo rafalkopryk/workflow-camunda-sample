@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Common.Kafka;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using Microsoft.Extensions.Logging;
@@ -22,7 +21,7 @@ public static class ServiceCollectionExtensions
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
     {
         services.AddSingleton(TimeProvider.System);
-        services.AddTransient<BusProxy>();
+        services.AddSingleton<BusProxy>();
 
         services.Configure<HostOptions>(options =>
         {
@@ -51,7 +50,6 @@ public static class ServiceCollectionExtensions
                     x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
                     x.RecordException = true;
                 })
-                .AddKafkaInstrumentation()
                 .AddGrpcClientInstrumentation()
                 .AddSqlClientInstrumentation(x =>
                 {
