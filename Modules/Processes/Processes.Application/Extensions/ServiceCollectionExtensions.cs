@@ -11,6 +11,7 @@ using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
 using Wolverine;
 using Wolverine.Attributes;
+using Wolverine.AzureServiceBus;
 using Wolverine.Kafka;
 
 namespace Processes.Application.Extensions;
@@ -36,25 +37,36 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
-        opts.UseKafka(configuration.GetkafkaConnectionString())
-            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
-            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
+        if (configuration.IsKafka())
+        {
+            opts.UseKafka(configuration.GetkafkaConnectionString())
+                .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+                .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
-        opts.PublishMessage<CloseApplicationCommand>().ToKafkaTopic("applications").TelemetryEnabled(true);
-        opts.PublishMessage<SimulationCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
-        opts.PublishMessage<DecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+            opts.PublishMessage<CloseApplicationCommand>().ToKafkaTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<SimulationCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+            opts.PublishMessage<DecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("applications")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("applications")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("simulations")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("simulations")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("contracts")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("contracts")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("decisions")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("decisions")
+                .ProcessInline().TelemetryEnabled(true);
+        }
+        else
+        {
+            opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString());
+
+
+
+        }
+
 
         opts.Services.AddResourceSetupOnStartup();
 

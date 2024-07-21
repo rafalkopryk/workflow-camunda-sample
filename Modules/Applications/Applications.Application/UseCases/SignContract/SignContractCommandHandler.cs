@@ -30,7 +30,7 @@ internal class SignContractCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.ApplicationId));
+        await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.Id));
 
         return Result.Success();
     }

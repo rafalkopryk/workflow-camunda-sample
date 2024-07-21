@@ -16,9 +16,10 @@ services:
        
        ConnectionStrings__Default: ${CREDIT_APPLICATIONS_CONNECTION_STRING}       
        ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
+       ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
-       DatabaseProvider: "Sql"
+       DatabaseProvider: "SqlServer"
        ServiceBusProvider: "kafka"
        
        EventBus__bootstrapservers: kafka:9092
@@ -27,7 +28,7 @@ services:
        EventBus__statisticsintervalms: 5000
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
-
+       
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
     build:
@@ -43,6 +44,7 @@ services:
        OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
 
        ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
+       ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
        ConnectionStrings__Default: ${CREDIT_CALCULATIONS_CONNECTION_STRING}       
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
@@ -180,24 +182,23 @@ services:
       - kibana:/usr/share/kibana/data
     depends_on:
       - elasticsearch
- 
-  # apm:
-  #   image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
-  #   container_name: apm
-  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-  #   cap_drop: ["ALL"]
-  #   ports:
-  #     - 8200:8200
-  #   depends_on:
-  #       - elasticsearch
-  #       - kibana
-  #   command: >
-  #      apm-server -e
-  #        -E output.elasticsearch.protocol=http
-  #        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-  #        -E output.elasticsearch.username=${ELASTIC_USER}
-  #        -E output.elasticsearch.password=${ELASTIC_PASSWORD}
-  #        -E output.elasticsearch.ssl.enabled=false
+  apm:
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
+    container_name: apm
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+        - 8200:8200
+    depends_on:
+        - elasticsearch
+        - kibana
+    command: >
+        apm-server -e
+        -E output.elasticsearch.protocol=http
+        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+        -E output.elasticsearch.username=${ELASTIC_USER}
+        -E output.elasticsearch.password=${ELASTIC_PASSWORD}
+        -E output.elasticsearch.ssl.enabled=false
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -244,7 +245,7 @@ services:
     build:
       context: .
       dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
-  
+    
   # operations.webapi:
   #   image: ${DOCKER_REGISTRY-}operationswebapi
   #   build:
@@ -296,6 +297,25 @@ services:
   #     context: .
   #     dockerfile: Modules/Functions/CreditProcessFunctions/Dockerfile
 
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+        - 27017:27017
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: example
+
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #       - 8081:8081
+  #   environment:
+  #       ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #       ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  #       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+  #       ME_CONFIG_BASICAUTH: false
 
 volumes:
   zeebe:

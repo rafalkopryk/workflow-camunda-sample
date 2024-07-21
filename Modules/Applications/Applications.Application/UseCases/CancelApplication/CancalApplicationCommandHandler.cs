@@ -27,7 +27,7 @@ internal class CancalApplicationCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new ApplicationClosed(creditApplication.ApplicationId));
+        await _eventBusProducer.PublishAsync(new ApplicationClosed(creditApplication.Id));
 
         return Result.Success();
     }

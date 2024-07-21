@@ -3,30 +3,20 @@ using Common.Application.Dictionary;
 
 namespace Applications.Application.Domain.Application;
 
-public record State
+public record State(string Level, DateTimeOffset Date, DateTimeOffset? ContractSigningDate = null, Decision? Decision = null)
 {
     public const string APPLICATION_REGISTERED = nameof(APPLICATION_REGISTERED);
     public const string DECISION_GENERATED = nameof(DECISION_GENERATED);
     public const string CONTRACT_SIGNED = nameof(CONTRACT_SIGNED);
     public const string APPLICATION_CLOSED = nameof(APPLICATION_CLOSED);
-    
-    public string Level { get; protected init; }
-
-    public DateTimeOffset Date { get; protected init; }
-
-    public DateTimeOffset? ContractSigningDate { get; protected init; }
-
-    public Decision? Decision { get; protected init; }
-
-    protected State() { }
 
     public static State ApplicationRegistered(DateTimeOffset date)
     {
         return new State
-        {
-            Level = APPLICATION_REGISTERED,
-            Date = date,
-        };
+        (
+            APPLICATION_REGISTERED,
+            date
+        );
     }
 
     public static State DecisionGenerated(State currentState, Decision decision, DateTimeOffset date)

@@ -10,6 +10,11 @@ public static class ConfigurationExtensions
         return configuration.GetValue<string>("DatabaseProvider")?.ToLower() == "cosmosdb";
     }
 
+    public static bool IsMongoDb(this IConfiguration configuration)
+    {
+        return configuration.GetValue<string>("DatabaseProvider")?.ToLower() == "mongodb";
+    }
+
     public static bool IsKafka(this IConfiguration configuration)
     {
         return configuration.GetValue<string>("ServiceBusProvider")?.ToLower() == "kafka";
@@ -28,6 +33,11 @@ public static class ConfigurationExtensions
     public static string GetSqlConnectionString(this IConfiguration configuration)
     {
         return configuration.GetConnectionString("Default");
+    }
+
+    public static string GetMongoDbConnectionString(this IConfiguration configuration)
+    {
+        return configuration.GetConnectionString("MongoDB");
     }
 
     public static string GetkafkaConnectionString(this IConfiguration configuration)

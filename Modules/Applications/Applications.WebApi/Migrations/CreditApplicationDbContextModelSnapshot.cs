@@ -17,14 +17,14 @@ namespace Applications.WebApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Applications.Application.Domain.Application.CreditApplication", b =>
                 {
-                    b.Property<string>("ApplicationId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
@@ -33,37 +33,16 @@ namespace Applications.WebApi.Migrations
                     b.Property<int>("CreditPeriodInMonths")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
-
-                    b.HasKey("ApplicationId");
+                    b.HasKey("Id");
 
                     b.ToTable("CreditApplication", (string)null);
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                            {
-                                ttb.UseHistoryTable("CreditApplicationHistory");
-                                ttb
-                                    .HasPeriodStart("PeriodStart")
-                                    .HasColumnName("PeriodStart");
-                                ttb
-                                    .HasPeriodEnd("PeriodEnd")
-                                    .HasColumnName("PeriodEnd");
-                            }));
                 });
 
             modelBuilder.Entity("Applications.Application.Domain.Application.CreditApplication", b =>
                 {
                     b.OwnsOne("Applications.Application.Domain.Application.CustomerPersonalData", "CustomerPersonalData", b1 =>
                         {
-                            b1.Property<string>("CreditApplicationApplicationId")
+                            b1.Property<string>("CreditApplicationId")
                                 .HasColumnType("nvarchar(450)");
 
                             b1.Property<string>("FirstName")
@@ -78,37 +57,37 @@ namespace Applications.WebApi.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("CreditApplicationApplicationId");
+                            b1.HasKey("CreditApplicationId");
 
                             b1.ToTable("CreditApplication");
 
                             b1.ToJson("CustomerPersonalData");
 
                             b1.WithOwner()
-                                .HasForeignKey("CreditApplicationApplicationId");
+                                .HasForeignKey("CreditApplicationId");
                         });
 
                     b.OwnsOne("Applications.Application.Domain.Application.Declaration", "Declaration", b1 =>
                         {
-                            b1.Property<string>("CreditApplicationApplicationId")
+                            b1.Property<string>("CreditApplicationId")
                                 .HasColumnType("nvarchar(450)");
 
                             b1.Property<decimal>("AverageNetMonthlyIncome")
                                 .HasColumnType("decimal(18,2)");
 
-                            b1.HasKey("CreditApplicationApplicationId");
+                            b1.HasKey("CreditApplicationId");
 
                             b1.ToTable("CreditApplication");
 
                             b1.ToJson("Declaration");
 
                             b1.WithOwner()
-                                .HasForeignKey("CreditApplicationApplicationId");
+                                .HasForeignKey("CreditApplicationId");
                         });
 
                     b.OwnsMany("Applications.Application.Domain.Application.State", "States", b1 =>
                         {
-                            b1.Property<string>("CreditApplicationApplicationId")
+                            b1.Property<string>("CreditApplicationId")
                                 .HasColumnType("nvarchar(450)");
 
                             b1.Property<int>("Id")
@@ -121,21 +100,21 @@ namespace Applications.WebApi.Migrations
                             b1.Property<DateTimeOffset>("Date")
                                 .HasColumnType("datetimeoffset");
 
-                            b1.Property<string>("Decision")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<int?>("Decision")
+                                .HasColumnType("int");
 
                             b1.Property<string>("Level")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("CreditApplicationApplicationId", "Id");
+                            b1.HasKey("CreditApplicationId", "Id");
 
                             b1.ToTable("CreditApplication");
 
                             b1.ToJson("States");
 
                             b1.WithOwner()
-                                .HasForeignKey("CreditApplicationApplicationId");
+                                .HasForeignKey("CreditApplicationId");
                         });
 
                     b.Navigation("CustomerPersonalData")

@@ -1,5 +1,6 @@
 ﻿using Calculations.Application.Domain;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace Calculations.Application.Infrastructure.Database;
 
@@ -32,7 +33,14 @@ public class CreditCalculationDbContext : DbContext
                 entity.ToTable("CreditCalculation");
             }
 
-            entity.HasKey(creditApplication => creditApplication.CalcualtionId);
+            if (Database.ProviderName == "MongoDB.EntityFrameworkCore")
+            {
+                entity.ToCollection("Calculations");
+                entity.Property(e => e.Id)
+                  .HasConversion(v => v.ToString(), v => Guid.Parse(v));
+            }
+
+            entity.HasKey(x => x.Id);
         });
     }
 }

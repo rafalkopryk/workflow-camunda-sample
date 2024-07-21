@@ -9,12 +9,19 @@ internal static class CreditApplicationDbContextExtensions
     private static readonly Func<CreditApplicationDbContext, string, Task<CreditApplication?>> GetApplication =
         EF.CompileAsyncQuery(
             (CreditApplicationDbContext dbContext, string applicationId) =>
-                dbContext.Applications.FirstOrDefault(application => application.ApplicationId == applicationId));
+                dbContext.Applications.FirstOrDefault(application => application.Id == applicationId));
 
     public static async Task<CreditApplication?> GetCreditApplicationAsync(this CreditApplicationDbContext dbContext, string applicationId)
     {
-        return await dbContext.Applications.FirstOrDefaultAsync(x => x.ApplicationId == applicationId);
+        try
+        {
+            return await dbContext.Applications.FirstOrDefaultAsync(x => x.Id == applicationId);
 
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
 
         //return await GetApplication(dbContext, applicationId);
     }
@@ -22,11 +29,11 @@ internal static class CreditApplicationDbContextExtensions
     private static readonly Func<CreditApplicationDbContext, string, Task<bool>> HasApplication =
         EF.CompileAsyncQuery(
             (CreditApplicationDbContext dbContext, string applicationId) =>
-                dbContext.Applications.Any(application => application.ApplicationId == applicationId));
+                dbContext.Applications.Any(application => application.Id == applicationId));
 
     public static async Task<bool> HasCreditApplicationAsync(this CreditApplicationDbContext dbContext, string applicationId)
     {
-        return (await dbContext.Applications.CountAsync(x => x.ApplicationId == applicationId)) > 0;
+        return (await dbContext.Applications.CountAsync(x => x.Id == applicationId)) > 0;
 
         //return await HasApplication(dbContext, applicationId);
     }

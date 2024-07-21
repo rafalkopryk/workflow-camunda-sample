@@ -10,14 +10,29 @@ using Common.Application.Extensions;
 using Wolverine;
 using Wolverine.Kafka;
 using Oakton.Resources;
+using MongoDB.Driver.Core.Extensions.DiagnosticSources;
+using MongoDB.Driver;
 
 public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        _ = configuration.IsCosmosDb()
-            ? services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseCosmos(configuration.GetAzCosmosDBConnectionString(), "Credit_Calculations"))
-            : services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Calculations.WebApi")));
+        if (configuration.IsCosmosDb())
+        {
+            services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseCosmos(configuration.GetAzCosmosDBConnectionString(), "Credit_Calculations"));
+        }
+        else if (configuration.IsMongoDb())
+        {
+            var clientSettings = MongoClientSettings.FromUrl(new MongoUrl(configuration.GetMongoDbConnectionString()));
+            var options = new InstrumentationOptions { CaptureCommandText = true };
+            clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber(options));
+            var mongoClient = new MongoClient(clientSettings);
+            services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseMongoDB(mongoClient, "Credit_Calculations"));
+        }
+        else
+        {
+            services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Calculations.WebApi")));
+        }
 
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
 

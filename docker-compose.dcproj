@@ -9,10 +9,8 @@
     <DockerServiceName>credit.front.server</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="docker-compose.override.yml">
-      <DependentUpon>docker-compose.yml</DependentUpon>
-    </None>
-    <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docker-compose.override.yml" />
+    <None Include="docker-compose.yml" />
   </ItemGroup>
 </Project>

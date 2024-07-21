@@ -25,6 +25,8 @@
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
 	<PackageReference Include="Microsoft.Extensions.Options" />
+	<PackageReference Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" />
+	<PackageReference Include="MongoDB.EntityFrameworkCore" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.ElasticsearchClient" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
@@ -35,6 +37,7 @@
 	<PackageReference Include="OpenTelemetry.Instrumentation.Process" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" />
+	<PackageReference Include="WolverineFx.AzureServiceBus" />
 	<PackageReference Include="WolverineFx.Kafka" />
   </ItemGroup>
 

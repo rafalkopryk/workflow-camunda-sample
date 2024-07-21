@@ -12,21 +12,22 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calculations.WebApi.Migrations
 {
     [DbContext(typeof(CreditCalculationDbContext))]
-    [Migration("20221023162603_Init")]
+    [Migration("20240721134047_Init")]
     partial class Init
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Calculations.Application.Domain.CreditCalculation", b =>
                 {
-                    b.Property<Guid>("CalcualtionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -43,7 +44,7 @@ namespace Calculations.WebApi.Migrations
                     b.Property<int>("Decision")
                         .HasColumnType("int");
 
-                    b.HasKey("CalcualtionId");
+                    b.HasKey("Id");
 
                     b.ToTable("CreditCalculation", (string)null);
                 });

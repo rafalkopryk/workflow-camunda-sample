@@ -1,5 +1,6 @@
 ﻿using Applications.Application.Domain.Application;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace Applications.Application.Infrastructure.Database;
 
@@ -31,8 +32,14 @@ public class CreditApplicationDbContext : DbContext
             {
                 entity.ToTable("CreditApplication");
             }
+            
+            if (Database.ProviderName == "MongoDB.EntityFrameworkCore")
+            {
+                entity.ToCollection("CreditApplication");
+            }
 
-            entity.HasKey(creditApplication => creditApplication.ApplicationId);
+            entity.HasKey(creditApplication => creditApplication.Id);
+            
             entity.OwnsOne(creditApplication => creditApplication.CustomerPersonalData, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
             entity.OwnsOne(creditApplication => creditApplication.Declaration, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
             entity.OwnsMany(creditApplication => creditApplication.States, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());

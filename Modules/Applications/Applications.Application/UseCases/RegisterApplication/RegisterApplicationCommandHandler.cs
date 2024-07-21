@@ -36,7 +36,7 @@ internal class RegisterApplicationCommandHandler(
 
         await _bus.PublishAsync(
             new ApplicationRegistered(
-                creditApplication.ApplicationId,
+                creditApplication.Id,
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
                 creditApplication.Declaration.AverageNetMonthlyIncome));
@@ -50,16 +50,14 @@ internal class RegisterApplicationCommandHandler(
             request.ApplicationId,
             request.CreditApplication.Amount,
             request.CreditApplication.CreditPeriodInMonths,
-            new CustomerPersonalData
-            {
-                FirstName = request.CreditApplication.CustomerPersonalData.FirstName,
-                LastName = request.CreditApplication.CustomerPersonalData.LastName,
-                Pesel = request.CreditApplication.CustomerPersonalData.Pesel,
-            },
+            new CustomerPersonalData(
+                request.CreditApplication.CustomerPersonalData.FirstName,
+                request.CreditApplication.CustomerPersonalData.LastName,
+                request.CreditApplication.CustomerPersonalData.Pesel),
             new Declaration
-            {
-                AverageNetMonthlyIncome = request.CreditApplication.Declaration.AverageNetMonthlyIncome
-            },
+            (
+              request.CreditApplication.Declaration.AverageNetMonthlyIncome
+            ),
             _timeProvider);
     }
 }

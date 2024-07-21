@@ -5,15 +5,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Calculations.WebApi.Migrations
 {
+    /// <inheritdoc />
     public partial class Init : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "CreditCalculation",
                 columns: table => new
                 {
-                    CalcualtionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ApplicationId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreditPeriodInMonths = table.Column<int>(type: "int", nullable: false),
@@ -21,10 +23,11 @@ namespace Calculations.WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreditCalculation", x => x.CalcualtionId);
+                    table.PrimaryKey("PK_CreditCalculation", x => x.Id);
                 });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

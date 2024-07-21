@@ -1,10 +1,14 @@
 ﻿using Common.Application.Dictionary;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Calculations.Application.Domain;
 
 public class CreditCalculation
 {
-    public Guid CalcualtionId { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
+    public Guid Id { get; set; }
 
     public string ApplicationId { get; set; }
 

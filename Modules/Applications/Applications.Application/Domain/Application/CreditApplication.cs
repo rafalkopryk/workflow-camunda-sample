@@ -1,15 +1,20 @@
 ﻿using Common.Application.Dictionary;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Applications.Application.Domain.Application;
 
 public class CreditApplication
 {
-    public string ApplicationId { get; protected set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
+    public string Id { get; protected set; }
     public decimal Amount { get; protected set; }
     public int CreditPeriodInMonths { get; protected set; }
-    public List<State> States { get; protected set; } = new();
+    public List<State> States { get; protected set; } = [];
     public CustomerPersonalData CustomerPersonalData { get; protected set; }
     public Declaration Declaration { get; protected set; }
+
     public State State => States?.OrderByDescending(x => x.Date).FirstOrDefault(); 
     
     protected CreditApplication() { }
@@ -24,7 +29,7 @@ public class CreditApplication
     {
         return new CreditApplication
         {
-            ApplicationId = applicationId,
+            Id = applicationId,
             Amount = amount,
             CreditPeriodInMonths = creditPeriodInMonths,
             CustomerPersonalData = customerPersonalData,

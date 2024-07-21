@@ -58,7 +58,8 @@ public static class ServiceCollectionExtensions
                 .AddSource("Wolverine")
                 .SetErrorStatusOnException()
                 .SetResourceBuilder(resourceBuilder)
-                .AddZeebeWorkerInstrumentation())
+                .AddZeebeWorkerInstrumentation()
+                .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources"))
             .WithMetrics(builder => builder
                 .AddAspNetCoreInstrumentation()
                 .AddRuntimeInstrumentation()

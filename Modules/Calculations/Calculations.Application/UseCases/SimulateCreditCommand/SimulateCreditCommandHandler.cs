@@ -3,7 +3,6 @@
 using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
 using Common.Application.Dictionary;
-
 using Wolverine;
 using Wolverine.Attributes;
 
@@ -32,6 +31,7 @@ public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalcu
 
         var calculation = new CreditCalculation
         {
+            Id = Guid.NewGuid(),
             ApplicationId = notification.ApplicationId,
             Amount = notification.Amount,
             CreditPeriodInMonths = notification.CreditPeriodInMonths,
