@@ -18,7 +18,7 @@ services:
        ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
-       DatabaseProvider: "SqlServer"
+       DatabaseProvider: "Sql"
        ServiceBusProvider: "kafka"
        
        EventBus__bootstrapservers: kafka:9092
