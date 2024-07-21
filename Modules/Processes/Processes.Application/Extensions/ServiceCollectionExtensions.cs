@@ -1,5 +1,6 @@
 ﻿using Camunda.Client;
 using Common.Application.Extensions;
+using JasperFx.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oakton.Resources;
@@ -58,17 +59,34 @@ public static class ServiceCollectionExtensions
 
             opts.ListenToKafkaTopic("decisions")
                 .ProcessInline().TelemetryEnabled(true);
+     
+            opts.Services.AddResourceSetupOnStartup();
         }
         else
         {
-            opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString());
+            opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString())
+                .AutoProvision();
 
+            opts.PublishMessage<CloseApplicationCommand>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<SimulationCommand>().ToAzureServiceBusTopic("simulations").TelemetryEnabled(true);
+            opts.PublishMessage<DecisionCommand>().ToAzureServiceBusTopic("decisions").TelemetryEnabled(true);
 
+            opts.ListenToAzureServiceBusSubscription("applications-processes-subs")
+                .FromTopic("applications")
+                .ProcessInline().TelemetryEnabled(true);
 
+            opts.ListenToAzureServiceBusSubscription("simulations-processes-subs")
+                .FromTopic("simulations")
+                .ProcessInline().TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("contracts-processes-subs")
+                .FromTopic("contracts")
+                .ProcessInline().TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("decisions-processes-subs")
+                .FromTopic("decisions")
+                .ProcessInline().TelemetryEnabled(true);
         }
-
-
-        opts.Services.AddResourceSetupOnStartup();
 
         opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
     }

@@ -19,7 +19,7 @@ services:
        ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
-       DatabaseProvider: "SqlServer"
+       DatabaseProvider: "mongodb"
        ServiceBusProvider: "kafka"
        
        EventBus__bootstrapservers: kafka:9092
@@ -35,7 +35,6 @@ services:
       context: .
       dockerfile: Modules/Calculations/Calculations.WebApi/Dockerfile
     depends_on:
-      - db
       - zeebe
     environment:
        OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
@@ -48,7 +47,7 @@ services:
        ConnectionStrings__Default: ${CREDIT_CALCULATIONS_CONNECTION_STRING}       
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
        
-       DatabaseProvider: "SqlServer"
+       DatabaseProvider: "mongodb"
        ServiceBusProvider: "kafka"
        
        EventBus__bootstrapservers: kafka:9092
@@ -58,14 +57,14 @@ services:
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
 
-  db:
-    image: "mcr.microsoft.com/mssql/server"
-    container_name: db
-    ports:
-      - "1433:1433"
-    environment:
-      SA_PASSWORD: "S3cur3P@ssW0rd!"
-      ACCEPT_EULA: "Y"
+  # db:
+  #   image: "mcr.microsoft.com/mssql/server"
+  #   container_name: db
+  #   ports:
+  #     - "1433:1433"
+  #   environment:
+  #     SA_PASSWORD: "S3cur3P@ssW0rd!"
+  #     ACCEPT_EULA: "Y"
 
   zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
@@ -182,23 +181,23 @@ services:
       - kibana:/usr/share/kibana/data
     depends_on:
       - elasticsearch
-  apm:
-    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
-    container_name: apm
-    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-    cap_drop: ["ALL"]
-    ports:
-        - 8200:8200
-    depends_on:
-        - elasticsearch
-        - kibana
-    command: >
-        apm-server -e
-        -E output.elasticsearch.protocol=http
-        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-        -E output.elasticsearch.username=${ELASTIC_USER}
-        -E output.elasticsearch.password=${ELASTIC_PASSWORD}
-        -E output.elasticsearch.ssl.enabled=false
+  # apm:
+  #   image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
+  #   container_name: apm
+  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+  #   cap_drop: ["ALL"]
+  #   ports:
+  #       - 8200:8200
+  #   depends_on:
+  #       - elasticsearch
+  #       - kibana
+  #   command: >
+  #       apm-server -e
+  #       -E output.elasticsearch.protocol=http
+  #       -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+  #       -E output.elasticsearch.username=${ELASTIC_USER}
+  #       -E output.elasticsearch.password=${ELASTIC_PASSWORD}
+  #       -E output.elasticsearch.ssl.enabled=false
 
   kafka:
     image: confluentinc/cp-kafka:latest

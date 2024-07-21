@@ -12,6 +12,8 @@ using Wolverine.Kafka;
 using Oakton.Resources;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using MongoDB.Driver;
+using Wolverine.AzureServiceBus;
+using JasperFx.Core;
 
 public static class ServiceCollectionExtensions
 {
@@ -35,68 +37,37 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
-
-        //services.AddMassTransit(x =>
-        //{
-        //    x.SetKebabCaseEndpointNameFormatter();
-
-        //    if (configuration.IsKafka())
-        //    {
-        //        x.AddRider(rider =>
-        //        {
-        //            rider.AddProducer<string, SimulationCreditFinished>();
-
-        //            rider.AddConsumer<SimulateCreditCommandHandler>();
-
-        //            rider.UsingKafka((context, k) =>
-        //            {
-        //                k.Host(configuration.GetkafkaConnectionString());
-        //                k.TopicEndpoint<SimulateCreditCommand>(configuration.GetkafkaConsumer(), e =>
-        //                {
-        //                    e.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-        //                    e.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-        //                    e.ConfigureConsumer<SimulateCreditCommandHandler>(context);
-        //                });
-        //            });
-        //        });
-        //    }
-        //    else
-        //    {
-        //        x.SetKebabCaseEndpointNameFormatter();
-        //        x.AddConsumer<SimulateCreditCommandHandler>();
-
-        //        x.UsingAzureServiceBus((context, cfg) =>
-        //        {
-        //            cfg.UseRawJsonSerializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-        //            cfg.UseRawJsonDeserializer(RawSerializerOptions.AddTransportHeaders | RawSerializerOptions.CopyHeaders);
-
-        //            cfg.Host(configuration.GetAzServiceBusConnectionString());
-                    
-        //            cfg.ConfigureEndpoints(context);
-        //        });
-        //    }
-        //});
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
-        opts.UseKafka(configuration.GetkafkaConnectionString())
-            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
-            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
+        if (configuration.IsKafka())
+        {
+            opts.UseKafka(configuration.GetkafkaConnectionString())
+                .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+                .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
-        //opts.PublishAllMessages().ToKafkaTopic("applications");
+            opts.PublishMessage<SimulationCreditFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
 
-        opts.PublishMessage<SimulationCreditFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("simulations")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("simulations")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.Services.AddResourceSetupOnStartup();
+        }
+        else
+        {
+            opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString())
+                .AutoProvision();
 
-        opts.Services.AddResourceSetupOnStartup();
+            opts.PublishMessage<SimulationCreditFinished>().ToAzureServiceBusTopic("simulations").TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("simulations-calculations-subs")
+                .FromTopic("simulations")
+                .ProcessInline().TelemetryEnabled(true);
+        }
 
         opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
     }
-
 
     public static async Task ConfigureApplication(this IHost host)
     {

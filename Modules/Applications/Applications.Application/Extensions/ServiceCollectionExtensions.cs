@@ -15,6 +15,9 @@ using Oakton.Resources;
 using Wolverine.Kafka;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
+using Wolverine.AzureServiceBus;
+using JasperFx.Core;
+using Wolverine.Runtime.Routing;
 
 public static class ServiceCollectionExtensions
 {
@@ -43,24 +46,43 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
-        opts.UseKafka(configuration.GetkafkaConnectionString())
-            .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
-            .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
+        if (configuration.IsKafka())
+        {
+            opts.UseKafka(configuration.GetkafkaConnectionString())
+                .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
+                .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
-        //opts.PublishAllMessages().ToKafkaTopic("applications");
+            opts.PublishMessage<ApplicationRegistered>().ToKafkaTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<ApplicationClosed>().ToKafkaTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<DecisionGenerated>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+            opts.PublishMessage<ContractSigned>().ToKafkaTopic("contracts").TelemetryEnabled(true);
 
-        opts.PublishMessage<ApplicationRegistered>().ToKafkaTopic("applications").TelemetryEnabled(true);
-        opts.PublishMessage<ApplicationClosed>().ToKafkaTopic("applications").TelemetryEnabled(true);
-        opts.PublishMessage<DecisionGenerated>().ToKafkaTopic("decisions").TelemetryEnabled(true);
-        opts.PublishMessage<ContractSigned>().ToKafkaTopic("contracts").TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("applications")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("applications")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("decisions")
+                .ProcessInline().TelemetryEnabled(true);
 
-        opts.ListenToKafkaTopic("decisions")
-            .ProcessInline().TelemetryEnabled(true);
+            opts.Services.AddResourceSetupOnStartup();
+        }
+        else
+        {
+            opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString())
+                .AutoProvision();
 
-        opts.Services.AddResourceSetupOnStartup();
+            opts.PublishMessage<ApplicationRegistered>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<ApplicationClosed>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<DecisionGenerated>().ToAzureServiceBusTopic("decisions").TelemetryEnabled(true);
+            opts.PublishMessage<ContractSigned>().ToAzureServiceBusTopic("contracts").TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("applications-applications-subs")
+                .FromTopic("applications")
+                .ProcessInline().TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("decisions-applications-subs")
+                .FromTopic("decisions")
+                .ProcessInline().TelemetryEnabled(true);
+        }
 
         opts.Discovery.IncludeAssembly(typeof(ServiceCollectionExtensions).Assembly);
     }
