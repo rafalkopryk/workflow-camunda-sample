@@ -2,15 +2,13 @@ using Applications.Application.UseCases.CancelApplication;
 using Applications.Application.UseCases.GetApplication;
 using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SignContract;
-using Common.Application.Envelope;
-using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 namespace Applications.WebApi.Controllers;
 
 [ApiController]
 [Route("applications")]
-public class ApplicationController : BaseController
+public class ApplicationController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -22,12 +20,16 @@ public class ApplicationController : BaseController
     [HttpPost(Name = "RegisterApplication")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
-        return result.Match(
-            () => Created($"/applications/{command.ApplicationId}", null),
-            failure => Failure(failure));
+        return result switch
+        {
+            RegisterApplicationCommandResponse.OK => Created($"/applications/{command.ApplicationId}", null),
+            RegisterApplicationCommandResponse.ResourceExists resourceExists => Problem(statusCode: StatusCodes.Status422UnprocessableEntity, title: nameof(resourceExists)),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        };
     }
 
     [HttpGet("{applicationId}", Name = "GetApplication")]
@@ -36,7 +38,12 @@ public class ApplicationController : BaseController
     public async Task<IActionResult> Get([FromRoute] string applicationId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetApplicationQuery(applicationId), cancellationToken);
-        return result.Match(success => Ok(success), failure => Failure(failure));
+        return result switch
+        {
+            GetApplicationQueryResponse.OK ok => Ok(ok.CreditApplication),
+            GetApplicationQueryResponse.ResourceNotFound resourceNotFound => Problem(statusCode: StatusCodes.Status404NotFound, title: nameof(resourceNotFound)),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        };
     }
 
     [HttpPost("{applicationId}/sign", Name = "SignContract")]
@@ -46,7 +53,12 @@ public class ApplicationController : BaseController
     public async Task<IActionResult> Sign([FromRoute] string applicationId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new SignContractCommand(applicationId), cancellationToken);
-        return result.Match(() => Ok(), failure => Failure(failure));
+        return result switch
+        {
+            SignContractCommandResponse.OK => Ok(),
+            SignContractCommandResponse.ResourceNotFound resourceNotFound => Problem(statusCode: StatusCodes.Status404NotFound, title: nameof(resourceNotFound)),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        };
     }
 
     [HttpPost("{applicationId}/cancel", Name = "CancelApplication")]
@@ -56,6 +68,11 @@ public class ApplicationController : BaseController
     public async Task<IActionResult> Cancel([FromRoute] string applicationId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CancelApplicationCommand(applicationId), cancellationToken);
-        return result.Match(() => Ok(), failure => Failure(failure));
+        return result switch
+        {
+            CancelApplicationCommandResponse.OK => Ok(),
+            CancelApplicationCommandResponse.ResourceNotFound resourceNotFound => Problem(statusCode: StatusCodes.Status404NotFound, title: nameof(resourceNotFound)),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        };
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Applications.Application.Infrastructure.Database;
-using Common.Application.Errors;
-using CSharpFunctionalExtensions;
 using MediatR;
 using Wolverine;
 using Wolverine.Attributes;
+using static Applications.Application.UseCases.SignContract.SignContractCommandResponse;
+
 
 namespace Applications.Application.UseCases.SignContract;
 
@@ -14,17 +14,19 @@ internal class SignContractCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
     IMessageBus publishEndpoint,
     TimeProvider timeProvider
-    ) : IRequestHandler<SignContractCommand, Result>
+    ) : IRequestHandler<SignContractCommand, SignContractCommandResponse>
 {
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
     private readonly IMessageBus _publishEndpoint = publishEndpoint;
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public async Task<Result> Handle(SignContractCommand command, CancellationToken cancellationToken)
+    public async Task<SignContractCommandResponse> Handle(SignContractCommand command, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(command.ApplicationId);
         if (creditApplication is null)
-            return Result.Failure(ErrorCode.ResourceNotFound);
+        {
+            return ResourceNotFound.Result;
+        }
 
         creditApplication.SignContract(_timeProvider);
 
@@ -32,6 +34,6 @@ internal class SignContractCommandHandler(
 
         await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.Id));
 
-        return Result.Success();
+        return OK.Result;
     }
 }

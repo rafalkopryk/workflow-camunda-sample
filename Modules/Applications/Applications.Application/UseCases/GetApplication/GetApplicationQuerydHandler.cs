@@ -1,55 +1,51 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using Common.Application.Errors;
-using CSharpFunctionalExtensions;
+using Applications.Application.UseCases.GetApplication.Dto;
 using MediatR;
+using static Applications.Application.UseCases.GetApplication.GetApplicationQueryResponse;
 
 namespace Applications.Application.UseCases.GetApplication;
 
-internal class GetApplicationQuerydHandler : IRequestHandler<GetApplicationQuery, Result<GetApplicationQueryResponse>>
+internal class GetApplicationQuerydHandler(CreditApplicationDbContext creditApplicationDbContext) : IRequestHandler<GetApplicationQuery, GetApplicationQueryResponse>
 {
-    private readonly CreditApplicationDbContext _creditApplicationDbContext;
+    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
 
-    public GetApplicationQuerydHandler(CreditApplicationDbContext creditApplicationDbContext)
-    {
-        _creditApplicationDbContext = creditApplicationDbContext;
-    }
-
-    public async Task<Result<GetApplicationQueryResponse>> Handle(GetApplicationQuery query, CancellationToken cancellationToken)
+    public async Task<GetApplicationQueryResponse> Handle(GetApplicationQuery query, CancellationToken cancellationToken)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(query.ApplicationId);
 
         if (creditApplication is null)
-            return Result.Failure<GetApplicationQueryResponse>(ErrorCode.ResourceNotFound);
+        {
+            return ResourceNotFound.Result;
+        }
 
-        return Map(creditApplication);
+        var result = Map(creditApplication);
+        
+        return new OK(result);
     }
 
-    private static GetApplicationQueryResponse Map(CreditApplication creditApplication)
+    private static GetApplicationQueryCreditApplicationDto Map(CreditApplication creditApplication)
     {
-        return new GetApplicationQueryResponse
+        return new GetApplicationQueryCreditApplicationDto
         {
-            CreditApplication = new()
+            Amount = creditApplication.Amount,
+            CreditPeriodInMonths = creditApplication.CreditPeriodInMonths,
+            CustomerPersonalData = new()
             {
-                Amount = creditApplication.Amount,
-                CreditPeriodInMonths = creditApplication.CreditPeriodInMonths,
-                CustomerPersonalData = new()
-                {
-                    FirstName = creditApplication.CustomerPersonalData.FirstName,
-                    LastName = creditApplication.CustomerPersonalData.LastName,
-                    Pesel = creditApplication.CustomerPersonalData.Pesel,
-                },
-                Declaration = new()
-                {
-                    AverageNetMonthlyIncome = creditApplication.Declaration.AverageNetMonthlyIncome,
-                },
-                State = new()
-                {
-                    Level = creditApplication.State.Level,
-                    Decision = creditApplication.State.Decision,
-                    ContractSigningDate = creditApplication.State.ContractSigningDate,
-                    Date = creditApplication.State.Date,
-                }
+                FirstName = creditApplication.CustomerPersonalData.FirstName,
+                LastName = creditApplication.CustomerPersonalData.LastName,
+                Pesel = creditApplication.CustomerPersonalData.Pesel,
+            },
+            Declaration = new()
+            {
+                AverageNetMonthlyIncome = creditApplication.Declaration.AverageNetMonthlyIncome,
+            },
+            State = new()
+            {
+                Level = creditApplication.State.Level,
+                Decision = creditApplication.State.Decision,
+                ContractSigningDate = creditApplication.State.ContractSigningDate,
+                Date = creditApplication.State.Date,
             }
         };
     }

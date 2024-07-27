@@ -1,6 +1,4 @@
-﻿using Common.Application.Envelope;
-using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Operations.Application.UseCases.FlowNodeInstances.SearchFlowNodeInstances;
 
@@ -9,7 +7,7 @@ namespace Credit.Front.Server.Controllers
 {
     [ApiController]
     [Route("flownode-instances")]
-    public class FlowNodeInstanceController : BaseController
+    public class FlowNodeInstanceController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -23,7 +21,7 @@ namespace Credit.Front.Server.Controllers
         public async Task<IActionResult> SearchFlowNodeInstances([FromBody] SearchFlowNodeInstancesQuery query, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query);
-            return result.Match(Ok, Failure);
+            return Ok(result);
         }
     }
 }

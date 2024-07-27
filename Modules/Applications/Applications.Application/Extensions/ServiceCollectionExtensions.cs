@@ -16,8 +16,6 @@ using Wolverine.Kafka;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using Wolverine.AzureServiceBus;
-using JasperFx.Core;
-using Wolverine.Runtime.Routing;
 
 public static class ServiceCollectionExtensions
 {

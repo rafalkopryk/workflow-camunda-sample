@@ -1,7 +1,5 @@
 ﻿namespace Common.Application.Extensions;
 
-using Common.Application.MediatR;
-using global::MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
@@ -25,8 +23,6 @@ public static class ServiceCollectionExtensions
             options.ServicesStartConcurrently = true;
             options.ServicesStopConcurrently = false;
         });
-
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(BusinessRuleValidationExceptionProcessorBehavior<,>));
 
         var openTelemetryBuilder = services.AddOpenTelemetry();
 

@@ -1,12 +1,11 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 
-public record GetProcessInstanceSequenceFlowsQuery(long ProcessInstanceKey) : MediatR.IRequest<Result<GetProcessInstanceSequenceFlowsQueryResponse>>;
+public record GetProcessInstanceSequenceFlowsQuery(long ProcessInstanceKey) : MediatR.IRequest<GetProcessInstanceSequenceFlowsQueryResponse>;
 
 public record GetProcessInstanceSequenceFlowsQueryResponse(string[] Items);
 
-internal class GetProcessInstanceSequenceFlowsQueryHandler : IRequestHandler<GetProcessInstanceSequenceFlowsQuery, Result<GetProcessInstanceSequenceFlowsQueryResponse>>
+internal class GetProcessInstanceSequenceFlowsQueryHandler : IRequestHandler<GetProcessInstanceSequenceFlowsQuery, GetProcessInstanceSequenceFlowsQueryResponse>
 {
     private readonly ElasticClient _elasticsearchClient;
 
@@ -15,7 +14,7 @@ internal class GetProcessInstanceSequenceFlowsQueryHandler : IRequestHandler<Get
         _elasticsearchClient = elasticsearchClient;
     }
 
-    public async Task<Result<GetProcessInstanceSequenceFlowsQueryResponse>> Handle(GetProcessInstanceSequenceFlowsQuery request, CancellationToken cancellationToken)
+    public async Task<GetProcessInstanceSequenceFlowsQueryResponse> Handle(GetProcessInstanceSequenceFlowsQuery request, CancellationToken cancellationToken)
     {
         var result = await _elasticsearchClient.SearchAsync<PorcessInstanceDocument>(s => s
             .Index(ProcessInstanceKeyword.INDEX)

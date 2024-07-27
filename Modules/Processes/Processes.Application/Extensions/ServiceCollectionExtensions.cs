@@ -1,17 +1,14 @@
 ﻿using Camunda.Client;
 using Common.Application.Extensions;
-using JasperFx.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oakton.Resources;
 using Processes.Application.UseCases.CreditApplications.Close;
-using Processes.Application.UseCases.CreditApplications.Contract;
 using Processes.Application.UseCases.CreditApplications.Decision;
 using Processes.Application.UseCases.CreditApplications.Simulation;
 using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
 using Wolverine;
-using Wolverine.Attributes;
 using Wolverine.AzureServiceBus;
 using Wolverine.Kafka;
 

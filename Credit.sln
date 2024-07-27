@@ -20,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{A7C7DEA0-25BB-4AB2-A0AB-659FA08EA1A8}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		config\otel-collector-config.yaml = config\otel-collector-config.yaml
 	EndProjectSection
 EndProject

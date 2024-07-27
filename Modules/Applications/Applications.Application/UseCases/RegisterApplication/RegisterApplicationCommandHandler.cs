@@ -1,10 +1,10 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using Common.Application.Errors;
-using CSharpFunctionalExtensions;
 using MediatR;
 using Wolverine;
 using Wolverine.Attributes;
+using static Applications.Application.UseCases.RegisterApplication.RegisterApplicationCommandResponse;
+
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
@@ -15,17 +15,17 @@ internal class RegisterApplicationCommandHandler(
     IMessageBus bus,
     CreditApplicationDbContext creditApplicationDbContext,
     TimeProvider timeProvider
-    ) : IRequestHandler<RegisterApplicationCommand, Result>
+    ) : IRequestHandler<RegisterApplicationCommand, RegisterApplicationCommandResponse>
 {
     private readonly IMessageBus _bus = bus;
     private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public async Task<Result> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
+    public async Task<RegisterApplicationCommandResponse> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
         if (await _creditApplicationDbContext.HasCreditApplicationAsync(command.ApplicationId))
         {
-            return Result.Failure(ErrorCode.ResourceExists);
+            return ResourceExists.Result;
         }
 
         var creditApplication = CreateCreditApplication(command);
@@ -41,7 +41,7 @@ internal class RegisterApplicationCommandHandler(
                 creditApplication.CreditPeriodInMonths,
                 creditApplication.Declaration.AverageNetMonthlyIncome));
 
-        return Result.Success();
+        return OK.Result;
     }
 
     private CreditApplication CreateCreditApplication(RegisterApplicationCommand request)

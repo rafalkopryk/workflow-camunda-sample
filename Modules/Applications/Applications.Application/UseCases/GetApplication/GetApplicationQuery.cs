@@ -1,6 +1,5 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 
 namespace Applications.Application.UseCases.GetApplication;
 
-public record GetApplicationQuery(string ApplicationId) : IRequest<Result<GetApplicationQueryResponse>>;
+public record GetApplicationQuery(string ApplicationId) : IRequest<GetApplicationQueryResponse>;

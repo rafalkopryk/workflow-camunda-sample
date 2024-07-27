@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 using Operations.Application.UseCases.ProcessDefinitions.Shared;
 using Operations.Application.UseCases.ProcessDefinitions.Shared.Documents;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace Operations.Application.UseCases.ProcessDefinitions.GetProcessDefinitionXml;
 
-internal class GetProcessDefinitionXmlQueryHandler : IRequestHandler<GetProcessDefinitionXmlQuery, Result<string>>
+internal class GetProcessDefinitionXmlQueryHandler : IRequestHandler<GetProcessDefinitionXmlQuery, string>
 {
     private readonly ElasticClient _elasticsearchClient;
 
@@ -16,7 +15,7 @@ internal class GetProcessDefinitionXmlQueryHandler : IRequestHandler<GetProcessD
         _elasticsearchClient = elasticsearchClient;
     }
 
-    public async Task<Result<string>> Handle(GetProcessDefinitionXmlQuery request, CancellationToken cancellationToken)
+    public async Task<string> Handle(GetProcessDefinitionXmlQuery request, CancellationToken cancellationToken)
     {
         var result = await _elasticsearchClient.SearchAsync<ProcessDefinitionDocument>(s => s
             .Size(1)

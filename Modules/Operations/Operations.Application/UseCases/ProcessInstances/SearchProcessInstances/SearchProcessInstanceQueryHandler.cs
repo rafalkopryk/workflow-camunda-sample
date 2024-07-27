@@ -1,38 +1,35 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 using Operations.Application.UseCases.ProcessInstances.Shared.Dto;
 
-public record SearchProcessInstanceQuery(ProcessInstanceDto? Filter, long[]? SearchAfter, int? Size = 50) : MediatR.IRequest<Result<SearchProcessInstanceQueryResponse>>;
+public record SearchProcessInstanceQuery(ProcessInstanceDto? Filter, long[]? SearchAfter, int? Size = 50) : MediatR.IRequest<SearchProcessInstanceQueryResponse>;
 
 public record SearchProcessInstanceQueryResponse(ProcessInstanceDto[] Items, object[] SortValues);
 
-internal class SearchProcessInstanceQueryHandler : IRequestHandler<SearchProcessInstanceQuery, Result<SearchProcessInstanceQueryResponse>>
+internal class SearchProcessInstanceQueryHandler : IRequestHandler<SearchProcessInstanceQuery, SearchProcessInstanceQueryResponse>
 {
     private readonly ElasticClient _elasticsearchClient;
-
-
 
     public SearchProcessInstanceQueryHandler(ElasticClient elasticsearchClient)
     {
         _elasticsearchClient = elasticsearchClient;
     }
 
-    public async Task<Result<SearchProcessInstanceQueryResponse>> Handle(SearchProcessInstanceQuery query, CancellationToken cancellationToken)
+    public async Task<SearchProcessInstanceQueryResponse> Handle(SearchProcessInstanceQuery query, CancellationToken cancellationToken)
     {
         var intentsQuery = query.Filter?.State switch
         {
             ProcessInstanceState.COMPLETED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED },
-            ProcessInstanceState.CANCELED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED },
-            _ => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED }
+            ProcessInstanceState.CANCELED => [ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED],
+            _ => [ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED]
         };
 
         var intentsFilter = query.Filter?.State switch
         {
             ProcessInstanceState.COMPLETED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED },
-            ProcessInstanceState.CANCELED => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED },
-            ProcessInstanceState.ACTIVE => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED },
-            _ => new[] { ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED }
+            ProcessInstanceState.CANCELED => [ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED],
+            ProcessInstanceState.ACTIVE => [ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED],
+            _ => [ProcessInstanceKeyword.INTENT_ELEMENT_TERMINATED, ProcessInstanceKeyword.INTENT_ELEMENT_COMPLETED, ProcessInstanceKeyword.INTENT_ELEMENT_ACTIVATED]
         };
 
         var processInstancesKeys = new List<long>();

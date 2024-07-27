@@ -1,11 +1,10 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 using Operations.Application.UseCases.FlowNodeInstances.Shared.Dto;
 
 namespace Operations.Application.UseCases.FlowNodeInstances.SearchFlowNodeInstances;
 
-internal class SearchFlowNodeInstancesQueryHandler : IRequestHandler<SearchFlowNodeInstancesQuery, Result<SearchFlowNodeInstancesQueryResponse>>
+internal class SearchFlowNodeInstancesQueryHandler : IRequestHandler<SearchFlowNodeInstancesQuery, SearchFlowNodeInstancesQueryResponse>
 {
     private readonly ElasticClient _elasticsearchClient;
 
@@ -14,7 +13,7 @@ internal class SearchFlowNodeInstancesQueryHandler : IRequestHandler<SearchFlowN
         _elasticsearchClient = elasticsearchClient;
     }
 
-    public async Task<Result<SearchFlowNodeInstancesQueryResponse>> Handle(SearchFlowNodeInstancesQuery query, CancellationToken cancellationToken)
+    public async Task<SearchFlowNodeInstancesQueryResponse> Handle(SearchFlowNodeInstancesQuery query, CancellationToken cancellationToken)
     {
         var result = await _elasticsearchClient.SearchAsync<FlowNodeInstanceDocument>(s => s
             .Index(FlowNodeInstanceKeyword.INDEX)

@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 using Operations.Application.UseCases.ProcessDefinitions.GetProcessDefinitionXml;
 using Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefinitions;
@@ -8,11 +7,11 @@ using Operations.Application.UseCases.ProcessDefinitions.Shared.Documents;
 
 namespace Operations.Application.UseCases.ProcessDefinitions.SearchProcessDefinition;
 
-internal class SearchProcessDefinitionsQueryHandler(ElasticClient elasticsearchClient) : IRequestHandler<SearchProcessDefinitionsQuery, Result<SearchProcessDefinitionsQueryResponse>>
+internal class SearchProcessDefinitionsQueryHandler(ElasticClient elasticsearchClient) : IRequestHandler<SearchProcessDefinitionsQuery, SearchProcessDefinitionsQueryResponse>
 {
     private readonly ElasticClient _elasticsearchClient = elasticsearchClient;
     
-    public async Task<Result<SearchProcessDefinitionsQueryResponse>> Handle(SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
+    public async Task<SearchProcessDefinitionsQueryResponse> Handle(SearchProcessDefinitionsQuery query, CancellationToken cancellationToken)
     {
         var searchAfter = query.SearchAfter?.Cast<object>().ToArray();
 

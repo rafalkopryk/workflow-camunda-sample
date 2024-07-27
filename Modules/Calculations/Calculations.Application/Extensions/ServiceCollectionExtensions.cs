@@ -13,7 +13,6 @@ using Oakton.Resources;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using MongoDB.Driver;
 using Wolverine.AzureServiceBus;
-using JasperFx.Core;
 
 public static class ServiceCollectionExtensions
 {

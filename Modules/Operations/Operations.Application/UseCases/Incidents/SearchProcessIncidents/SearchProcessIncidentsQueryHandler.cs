@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using MediatR;
+﻿using MediatR;
 using Nest;
 using Operations.Application.Incidents.SearchProcessIncidents.Shared.Documents;
 using Operations.Application.UseCases.Incidents.Shared;
@@ -7,7 +6,7 @@ using Operations.Application.UseCases.ProcessDefinitions.GetProcessDefinitionXml
 
 namespace Operations.Application.UseCases.Incidents.SearchProcessIncidents;
 
-internal class SearchProcessIncidentsQueryHandler : IRequestHandler<SearchProcessIncidentsQuery, Result<SearchProcessIncidentsQueryResponse>>
+internal class SearchProcessIncidentsQueryHandler : IRequestHandler<SearchProcessIncidentsQuery, SearchProcessIncidentsQueryResponse>
 {
     private readonly ElasticClient _elasticsearchClient;
 
@@ -16,18 +15,18 @@ internal class SearchProcessIncidentsQueryHandler : IRequestHandler<SearchProces
         _elasticsearchClient = elasticsearchClient;
     }
 
-    public async Task<Result<SearchProcessIncidentsQueryResponse>> Handle(SearchProcessIncidentsQuery query, CancellationToken cancellationToken)
+    public async Task<SearchProcessIncidentsQueryResponse> Handle(SearchProcessIncidentsQuery query, CancellationToken cancellationToken)
     {
         var intentsQuery = query.Filter?.State switch
         {
-            ProcessIncidenState.RESOLVED => new[] { ProcessIncidentKeyword.INTENT_RESOLVED },
+            ProcessIncidenState.RESOLVED => [ProcessIncidentKeyword.INTENT_RESOLVED],
             _ => new[] { ProcessIncidentKeyword.INTENT_CREATED, ProcessIncidentKeyword.INTENT_RESOLVED }
         };
 
         var intentsFilter = query.Filter?.State switch
         {
-            ProcessIncidenState.ACTIVE => new[] { ProcessIncidentKeyword.INTENT_CREATED },
-            ProcessIncidenState.RESOLVED => new[] { ProcessIncidentKeyword.INTENT_RESOLVED },
+            ProcessIncidenState.ACTIVE => [ProcessIncidentKeyword.INTENT_CREATED],
+            ProcessIncidenState.RESOLVED => [ProcessIncidentKeyword.INTENT_RESOLVED],
             _ => new[] { ProcessIncidentKeyword.INTENT_CREATED, ProcessIncidentKeyword.INTENT_RESOLVED }
         };
 

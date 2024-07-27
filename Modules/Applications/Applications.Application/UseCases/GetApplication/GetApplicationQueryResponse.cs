@@ -2,7 +2,12 @@
 
 namespace Applications.Application.UseCases.GetApplication;
 
-public record GetApplicationQueryResponse
+public abstract record GetApplicationQueryResponse 
 {
-    public GetApplicationQueryCreditApplicationDto CreditApplication { get; init; }
+    public record OK(GetApplicationQueryCreditApplicationDto CreditApplication) : GetApplicationQueryResponse;
+
+    public record ResourceNotFound() : GetApplicationQueryResponse
+    {
+        public static readonly ResourceNotFound Result = new();
+    }
 }
