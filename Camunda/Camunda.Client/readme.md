@@ -63,19 +63,21 @@ Description of Fields
 - AutoComplete: Indicates if the job should be auto-completed.
 - TenatIds: Tenant IDs.
 - PoolingMaxJobsToActivate: Maximum jobs to activate in one polling.
-- PoolingRequestTimeoutInMs: Timeout for the polling request in milliseconds. The request will be completed when at least one job is activated or after the requestTimeout (in ms). 
-  - if the requestTimeout = 0, a default timeout is used. 
-  - if the requestTimeout < 0, long polling is disabled and the request is completed immediately, even when no job is activated.
+- PoolingRequestTimeoutInMs: Timeout for the polling request in milliseconds.
+> The request will be completed when at least one job is activated or after the requestTimeout (in ms). 
+>  - if the requestTimeout = 0, a default timeout is used. 
+>  - if the requestTimeout < 0, long polling is disabled and the request is completed immediately, even when no job is activated.
 - PoolingDelayInMs: Delay between polling attempts in milliseconds.
 - UseStream: Indicates if streaming should be used.
 - StreamTimeoutInSec: Timeout for the stream in seconds.
 
-WARMING!!!
-Even with streaming enabled, job workers still poll the cluster for jobs. Due to implementation constraints https://docs.camunda.io/docs/apis-tools/java-client/job-worker/#backfilling.
+> [!WARNING]
+> Even with streaming enabled, job workers still poll the cluster for jobs. Due to implementation constraints https://docs.camunda.io/docs/apis-tools/java-client/job-worker/#backfilling.
 
-For UseStream = true recomends set pooling fields:
-- PoolingRequestTimeoutInMs: -1
-- PoolingDelayInMs: 10_000
+> [!NOTE]
+> For UseStream = true recomends set pooling fields:
+> - PoolingRequestTimeoutInMs: -1
+> - PoolingDelayInMs: 10_000
 
 ### Auto-completing jobs
 By default, the autoComplete attribute is set to true for any job worker.
