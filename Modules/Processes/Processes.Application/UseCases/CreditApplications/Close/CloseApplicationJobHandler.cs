@@ -8,7 +8,7 @@ namespace Processes.Application.UseCases.CreditApplications.Close;
 [MessageIdentity("close", Version=1)]
 public record CloseApplicationCommand(string ApplicationId);
 
-[ZeebeWorker(Type = "credit-closeApplication:1", UseStream = true, StreamTimeoutInSec = 120, PoolingDelayInMs = 10_000, PoolingRequestTimeoutInMs = -1)]
+[JobWorker(Type = "credit-closeApplication:1", UseStream = true, StreamTimeoutInSec = 120, PoolingDelayInMs = 10_000, PoolingRequestTimeoutInMs = -1)]
 internal class CloseApplicationJobHandler(IMessageBus busProducer) : IJobHandler
 {
     private readonly IMessageBus _busProducer = busProducer;

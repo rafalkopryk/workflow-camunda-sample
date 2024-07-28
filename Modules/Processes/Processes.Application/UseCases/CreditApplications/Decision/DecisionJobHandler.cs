@@ -8,7 +8,7 @@ namespace Processes.Application.UseCases.CreditApplications.Decision;
 [MessageIdentity("decision", Version=1)]
 public record DecisionCommand(string ApplicationId, string Decision);
 
-[ZeebeWorker(Type = "credit-decision:1", UseStream = true, StreamTimeoutInSec = 120, PoolingDelayInMs = 10_000, PoolingRequestTimeoutInMs = -1)]
+[JobWorker(Type = "credit-decision:1", UseStream = true, StreamTimeoutInSec = 120, PoolingDelayInMs = 10_000, PoolingRequestTimeoutInMs = -1)]
 internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
 {
     private readonly IMessageBus _busProducer = busProducer;

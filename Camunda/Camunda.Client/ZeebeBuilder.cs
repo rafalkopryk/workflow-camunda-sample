@@ -15,11 +15,11 @@ public class ZeebeBuilder : IZeebeBuilder
 
     public ZeebeBuilder AddWorker<T>() where T : class, IJobHandler
     {
-        var attribute = typeof(T).GetAttribute<ZeebeWorkerAttribute>();
+        var attribute = typeof(T).GetAttribute<JobWorkerAttribute>();
         var serviceTaskConfiguration = new ServiceTaskConfiguration
         {
             Type = attribute.Type,
-            AutoComplate = attribute.AutoComplate,
+            AutoComplate = attribute.AutoComplete,
             FetchVariabeles = attribute.FetchVariabeles,
             RetryBackOffInMs = attribute.RetryBackOffInMs,
             TimeoutInMs = attribute.TimeoutInMs,
