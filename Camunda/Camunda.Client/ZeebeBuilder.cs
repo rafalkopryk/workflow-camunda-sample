@@ -19,7 +19,7 @@ public class ZeebeBuilder : IZeebeBuilder
         var serviceTaskConfiguration = new ServiceTaskConfiguration
         {
             Type = attribute.Type,
-            AutoComplate = attribute.AutoComplete,
+            AutoComplete = attribute.AutoComplete,
             FetchVariabeles = attribute.FetchVariabeles,
             RetryBackOffInMs = attribute.RetryBackOffInMs,
             TimeoutInMs = attribute.TimeoutInMs,

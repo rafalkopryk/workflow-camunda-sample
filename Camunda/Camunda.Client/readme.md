@@ -47,7 +47,7 @@ The JobWorkerAttribute and ServiceTaskConfiguration has several fields that can 
     public long TimeoutInMs { get; init; } = 60_000;
     public string[] FetchVariabeles { get; init; } = [];
     public int[] RetryBackOffInMs { get; init; } = [1000];
-    public bool AutoComplate { get; init; } = true;
+    public bool AutoComplete { get; init; } = true;
     public string[] TenatIds { get; init; } = [];
     public int PoolingMaxJobsToActivate { get; init; } = 20;
     public long PoolingRequestTimeoutInMs { get; set; } = 20_000;
@@ -60,7 +60,7 @@ Description of Fields
 - TimeoutInMs: a job returned after this call will not be activated by another call until the timeout (in ms) has been reached.
 - FetchVariabeles: a list of variables to fetch as the job variables; if empty, all visible variables at the time of activation for the scope of the job will be returned.
 - RetryBackOffInMs: Backoff intervals for retries in milliseconds.
-- AutoComplate: Indicates if the job should be auto-completed.
+- AutoComplete: Indicates if the job should be auto-completed.
 - TenatIds: Tenant IDs.
 - PoolingMaxJobsToActivate: Maximum jobs to activate in one polling.
 - PoolingRequestTimeoutInMs: Timeout for the polling request in milliseconds. The request will be completed when at least one job is activated or after the requestTimeout (in ms). 

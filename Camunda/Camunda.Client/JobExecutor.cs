@@ -45,7 +45,7 @@ internal class JobExecutor(
             var handler = serviceScope.ServiceProvider.GetRequiredService<T>();
             await handler.Handle(jobClient, internalJob, cancellationToken);
 
-            if (!serviceTaskConfiguration.AutoComplate)
+            if (!serviceTaskConfiguration.AutoComplete)
             {
                 return;
             }
