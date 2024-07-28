@@ -25,7 +25,7 @@ To configure the Zeebe client using parameters, add the following code to your S
             .AddWorker<Task1JobHandler>(new ServiceTaskConfiguration
             {
                 Type = "task1",
-                AutoComplate = true,
+                AutoComplete = true,
             }));
 
 ### Job Worker Implementation
