@@ -1,28 +1,28 @@
 ﻿# Camunda.Client
 
 ## Installation
-To integrate Zeebe with your .NET application, you need to install the necessary packages. Add the following packages to your project:
+To integrate Camunda with your .NET application, you need to install the necessary packages. Add the following packages to your project:
 
     //TODO
 
 ## Configuration
-You can configure the Zeebe integration using either attributes or parameters.
+You can configure the Camunda integration using either attributes or parameters.
 
 ### Attribute Configuration
-To configure the Zeebe client using attributes, add the following code to your Startup.cs or equivalent file:
+To configure the Camunda client using attributes, add the following code to your Startup.cs or equivalent file:
 
-    services.AddZeebe(
-        options => configuration.GetSection("Zeebe").Bind(options),
+    services.AddCamunda(
+        options => configuration.GetSection("Camunda").Bind(options),
         builder => builder
             .AddWorker<Task1JobHandler>());
 
 ### Parameter Configuration
-To configure the Zeebe client using parameters, add the following code to your Startup.cs or equivalent file:
+To configure the Camunda client using parameters, add the following code to your Startup.cs or equivalent file:
 
-    services.AddZeebe(
-        options => configuration.GetSection("Zeebe").Bind(options),
+    services.AddCamunda(
+        options => configuration.GetSection("Camunda").Bind(options),
         builder => builder
-            .AddWorker<Task1JobHandler>(new ServiceTaskConfiguration
+            .AddWorker<Task1JobHandler>(new JobWorkerConfiguration
             {
                 Type = "task1",
                 AutoComplete = true,
@@ -41,7 +41,7 @@ Below is an example implementation of a job worker using the attribute configura
     }
 
 ### Configuration Fields
-The JobWorkerAttribute and ServiceTaskConfiguration has several fields that can be configured:
+The JobWorkerAttribute and JobWorkerConfiguration has several fields that can be configured:
 
     public string Type { get; init; }
     public long TimeoutInMs { get; init; } = 60_000;

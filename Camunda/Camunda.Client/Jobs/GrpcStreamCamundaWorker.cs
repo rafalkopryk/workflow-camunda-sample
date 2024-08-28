@@ -1,20 +1,21 @@
+using Camunda.Client.Jobs;
 using GatewayProtocol;
 using Grpc.Core;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Camunda.Client;
+namespace Camunda.Client.Workers;
 
-internal class StreamZeebeWorker<T>(
+internal class GrpcStreamCamundaWorker<T>(
     Gateway.GatewayClient client,
-    ServiceTaskConfiguration serviceTaskConfiguration,
+    JobWorkerConfiguration serviceTaskConfiguration,
     JobExecutor jobExecutor,
-    ILogger<StreamZeebeWorker<T>> logger
+    ILogger<GrpcStreamCamundaWorker<T>> logger
     ) : BackgroundService where T : IJobHandler
 {
     private readonly Gateway.GatewayClient _client = client;
     private readonly ILogger _logger = logger;
-    private readonly ServiceTaskConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
+    private readonly JobWorkerConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
     private readonly JobExecutor _jobExecutor = jobExecutor;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,10 +41,10 @@ internal class StreamZeebeWorker<T>(
                     cancellationToken: stoppingToken);
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
-                    await _jobExecutor.HandleJob<T>(response, _serviceTaskConfiguration, CancellationToken.None);
+                    await _jobExecutor.HandleJob<T>(GrpcCamundaWorkerHelpers.Map(response), _serviceTaskConfiguration, CancellationToken.None);
                 }
             }
-            catch (RpcException ex) when (ex.Status.StatusCode == Grpc.Core.StatusCode.DeadlineExceeded)
+            catch (RpcException ex) when (ex.Status.StatusCode == StatusCode.DeadlineExceeded)
             {
                 continue;
             }
@@ -53,7 +54,7 @@ internal class StreamZeebeWorker<T>(
 
                 activity?.AddException(ex);
 
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
             }
         }
     }

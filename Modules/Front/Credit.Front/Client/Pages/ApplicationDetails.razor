@@ -179,14 +179,14 @@
 
     async Task SignContract()
     {
-        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/sign", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
+        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/signature", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
         SignContractDisabled = true;
         model = await GetApplication();
     }
 
     async Task CancelApplication()
     {
-        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/cancel", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
+        var httpResult = await Http.PostAsync($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}/cancellation", new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json"));
         CancelApplcationDisabled = true;
         model = await GetApplication();
     }

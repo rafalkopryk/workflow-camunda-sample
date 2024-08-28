@@ -16,34 +16,34 @@ internal static class Diagnostics
     {
         internal static Activity StartStreamActivatedJobs(string jobType)
         {
-            var activityName = $"ZeebeWorker JobStream ACTIVATED from {jobType}";
+            var activityName = $"CamundaWorker JobStream ACTIVATED from {jobType}";
             return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
         }
 
         internal static Activity StartPoolActivatedJobs(string jobType)
         {
-            var activityName = $"ZeebeWorker JobPool ACTIVATED from {jobType}";
+            var activityName = $"CamundaWorker JobPool ACTIVATED from {jobType}";
             return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
         }
 
         internal static Activity StartHandleTask(string elementId)
         {
-            var activityName = $"ZeebeWorker Task RECEIVE from {elementId}";
+            var activityName = $"CamundaWorker Task RECEIVE from {elementId}";
             return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
         }
     }
 
     public static void AddtOpenTelemetryTags(this Activity? activity, IJob job)
     {
-        activity?.AddTag(MessagingAttributes.SYSTEM, "zeebe");
+        activity?.AddTag(MessagingAttributes.SYSTEM, "camunda");
 
         activity?.AddTag(MessagingAttributes.DESTINATION_NAME, job.Type);
         activity?.AddTag(MessagingAttributes.DESTINATION, job.Type);
 
         activity?.AddTag(MessagingAttributes.OPERATION, "receive");
-        activity?.AddTag(MessagingAttributes.ZEEBE_PROCESS_INSTANCE_KEY, job.ProcessInstanceKey);
-        activity?.AddTag(MessagingAttributes.ZEEBE_BPMN_PROCESS_ID, job.BpmnProcessId);
-        activity?.AddTag(MessagingAttributes.ZEEBE_ELEMENT_ID, job.ElementId);
+        activity?.AddTag(MessagingAttributes.CAMUNDA_PROCESS_INSTANCE_KEY, job.ProcessInstanceKey);
+        activity?.AddTag(MessagingAttributes.CAMUNDA_BPMN_PROCESS_ID, job.BpmnProcessId);
+        activity?.AddTag(MessagingAttributes.CAMUNDA_ELEMENT_ID, job.ElementId);
     }
 
     public static void AddException(this Activity? activity, Exception ex)

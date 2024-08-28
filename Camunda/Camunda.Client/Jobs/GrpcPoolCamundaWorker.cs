@@ -1,20 +1,21 @@
-﻿using GatewayProtocol;
+﻿using Camunda.Client.Jobs;
+using GatewayProtocol;
 using Grpc.Core;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Camunda.Client;
+namespace Camunda.Client.Workers;
 
-internal class PoolZeebeWorker<T>(
+internal class GrpcPoolCamundaWorker<T>(
     Gateway.GatewayClient client,
-    ServiceTaskConfiguration serviceTaskConfiguration,
+    JobWorkerConfiguration serviceTaskConfiguration,
     JobExecutor jobExecutor,
-    ILogger<PoolZeebeWorker<T>> logger
+    ILogger<GrpcPoolCamundaWorker<T>> logger
     ) : BackgroundService where T : IJobHandler
 {
     private readonly Gateway.GatewayClient _client = client;
     private readonly ILogger _logger = logger;
-    private readonly ServiceTaskConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
+    private readonly JobWorkerConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
     private readonly JobExecutor _jobExecutor = jobExecutor;
     private const int MAX_DEGREE_OF_PARALLELISM = 4;
 
@@ -45,7 +46,7 @@ internal class PoolZeebeWorker<T>(
                     var jobs = response.Jobs.ToArray();
                     var jobsCount = jobs.Length;
 
-                    if (jobsCount > 1) 
+                    if (jobsCount > 1)
                     {
                         var parallelOptions = new ParallelOptions
                         {
@@ -55,11 +56,11 @@ internal class PoolZeebeWorker<T>(
                                 : jobsCount,
                         };
 
-                        await Parallel.ForEachAsync(jobs, parallelOptions, async (job, cancellationToken) => await _jobExecutor.HandleJob<T>(job, _serviceTaskConfiguration, cancellationToken));
+                        await Parallel.ForEachAsync(jobs, parallelOptions, async (job, cancellationToken) => await _jobExecutor.HandleJob<T>(GrpcCamundaWorkerHelpers.Map(job), _serviceTaskConfiguration, cancellationToken));
                     }
                     else
                     {
-                        await _jobExecutor.HandleJob<T>(jobs.First(), _serviceTaskConfiguration, CancellationToken.None);
+                        await _jobExecutor.HandleJob<T>(GrpcCamundaWorkerHelpers.Map(jobs.First()), _serviceTaskConfiguration, CancellationToken.None);
                     }
                 }
             }
@@ -74,5 +75,3 @@ internal class PoolZeebeWorker<T>(
         }
     }
 }
-
-

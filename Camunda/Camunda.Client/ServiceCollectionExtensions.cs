@@ -1,4 +1,6 @@
-﻿using GatewayProtocol;
+﻿using Camunda.Client.Jobs;
+using Camunda.Client.Rest;
+using GatewayProtocol;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,14 +9,35 @@ namespace Camunda.Client;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddZeebe(
+    public static void AddCamunda(
         this IServiceCollection services,
-        Action<ZeebeOptions> options,
-        Action<ZeebeBuilder>? configure = null)
+        Action<CamundaOptions> options,
+        Action<CamundaBuilder>? configure = null)
     {
-        var zeebeOptions = new ZeebeOptions();
-        options?.Invoke(zeebeOptions);
+        var camundaOptions = new CamundaOptions();
+        options?.Invoke(camundaOptions);
 
+        ConfigureCamundaGrpc(services, configure, camundaOptions.CamundaGrpc);
+        ConfigureCamundaRest(services, configure, camundaOptions.CamundaRest);
+
+        services.AddSingleton<JobExecutor>();
+        services.AddSingleton<IMessageClient, GrpcMessageClient>();
+
+        if (camundaOptions.UseRest)
+        {
+            services.AddSingleton<IJobClient, RestJobClient>();
+        }
+        else
+        {
+            services.AddSingleton<IJobClient, GrpcJobClient>();
+        }
+
+        var camundaBuilder = new CamundaBuilder(services, camundaOptions.UseRest);
+        configure?.Invoke(camundaBuilder);
+    }
+
+    private static void ConfigureCamundaGrpc(IServiceCollection services, Action<CamundaBuilder>? configure, GrpcCamundaOptions camundaOptions)
+    {
         var defaultMethodConfig = new MethodConfig
         {
             Names = { MethodName.Default },
@@ -29,7 +52,7 @@ public static class ServiceCollectionExtensions
         };
         services.AddGrpcClient<Gateway.GatewayClient>(client =>
         {
-            client.Address = new Uri(zeebeOptions.Endpoint);
+            client.Address = new Uri(camundaOptions!.Endpoint);
         })
         .ConfigureChannel(configureChannel =>
         {
@@ -48,12 +71,13 @@ public static class ServiceCollectionExtensions
                 EnableMultipleHttp2Connections = true
             };
         });
+    }
 
-        var zeebeBuilder = new ZeebeBuilder(services);
-        configure?.Invoke(zeebeBuilder);
-
-        services.AddSingleton<IJobClient, JobClient>();
-        services.AddSingleton<IMessageClient, MessageClient>();
-        services.AddSingleton<JobExecutor>();
+    private static void ConfigureCamundaRest(IServiceCollection services, Action<CamundaBuilder>? configure, RestCamundaOptions camundaOptions)
+    {
+        services.AddHttpClient<CamundaClientRest>(client =>
+        {
+            client.BaseAddress = new Uri(camundaOptions!.Endpoint);
+        });
     }
 }

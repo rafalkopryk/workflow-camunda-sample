@@ -33,14 +33,14 @@ public class ApplicationController : ControllerBase
     }
 
     [HttpGet("{applicationId}", Name = "GetApplication")]
-    [ProducesResponseType(typeof(GetApplicationQueryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetApplicationQueryResponse.OK), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromRoute] string applicationId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetApplicationQuery(applicationId), cancellationToken);
         return result switch
         {
-            GetApplicationQueryResponse.OK ok => Ok(ok.CreditApplication),
+            GetApplicationQueryResponse.OK ok => Ok(ok),
             GetApplicationQueryResponse.ResourceNotFound resourceNotFound => Problem(statusCode: StatusCodes.Status404NotFound, title: nameof(resourceNotFound)),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
         };

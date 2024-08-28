@@ -25,12 +25,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IBpmnProvider, PathFileProvider>();
         services.AddHostedService<DeployBPMNDefinitionService>();
 
-        services.AddZeebe(
-            options => configuration.GetSection("Zeebe").Bind(options),
+        var jobWorkerDefault = configuration.GetSection("Camunda:JobWorkers:Default").Get<JobWorkerConfiguration>();
+        services.AddCamunda(
+            options => configuration.GetSection("Camunda").Bind(options),
             builder => builder
-                .AddWorker<SimulationJobHandler>()
-                .AddWorker<DecisionJobHandler>()
-                .AddWorker<CloseApplicationJobHandler>());
+                .AddWorker<SimulationJobHandler>(jobWorkerDefault with { Type = "credit-simulation:1" } )
+                .AddWorker<DecisionJobHandler>(jobWorkerDefault with { Type = "credit-decision:1" })
+                .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault with { Type = "credit-closeApplication:1" }));
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)

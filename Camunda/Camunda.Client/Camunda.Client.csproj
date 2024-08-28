@@ -4,13 +4,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Rest\rest-api.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <OpenApiReference Include="Rest\rest-api.yaml" CodeGenerator="NSwagCSharp" Namespace="Camunda.Client.Rest" ClassName="CamundaClientRest" OutputPath="..\Rest\CamundaClientRest.cs">
+		  <Options>/UseBaseUrl:false /DisposeHttpClinet:false</Options>
+	  </OpenApiReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Protobuf" />
     <PackageReference Include="Grpc.Net.ClientFactory" />
     <PackageReference Include="Grpc.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NSwag.ApiDescription.Client">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="OpenTelemetry.Api" />
   </ItemGroup>
 

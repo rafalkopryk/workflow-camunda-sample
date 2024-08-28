@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Camunda.Client;
 
-internal class MessageClient(Gateway.GatewayClient client) : IMessageClient
+internal class GrpcMessageClient(Gateway.GatewayClient client) : IMessageClient
 {
     private readonly Gateway.GatewayClient _client = client;
 

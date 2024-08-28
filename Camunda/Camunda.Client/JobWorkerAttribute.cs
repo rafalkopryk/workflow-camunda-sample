@@ -17,9 +17,9 @@ public class JobWorkerAttribute : Attribute
     public int StreamTimeoutInSec { get; init; } = 900;
 }
 
-public record ServiceTaskConfiguration
+public record JobWorkerConfiguration
 {
-    public string Type { get; init; }
+    public string? Type { get; init; }
     public long TimeoutInMs { get; init; } = 60_000;
     public string[] FetchVariabeles { get; init; } = [];
     public int[] RetryBackOffInMs { get; init; } = [1000];
