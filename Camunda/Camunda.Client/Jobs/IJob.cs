@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Camunda.Client;
+namespace Camunda.Client.Jobs;
 
 public interface IJob
 {

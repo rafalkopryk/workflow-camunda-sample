@@ -1,16 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Rest\rest-api.yaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-	  <OpenApiReference Include="Rest\rest-api.yaml" CodeGenerator="NSwagCSharp" Namespace="Camunda.Client.Rest" ClassName="CamundaClientRest" OutputPath="..\Rest\CamundaClientRest.cs">
-		  <Options>/UseBaseUrl:false /DisposeHttpClinet:false</Options>
-	  </OpenApiReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +32,10 @@
       <SourceUri>https://raw.githubusercontent.com/camunda/zeebe/main/gateway-protocol/src/main/proto/gateway.proto</SourceUri>
       <GrpcServices>Client</GrpcServices>
 	</Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="Rest\rest-api.yaml" CodeGenerator="NSwagCSharp" Namespace="Camunda.Client.Rest" ClassName="CamundaClientRest" Options="/UseBaseUrl:false /GenerateClientInterfaces:true /DisposeHttpClient:false" />
   </ItemGroup>
 
 </Project>

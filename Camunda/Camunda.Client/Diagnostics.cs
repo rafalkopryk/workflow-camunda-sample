@@ -1,5 +1,6 @@
 ﻿namespace Camunda.Client;
 
+using Camunda.Client.Jobs;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -44,6 +45,8 @@ internal static class Diagnostics
         activity?.AddTag(MessagingAttributes.CAMUNDA_PROCESS_INSTANCE_KEY, job.ProcessInstanceKey);
         activity?.AddTag(MessagingAttributes.CAMUNDA_BPMN_PROCESS_ID, job.BpmnProcessId);
         activity?.AddTag(MessagingAttributes.CAMUNDA_ELEMENT_ID, job.ElementId);
+
+        activity?.AddBaggage("", "");
     }
 
     public static void AddException(this Activity? activity, Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Camunda.Client;
+using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Simulation;

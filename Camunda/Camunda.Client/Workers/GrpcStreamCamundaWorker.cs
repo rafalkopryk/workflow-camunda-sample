@@ -8,24 +8,24 @@ namespace Camunda.Client.Workers;
 
 internal class GrpcStreamCamundaWorker<T>(
     Gateway.GatewayClient client,
-    JobWorkerConfiguration serviceTaskConfiguration,
+    InternalJobWorkerConfiguration jobWorkerConfiguration,
     JobExecutor jobExecutor,
     ILogger<GrpcStreamCamundaWorker<T>> logger
     ) : BackgroundService where T : IJobHandler
 {
     private readonly Gateway.GatewayClient _client = client;
     private readonly ILogger _logger = logger;
-    private readonly JobWorkerConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
+    private readonly InternalJobWorkerConfiguration _jobWorkerConfiguration = jobWorkerConfiguration;
     private readonly JobExecutor _jobExecutor = jobExecutor;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var jobType = _serviceTaskConfiguration.Type;
+        var jobType = _jobWorkerConfiguration.Type;
         var request = new StreamActivatedJobsRequest
         {
             Type = jobType,
-            Timeout = _serviceTaskConfiguration.TimeoutInMs,
-            TenantIds = { _serviceTaskConfiguration.TenatIds },
+            Timeout = _jobWorkerConfiguration.TimeoutInMs,
+            TenantIds = { _jobWorkerConfiguration.TenatIds },
         };
 
         await Task.Yield();
@@ -37,11 +37,11 @@ internal class GrpcStreamCamundaWorker<T>(
             {
                 using var call = _client.StreamActivatedJobs(
                     request,
-                    deadline: TimeProvider.System.GetUtcNow().AddSeconds(_serviceTaskConfiguration.StreamTimeoutInSec).UtcDateTime,
+                    deadline: TimeProvider.System.GetUtcNow().AddSeconds(_jobWorkerConfiguration.StreamTimeoutInSec).UtcDateTime,
                     cancellationToken: stoppingToken);
                 await foreach (var response in call.ResponseStream.ReadAllAsync(stoppingToken))
                 {
-                    await _jobExecutor.HandleJob<T>(GrpcCamundaWorkerHelpers.Map(response), _serviceTaskConfiguration, CancellationToken.None);
+                    await _jobExecutor.HandleJob<T>(GrpcCamundaWorkerHelpers.Map(response), _jobWorkerConfiguration, CancellationToken.None);
                 }
             }
             catch (RpcException ex) when (ex.Status.StatusCode == StatusCode.DeadlineExceeded)

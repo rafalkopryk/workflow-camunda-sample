@@ -1,4 +1,5 @@
 ﻿using Camunda.Client;
+using Camunda.Client.Jobs;
 using Common.Application.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,9 +30,9 @@ public static class ServiceCollectionExtensions
         services.AddCamunda(
             options => configuration.GetSection("Camunda").Bind(options),
             builder => builder
-                .AddWorker<SimulationJobHandler>(jobWorkerDefault with { Type = "credit-simulation:1" } )
-                .AddWorker<DecisionJobHandler>(jobWorkerDefault with { Type = "credit-decision:1" })
-                .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault with { Type = "credit-closeApplication:1" }));
+                .AddWorker<SimulationJobHandler>(jobWorkerDefault!)
+                .AddWorker<DecisionJobHandler>(jobWorkerDefault!)
+                .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault!));
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)

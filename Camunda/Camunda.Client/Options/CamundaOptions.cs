@@ -1,4 +1,4 @@
-﻿namespace Camunda.Client;
+﻿namespace Camunda.Client.Options;
 
 public record CamundaOptions
 {

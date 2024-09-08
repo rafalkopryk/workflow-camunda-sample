@@ -199,23 +199,23 @@ services:
       - kibana:/usr/share/kibana/data
     depends_on:
       - elasticsearch
-  # apm:
-  #   image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
-  #   container_name: apm
-  #   cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-  #   cap_drop: ["ALL"]
-  #   ports:
-  #       - 8200:8200
-  #   depends_on:
-  #       - elasticsearch
-  #       - kibana
-  #   command: >
-  #       apm-server -e
-  #       -E output.elasticsearch.protocol=http
-  #       -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-  #       -E output.elasticsearch.username=${ELASTIC_USER}
-  #       -E output.elasticsearch.password=${ELASTIC_PASSWORD}
-  #       -E output.elasticsearch.ssl.enabled=false
+  apm:
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION}
+    container_name: apm
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+        - 8200:8200
+    depends_on:
+        - elasticsearch
+        - kibana
+    command: >
+        apm-server -e
+        -E output.elasticsearch.protocol=http
+        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+        -E output.elasticsearch.username=${ELASTIC_USER}
+        -E output.elasticsearch.password=${ELASTIC_PASSWORD}
+        -E output.elasticsearch.ssl.enabled=false
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -302,16 +302,19 @@ services:
        # OTEL_EXPORTER_OTLP_TRACES_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
        # OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
        
+       # OTEL_SERVICE_NAME: "Process.Worker"
+       # OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES: "*"
+       # OTEL_DOTNET_AUTO_METRICS_ADDITIONAL_SOURCES: "*"
+
        Camunda__UseRest: false
        Camunda__CamundaRest__Endpoint: ${CAMUNDA_ADDRESS_REST}
        Camunda__CamundaGrpc__Endpoint: ${CAMUNDA_ADDRESS_GRPC}
 
-       Camunda__JobWorkers__Default__Type: Default
        Camunda__JobWorkers__Default__TimeoutInMs: 60000
        Camunda__JobWorkers__Default__PoolingMaxJobsToActivate: 5
        Camunda__JobWorkers__Default__PoolingRequestTimeoutInMs: 10000
        Camunda__JobWorkers__Default__PoolingDelayInMs: 200
-       Camunda__JobWorkers__Default__UseStream: "true"
+       Camunda__JobWorkers__Default__UseStream: "false"
        Camunda__JobWorkers__Default__StreamTimeoutInSec: 900
 
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
@@ -324,6 +327,8 @@ services:
        EventBus__statisticsintervalms: 5000
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
+    # env_file:
+    #   - otel-dotnet.env
 
 
 

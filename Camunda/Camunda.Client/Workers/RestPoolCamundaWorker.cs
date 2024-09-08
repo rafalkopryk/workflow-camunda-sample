@@ -7,28 +7,28 @@ using System.Text.Json;
 namespace Camunda.Client.Workers;
 
 internal class RestPoolCamundaWorker<T>(
-    CamundaClientRest client,
-    JobWorkerConfiguration serviceTaskConfiguration,
+    ICamundaClientRest client,
+    InternalJobWorkerConfiguration jobWorkerConfiguration,
     JobExecutor jobExecutor,
-    ILogger<GrpcPoolCamundaWorker<T>> logger
+    ILogger<RestPoolCamundaWorker<T>> logger
     ) : BackgroundService where T : IJobHandler
 {
-    private readonly CamundaClientRest _client = client;
+    private readonly ICamundaClientRest _client = client;
     private readonly ILogger _logger = logger;
-    private readonly JobWorkerConfiguration _serviceTaskConfiguration = serviceTaskConfiguration;
+    private readonly InternalJobWorkerConfiguration _jobWorkerConfiguration = jobWorkerConfiguration;
     private readonly JobExecutor _jobExecutor = jobExecutor;
     private const int MAX_DEGREE_OF_PARALLELISM = 4;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var jobType = _serviceTaskConfiguration.Type;
+        var jobType = _jobWorkerConfiguration.Type;
         var request = new JobActivationRequest
         {
             Type = jobType,
-            Timeout = _serviceTaskConfiguration.TimeoutInMs,
-            TenantIds = [.._serviceTaskConfiguration.TenatIds ],
-            MaxJobsToActivate = _serviceTaskConfiguration.PoolingMaxJobsToActivate,
-            RequestTimeout = _serviceTaskConfiguration.PoolingRequestTimeoutInMs,
+            Timeout = _jobWorkerConfiguration.TimeoutInMs,
+            TenantIds = [.._jobWorkerConfiguration.TenatIds ],
+            MaxJobsToActivate = _jobWorkerConfiguration.PoolingMaxJobsToActivate,
+            RequestTimeout = _jobWorkerConfiguration.PoolingRequestTimeoutInMs,
         };
 
         await Task.Yield();
@@ -42,6 +42,11 @@ internal class RestPoolCamundaWorker<T>(
                 var jobs = response.Jobs.ToArray();
                 var jobsCount = jobs.Length;
 
+                if (jobsCount == 0)
+                {
+                    continue;
+                }
+
                 if (jobsCount > 1)
                 {
                     var parallelOptions = new ParallelOptions
@@ -52,11 +57,11 @@ internal class RestPoolCamundaWorker<T>(
                             : jobsCount,
                     };
 
-                    await Parallel.ForEachAsync(jobs, parallelOptions, async (job, cancellationToken) => await _jobExecutor.HandleJob<T>(Map(job), _serviceTaskConfiguration, cancellationToken));
+                    await Parallel.ForEachAsync(jobs, parallelOptions, async (job, cancellationToken) => await _jobExecutor.HandleJob<T>(Map(job), _jobWorkerConfiguration, cancellationToken));
                 }
                 else
                 {
-                    await _jobExecutor.HandleJob<T>(Map(jobs.First()), _serviceTaskConfiguration, CancellationToken.None);
+                    await _jobExecutor.HandleJob<T>(Map(jobs.First()), _jobWorkerConfiguration, CancellationToken.None);
                 }
                 
             }
@@ -67,7 +72,7 @@ internal class RestPoolCamundaWorker<T>(
                 activity?.AddException(ex);
             }
 
-            await Task.Delay(TimeSpan.FromMilliseconds(_serviceTaskConfiguration.PoolingDelayInMs), stoppingToken);
+            await Task.Delay(TimeSpan.FromMilliseconds(_jobWorkerConfiguration.PoolingDelayInMs), stoppingToken);
         }
     }
 
@@ -76,9 +81,9 @@ internal class RestPoolCamundaWorker<T>(
         return new InternalJob
         {
             BpmnProcessId = activatedJob.BpmnProcessId,
-            CustomHeaders = JsonSerializer.Serialize(activatedJob.CustomHeaders, JsonSerializerCustomOptions.CamelCase),
+            CustomHeaders = Newtonsoft.Json.JsonConvert.SerializeObject(activatedJob.Variables),
             Deadline = DateTimeOffset.FromUnixTimeMilliseconds(activatedJob.Deadline).ToLocalTime(),
-            Variables = JsonSerializer.Serialize(activatedJob.Variables, JsonSerializerCustomOptions.CamelCase),
+            Variables = Newtonsoft.Json.JsonConvert.SerializeObject(activatedJob.Variables),
             ElementId = activatedJob.ElementId,
             ElementInstanceKey = activatedJob.ElementInstanceKey,
             Key = activatedJob.Key,

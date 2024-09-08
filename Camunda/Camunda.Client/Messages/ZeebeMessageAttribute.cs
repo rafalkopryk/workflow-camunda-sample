@@ -1,4 +1,4 @@
-﻿namespace Camunda.Client;
+﻿namespace Camunda.Client.Messages;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ZeebeMessageAttribute : Attribute

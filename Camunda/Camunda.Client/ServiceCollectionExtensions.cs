@@ -1,5 +1,8 @@
 ﻿using Camunda.Client.Jobs;
+using Camunda.Client.Messages;
+using Camunda.Client.Options;
 using Camunda.Client.Rest;
+using Camunda.Client.Workers;
 using GatewayProtocol;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
@@ -21,15 +24,17 @@ public static class ServiceCollectionExtensions
         ConfigureCamundaRest(services, configure, camundaOptions.CamundaRest);
 
         services.AddSingleton<JobExecutor>();
-        services.AddSingleton<IMessageClient, GrpcMessageClient>();
+        //services.AddSingleton<IMessageClient, GrpcMessageClient>();
 
         if (camundaOptions.UseRest)
         {
             services.AddSingleton<IJobClient, RestJobClient>();
+            services.AddSingleton<IMessageClient, RestMessageClient>();
         }
         else
         {
             services.AddSingleton<IJobClient, GrpcJobClient>();
+            services.AddSingleton<IMessageClient, GrpcMessageClient>();
         }
 
         var camundaBuilder = new CamundaBuilder(services, camundaOptions.UseRest);
@@ -75,9 +80,36 @@ public static class ServiceCollectionExtensions
 
     private static void ConfigureCamundaRest(IServiceCollection services, Action<CamundaBuilder>? configure, RestCamundaOptions camundaOptions)
     {
-        services.AddHttpClient<CamundaClientRest>(client =>
+        services.AddHttpClient<ICamundaClientRest, CamundaClientRest>(client =>
         {
             client.BaseAddress = new Uri(camundaOptions!.Endpoint);
-        });
+        })
+        .AddHttpMessageHandler(() => new LoggingHttpHandler());
+
+    }
+}
+
+public class LoggingHttpHandler : DelegatingHandler
+{
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        // Logowanie ciała żądania
+        if (request.Content != null)
+        {
+            var requestBody = await request.Content.ReadAsStringAsync();
+            Console.WriteLine($"Request Body: {requestBody}");
+        }
+
+        // Wysyłanie żądania do serwera
+        var response = await base.SendAsync(request, cancellationToken);
+
+        // Logowanie ciała odpowiedzi
+        if (response.Content != null)
+        {
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Body: {responseBody}");
+        }
+
+        return response;
     }
 }

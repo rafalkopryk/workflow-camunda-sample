@@ -43,6 +43,10 @@ public static class ServiceCollectionExtensions
                     x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
                     x.RecordException = true;
                 })
+                .AddHttpClientInstrumentation(x =>
+                {
+                    x.RecordException = true;
+                })
                 .AddGrpcClientInstrumentation()
                 .AddSqlClientInstrumentation(x =>
                 {

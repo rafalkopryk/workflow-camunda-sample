@@ -12,32 +12,33 @@ public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamund
     private readonly IServiceCollection _services = services;
     private readonly bool _useRest = useRest;
 
-    public ICamundaBuilder AddWorker<T>() where T : class, IJobHandler
+    public ICamundaBuilder AddWorker<T>(JobWorkerConfiguration jobWorkerConfiguration) where T : class, IJobHandler
     {
         var attribute = typeof(T).GetAttribute<JobWorkerAttribute>();
-        var serviceTaskConfiguration = new JobWorkerConfiguration
-        {
-            Type = attribute.Type,
-            AutoComplete = attribute.AutoComplete,
-            FetchVariabeles = attribute.FetchVariabeles,
-            RetryBackOffInMs = attribute.RetryBackOffInMs,
-            TimeoutInMs = attribute.TimeoutInMs,
-            TenatIds = attribute.TenatIds,
-            PoolingDelayInMs = attribute.PoolingDelayInMs,
-            PoolingMaxJobsToActivate = attribute.PoolingMaxJobsToActivate,
-            PoolingRequestTimeoutInMs = attribute.PoolingRequestTimeoutInMs,
-            UseStream = attribute.UseStream,
-            StreamTimeoutInSec = attribute.StreamTimeoutInSec,
-        };
-        AddWorker<T>(serviceTaskConfiguration);
+        AddWorker<T>(attribute.Type, jobWorkerConfiguration, attribute.FetchVariabeles);
         return this;
     }
 
-    public ICamundaBuilder AddWorker<T>(JobWorkerConfiguration serviceTaskConfiguration) where T : class, IJobHandler
+    public ICamundaBuilder AddWorker<T>(string type, JobWorkerConfiguration jobWorkerConfiguration, string[]? fetchVariabeles  = null) where T : class, IJobHandler
     {
         _services.AddScoped(typeof(T));
 
-        if (serviceTaskConfiguration.UseStream)
+        var internalJobWorkerConfiguration = new InternalJobWorkerConfiguration
+        {
+            Type = type,
+            FetchVariabeles = fetchVariabeles ?? [],
+            AutoComplete = jobWorkerConfiguration.AutoComplete,
+            PoolingDelayInMs = jobWorkerConfiguration.PoolingDelayInMs,
+            PoolingMaxJobsToActivate = jobWorkerConfiguration.PoolingMaxJobsToActivate,
+            PoolingRequestTimeoutInMs = jobWorkerConfiguration.PoolingRequestTimeoutInMs,
+            RetryBackOffInMs = jobWorkerConfiguration.RetryBackOffInMs,
+            StreamTimeoutInSec = jobWorkerConfiguration.StreamTimeoutInSec,
+            TenatIds = jobWorkerConfiguration.TenatIds,
+            TimeoutInMs = jobWorkerConfiguration.TimeoutInMs,
+            UseStream = jobWorkerConfiguration.UseStream,
+        };
+
+        if (jobWorkerConfiguration.UseStream)
         {
             _services.AddHostedService(x =>
             {
@@ -45,7 +46,7 @@ public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamund
                 var logger = x.GetRequiredService<ILogger<GrpcStreamCamundaWorker<T>>>();
                 var jobExecutor = x.GetRequiredService<JobExecutor>();
 
-                return new GrpcStreamCamundaWorker<T>(client, serviceTaskConfiguration, jobExecutor, logger);
+                return new GrpcStreamCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
             });
         }
 
@@ -53,11 +54,11 @@ public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamund
         {
             _services.AddHostedService(x =>
             {
-                var client = x.GetRequiredService<CamundaClientRest>();
-                var logger = x.GetRequiredService<ILogger<GrpcPoolCamundaWorker<T>>>();
+                var client = x.GetRequiredService<ICamundaClientRest>();
+                var logger = x.GetRequiredService<ILogger<RestPoolCamundaWorker<T>>>();
                 var jobExecutor = x.GetRequiredService<JobExecutor>();
 
-                return new RestPoolCamundaWorker<T>(client, serviceTaskConfiguration, jobExecutor, logger);
+                return new RestPoolCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
             });
         }
         else
@@ -68,7 +69,7 @@ public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamund
                 var logger = x.GetRequiredService<ILogger<GrpcPoolCamundaWorker<T>>>();
                 var jobExecutor = x.GetRequiredService<JobExecutor>();
 
-                return new GrpcPoolCamundaWorker<T>(client, serviceTaskConfiguration, jobExecutor, logger);
+                return new GrpcPoolCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
             });
         }
 

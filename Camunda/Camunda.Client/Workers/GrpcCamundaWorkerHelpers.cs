@@ -1,4 +1,5 @@
-﻿using GatewayProtocol;
+﻿using Camunda.Client.Jobs;
+using GatewayProtocol;
 
 namespace Camunda.Client.Workers
 {

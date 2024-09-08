@@ -2,24 +2,32 @@
 
 using Camunda.Client.Rest;
 
-internal class RestJobClient(CamundaClientRest client) : IJobClient
+internal class RestJobClient(ICamundaClientRest client) : IJobClient
 {
-    private readonly CamundaClientRest _client = client;
+    private readonly ICamundaClientRest _client = client;
 
     public async Task CompleteJobCommand(IJob activatedJob, string? variables = null)
     {
+        var jsonAsObject = !string.IsNullOrWhiteSpace(variables)
+            ? Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(variables)
+            : [];
+
         await _client.CompletionAsync(activatedJob.Key, new JobCompletionRequest
         {
-            Variables = variables ?? string.Empty,
+            Variables = jsonAsObject,
         });
     }
 
     public async Task FailCommand(long jobKey, string errorMessage, int retries, long retryBackOff, string? variables = null)
     {
+        var jsonAsObject = !string.IsNullOrWhiteSpace(variables)
+            ? Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(variables)
+            : [];
+
         await _client.FailureAsync(jobKey, new JobFailRequest
         {
             ErrorMessage = errorMessage,
-            Variables = variables ?? string.Empty,
+            Variables = jsonAsObject,
             Retries = retries,
             RetryBackOff = retryBackOff,
         });
@@ -27,11 +35,15 @@ internal class RestJobClient(CamundaClientRest client) : IJobClient
 
     public async Task ThrowErrorCommand(long jobKey, string errorCode, string errorMessage, string? variables = null)
     {
+        var jsonAsObject = !string.IsNullOrWhiteSpace(variables)
+            ? Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(variables)
+            : [];
+
         await _client.ErrorAsync(jobKey, new JobErrorRequest
         {
             ErrorCode = errorCode,
             ErrorMessage = errorMessage,
-            Variables = variables ?? string.Empty,
+            Variables = jsonAsObject,
         });
     }
 }

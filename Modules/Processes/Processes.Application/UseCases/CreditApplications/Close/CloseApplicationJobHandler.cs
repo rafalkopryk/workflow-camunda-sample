@@ -1,4 +1,4 @@
-﻿using Camunda.Client;
+﻿using Camunda.Client.Jobs;
 using Processes.Application.Domain.CreditApplications;
 using Wolverine;
 using Wolverine.Attributes;
@@ -8,7 +8,7 @@ namespace Processes.Application.UseCases.CreditApplications.Close;
 [MessageIdentity("close", Version=1)]
 public record CloseApplicationCommand(string ApplicationId);
 
-[JobWorker(Type = "credit-closeApplication:1", UseStream = true, StreamTimeoutInSec = 120, PoolingDelayInMs = 10_000, PoolingRequestTimeoutInMs = -1)]
+[JobWorker(Type = "credit-closeApplication:1")]
 internal class CloseApplicationJobHandler(IMessageBus busProducer) : IJobHandler
 {
     private readonly IMessageBus _busProducer = busProducer;

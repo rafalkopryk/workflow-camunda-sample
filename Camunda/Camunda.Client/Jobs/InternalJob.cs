@@ -1,4 +1,4 @@
-﻿namespace Camunda.Client;
+﻿namespace Camunda.Client.Jobs;
 
 internal record InternalJob : IJob
 {

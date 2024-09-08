@@ -1,7 +1,9 @@
-﻿using GatewayProtocol;
+﻿using Camunda.Client.Messages;
+using GatewayProtocol;
 using System.Text.Json;
 
 namespace Camunda.Client;
+
 
 internal class GrpcMessageClient(Gateway.GatewayClient client) : IMessageClient
 {
@@ -10,10 +12,7 @@ internal class GrpcMessageClient(Gateway.GatewayClient client) : IMessageClient
     public async Task Publish<T>(string correlationKey, T message, string? messageId = null)
     {
         var attribute = message.GetType().GetAttribute<ZeebeMessageAttribute>();
-        if (attribute is null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
+        ArgumentNullException.ThrowIfNull(attribute);
 
         await _client.PublishMessageAsync(new PublishMessageRequest
         {

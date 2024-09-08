@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Camunda.Client.Jobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Camunda.Client.Jobs;
+namespace Camunda.Client.Workers;
 
 internal class JobExecutor(
     IJobClient client,
@@ -12,7 +13,7 @@ internal class JobExecutor(
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
     private readonly ILogger _logger = logger;
 
-    public async ValueTask HandleJob<T>(IJob activatedJob, JobWorkerConfiguration serviceTaskConfiguration, CancellationToken cancellationToken = default) where T : IJobHandler
+    public async ValueTask HandleJob<T>(IJob activatedJob, InternalJobWorkerConfiguration jobWorkerConfiguration, CancellationToken cancellationToken = default) where T : IJobHandler
     {
         if (cancellationToken.IsCancellationRequested)
             await Task.FromCanceled(cancellationToken);
@@ -27,7 +28,7 @@ internal class JobExecutor(
             var handler = serviceScope.ServiceProvider.GetRequiredService<T>();
             await handler.Handle(jobClient, activatedJob, cancellationToken);
 
-            if (!serviceTaskConfiguration.AutoComplete)
+            if (!jobWorkerConfiguration.AutoComplete)
             {
                 return;
             }
@@ -42,7 +43,7 @@ internal class JobExecutor(
 
             try
             {
-                var retryBackOff = serviceTaskConfiguration.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
+                var retryBackOff = jobWorkerConfiguration.RetryBackOffInMs?.TakeLast(activatedJob.Retries).FirstOrDefault() ?? 500;
 
                 await _client.FailCommand(activatedJob.Key, ex.Message, activatedJob.Retries - 1, retryBackOff);
             }
