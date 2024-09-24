@@ -306,7 +306,7 @@ services:
        # OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES: "*"
        # OTEL_DOTNET_AUTO_METRICS_ADDITIONAL_SOURCES: "*"
 
-       Camunda__UseRest: false
+       Camunda__UseRest: true
        Camunda__CamundaRest__Endpoint: ${CAMUNDA_ADDRESS_REST}
        Camunda__CamundaGrpc__Endpoint: ${CAMUNDA_ADDRESS_GRPC}
 
