@@ -18,16 +18,17 @@ internal class RestMessageClient(ICamundaClientRest client) : IMessageClient
             var json = JsonSerializer.Serialize(message, JsonSerializerCustomOptions.CamelCase);
             var jsonAsObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 
-            await _client.CorrelationAsync(new MessageCorrelationRequest
+            await _client.PublicationAsync(new MessagePublicationRequest
             {
                 Name = attribute!.Name,
-                CorrelationKey = correlationKey ?? messageId ?? string.Empty,
+                CorrelationKey = correlationKey ?? string.Empty,
                 Variables = jsonAsObject,
+                MessageId = messageId ?? string.Empty,
+                TimeToLive = attribute.TimeToLiveInMs,
             });
         }
         catch (Exception ex)
         {
-
             throw;
         }
     }
