@@ -2,13 +2,21 @@
 
 An example of using the camunda platfrom to control the process with kafka
 
-![image](https://user-images.githubusercontent.com/17733188/232312212-e5c5ee7f-a1e2-4f94-a983-87280c33976a.png)
+![image](https://github.com/user-attachments/assets/6a019fac-a810-4fed-aa99-1fad2e04855c)
+
+
+![image](https://github.com/user-attachments/assets/7b98b515-1df0-415a-acee-0702c6dd4322)
+
+![image](https://github.com/user-attachments/assets/9360440f-79ab-477f-a4b6-363be6d989ac)
+
+![image](https://github.com/user-attachments/assets/b0805838-2ca2-4578-9d88-82662c987085)
+
 
 ## Application modules
-![image](https://user-images.githubusercontent.com/17733188/232312316-8af22313-743b-42a6-8a7f-95e636b782dd.png)
+![image](https://github.com/user-attachments/assets/bcbbe0d0-ffec-4278-adea-fcb6dba1ac82)
 
 ## Tracing
-![image](https://user-images.githubusercontent.com/17733188/232312605-149db7fc-2f67-4535-b158-d954d72e1ef5.png)
+![image](https://github.com/user-attachments/assets/e10f2c48-715c-42cd-841c-63bab53a5f5a)
 
 ## to run
 *  complete the .env file
