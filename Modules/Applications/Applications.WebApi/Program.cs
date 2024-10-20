@@ -18,18 +18,15 @@ var resourceBuilder = ResourceBuilder.CreateDefault()
 builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
 builder.Services.AddApplication(builder.Configuration);
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddCors();
+builder.Services.AddOpenApi();
 
 builder.Host.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.MapOpenApi();
+app.UseSwaggerUI(x => x.SwaggerEndpoint("/openapi/v1.json", "Applications Api"));
 
 app.UseHttpsRedirection();
 

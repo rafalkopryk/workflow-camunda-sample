@@ -24,20 +24,10 @@ public static class ServiceCollectionExtensions
         ConfigureCamundaRest(services, configure, camundaOptions.CamundaRest);
 
         services.AddSingleton<JobExecutor>();
-        //services.AddSingleton<IMessageClient, GrpcMessageClient>();
+        services.AddSingleton<IJobClient, RestJobClient>();
+        services.AddSingleton<IMessageClient, RestMessageClient>();
 
-        if (camundaOptions.UseRest)
-        {
-            services.AddSingleton<IJobClient, RestJobClient>();
-            services.AddSingleton<IMessageClient, RestMessageClient>();
-        }
-        else
-        {
-            services.AddSingleton<IJobClient, GrpcJobClient>();
-            services.AddSingleton<IMessageClient, GrpcMessageClient>();
-        }
-
-        var camundaBuilder = new CamundaBuilder(services, camundaOptions.UseRest);
+        var camundaBuilder = new CamundaBuilder(services);
         configure?.Invoke(camundaBuilder);
     }
 
@@ -93,21 +83,15 @@ public class LoggingHttpHandler : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        // Logowanie ciała żądania
         if (request.Content != null)
         {
             var requestBody = await request.Content.ReadAsStringAsync();
-            Console.WriteLine($"Request Body: {requestBody}");
         }
 
-        // Wysyłanie żądania do serwera
         var response = await base.SendAsync(request, cancellationToken);
-
-        // Logowanie ciała odpowiedzi
         if (response.Content != null)
         {
             var responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Body: {responseBody}");
         }
 
         return response;

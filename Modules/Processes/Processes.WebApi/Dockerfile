@@ -12,21 +12,22 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj", "Modules/Front/Credit.Front/Server/"]
-COPY ["Modules/Front/Credit.Front/Client/Credit.Front.Client.csproj", "Modules/Front/Credit.Front/Client/"]
-COPY ["Modules/Front/Credit.Front/Shared/Credit.Front.Shared.csproj", "Modules/Front/Credit.Front/Shared/"]
-RUN dotnet restore "./Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj"
+COPY ["Modules/Processes/Processes.WebApi/Processes.WebApi.csproj", "Modules/Processes/Processes.WebApi/"]
+COPY ["Modules/Processes/Processes.Application/Processes.Application.csproj", "Modules/Processes/Processes.Application/"]
+COPY ["Common/Common.Application/Common.Application.csproj", "Common/Common.Application/"]
+COPY ["Camunda/Camunda.Client/Camunda.Client.csproj", "Camunda/Camunda.Client/"]
+RUN dotnet restore "./Modules/Processes/Processes.WebApi/Processes.WebApi.csproj"
 COPY . .
-WORKDIR "/src/Modules/Front/Credit.Front/Server"
-RUN dotnet build "./Credit.Front.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Modules/Processes/Processes.WebApi"
+RUN dotnet build "./Processes.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Ten etap służy do publikowania projektu usługi do skopiowania do etapu końcowego
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Credit.Front.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Processes.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Ten etap jest używany w środowisku produkcyjnym lub w przypadku uruchamiania z programu VS w trybie regularnym (domyślnie, gdy nie jest używana konfiguracja debugowania)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Credit.Front.Server.dll"]
+ENTRYPOINT ["dotnet", "Processes.WebApi.dll"]

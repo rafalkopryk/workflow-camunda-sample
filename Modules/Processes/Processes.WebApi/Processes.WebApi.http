@@ -1,0 +1,6 @@
+@Processes.WebApi_HostAddress = http://localhost:5188
+
+GET {{Processes.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

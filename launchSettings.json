@@ -11,7 +11,9 @@
         "operations.webapi": "StartDebugging",
         "operations.backoffice.server": "StartDebugging",
         "processes.worker": "StartDebugging",
-        "creditprocessfunctions": "StartDebugging"
+        "creditprocessfunctions": "StartDebugging",
+        "processes.workerv2": "StartDebugging",
+        "processes.webapi": "StartDebugging"
       }
     }
   }

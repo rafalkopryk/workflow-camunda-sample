@@ -7,10 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Camunda.Client;
 
-public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamundaBuilder
+public class CamundaBuilder(IServiceCollection services) : ICamundaBuilder
 {
     private readonly IServiceCollection _services = services;
-    private readonly bool _useRest = useRest;
 
     public ICamundaBuilder AddWorker<T>(JobWorkerConfiguration jobWorkerConfiguration) where T : class, IJobHandler
     {
@@ -50,28 +49,14 @@ public class CamundaBuilder(IServiceCollection services, bool useRest) : ICamund
             });
         }
 
-        if (_useRest)
+        _services.AddHostedService(x =>
         {
-            _services.AddHostedService(x =>
-            {
-                var client = x.GetRequiredService<ICamundaClientRest>();
-                var logger = x.GetRequiredService<ILogger<RestPoolCamundaWorker<T>>>();
-                var jobExecutor = x.GetRequiredService<JobExecutor>();
+            var client = x.GetRequiredService<ICamundaClientRest>();
+            var logger = x.GetRequiredService<ILogger<RestPoolCamundaWorker<T>>>();
+            var jobExecutor = x.GetRequiredService<JobExecutor>();
 
-                return new RestPoolCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
-            });
-        }
-        else
-        {
-            _services.AddHostedService(x =>
-            {
-                var client = x.GetRequiredService<Gateway.GatewayClient>();
-                var logger = x.GetRequiredService<ILogger<GrpcPoolCamundaWorker<T>>>();
-                var jobExecutor = x.GetRequiredService<JobExecutor>();
-
-                return new GrpcPoolCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
-            });
-        }
+            return new RestPoolCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
+        });
 
         return this;
     }

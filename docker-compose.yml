@@ -5,19 +5,14 @@ services:
     image: ${DOCKER_REGISTRY-}applicationswebapi
     build:
       context: .
-      dockerfile: Modules/Applications/Applications.WebApi/Dockerfile
+      dockerfile: Modules/Applications/Applications.WebApi/Dockerfile  
     depends_on:
-      - zeebe
+      - kafka
     environment:
+       OTEL_SERVICE_NAME: "Applications"
        OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
-       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
-       # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://seq:5341/ingest/otlp/v1/logs
-       # OTEL_EXPORTER_OTLP_LOGS_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: http/protobuf
-
-       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://seq:5341/ingest/otlp/v1/traces
-       # OTEL_EXPORTER_OTLP_TRACES_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}   
+       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
 
        OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
        OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
@@ -36,27 +31,22 @@ services:
        EventBus__statisticsintervalms: 5000
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
-       
+
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
     build:
       context: .
       dockerfile: Modules/Calculations/Calculations.WebApi/Dockerfile
     depends_on:
-      - zeebe
+      - kafka
     environment:
+       OTEL_SERVICE_NAME: "Calculations"
        OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
-       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}   
+       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+
        OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
        OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
-
-       # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://seq:5341/ingest/otlp/v1/logs
-       # OTEL_EXPORTER_OTLP_LOGS_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: http/protobuf
-
-       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://seq:5341/ingest/otlp/v1/traces
-       # OTEL_EXPORTER_OTLP_TRACES_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
 
        ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
        ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
@@ -73,14 +63,49 @@ services:
        EventBus__autooffsetreset: earliest
        EventBus__enablepartitioneof: "true"
 
-  # db:
-  #   image: "mcr.microsoft.com/mssql/server"
-  #   container_name: db
-  #   ports:
-  #     - "1433:1433"
-  #   environment:
-  #     SA_PASSWORD: "S3cur3P@ssW0rd!"
-  #     ACCEPT_EULA: "Y"
+  processes.webapi:
+    image: ${DOCKER_REGISTRY-}processeswebapi
+    build:
+      context: .
+      dockerfile: Modules/Processes/Processes.WebApi/Dockerfile
+    depends_on:
+      - zeebe
+      - kafka 
+    environment:
+       OTEL_SERVICE_NAME: "Processes"
+       OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
+       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}   
+       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+
+       OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
+       OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
+
+       Camunda__CamundaRest__Endpoint: ${CAMUNDA_ADDRESS_REST}
+       Camunda__CamundaGrpc__Endpoint: ${CAMUNDA_ADDRESS_GRPC}
+
+       Camunda__JobWorkers__Default__TimeoutInMs: 60000
+       Camunda__JobWorkers__Default__PoolingMaxJobsToActivate: 5
+       Camunda__JobWorkers__Default__PoolingRequestTimeoutInMs: 10000
+       Camunda__JobWorkers__Default__PoolingDelayInMs: 200
+       Camunda__JobWorkers__Default__UseStream: "false"
+       Camunda__JobWorkers__Default__StreamTimeoutInSec: 900
+
+       ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
+       
+       ServiceBusProvider: "kafka"
+       
+       EventBus__bootstrapservers: kafka:9092
+       EventBus__groupid: credit-processes
+       EventBus__enableautocommit: "false"
+       EventBus__statisticsintervalms: 5000
+       EventBus__autooffsetreset: earliest
+       EventBus__enablepartitioneof: "true"
+
+  credit.front.server:
+    image: ${DOCKER_REGISTRY-}creditfrontserver
+    build:
+      context: .
+      dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
 
   zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
@@ -218,29 +243,20 @@ services:
         -E output.elasticsearch.ssl.enabled=false
 
   kafka:
-    image: confluentinc/cp-kafka:latest
-    ports:
-     - "9092:9092"
-    hostname: kafka
-    container_name: kafka
-    depends_on:
-      - zookeeper
+    container_name: "kafka"
+    image: "docker.io/confluentinc/confluent-local:7.7.1"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_LISTENERS: "PLAINTEXT://localhost:29092,CONTROLLER://localhost:29093,PLAINTEXT_HOST://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092,PLAINTEXT_INTERNAL://kafka:9093"
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENABLED}
+      OTEL_SERVICE_NAME: "kafka"
     ports:
-      - "2181:2181"
+    - target: 9092
+      published: 9092
+    - target: 9093
+      published: 9093
+    restart: unless-stopped
  
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -251,17 +267,10 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=""
       - DYNAMIC_CONFIG_ENABLED=true
     depends_on:
         - kafka
-        - zookeeper
-
-  credit.front.server:
-    image: ${DOCKER_REGISTRY-}creditfrontserver
-    build:
-      context: .
-      dockerfile: Modules/Front/Credit.Front/Server/Dockerfile
     
   # operations.webapi:
   #   image: ${DOCKER_REGISTRY-}operationswebapi
@@ -281,57 +290,6 @@ services:
   #     context: .
   #     dockerfile: Modules/BackOffice/Operations.BackOffice/Server/Dockerfile
 
-  processes.worker:
-    image: ${DOCKER_REGISTRY-}processesworker
-    build:
-      context: .
-      dockerfile: Modules/Processes/Processes.Worker/Dockerfile
-    depends_on:
-      - zeebe
-    environment:
-       OTEL_EXPORTER_OTLP_ENABLED: ${OTLP_ENABLED}
-       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTLP_ENDPOINT}       
-       OTEL_EXPORTER_AZUREMONITOR_ENABLED: ${AZUREMONITOR_ENABLED}
-       OTEL_EXPORTER_AZUREMONITOR_ENDPOINT: ${AZUREMONITOR_ENDPOINT}
-
-       # OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://seq:5341/ingest/otlp/v1/logs
-       # OTEL_EXPORTER_OTLP_LOGS_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: http/protobuf
-
-       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://seq:5341/ingest/otlp/v1/traces
-       # OTEL_EXPORTER_OTLP_TRACES_HEADERS: X-Seq-ApiKey=tAndZ4eevhnvmhQqKpVQ
-       # OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
-       
-       # OTEL_SERVICE_NAME: "Process.Worker"
-       # OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES: "*"
-       # OTEL_DOTNET_AUTO_METRICS_ADDITIONAL_SOURCES: "*"
-
-       Camunda__UseRest: true
-       Camunda__CamundaRest__Endpoint: ${CAMUNDA_ADDRESS_REST}
-       Camunda__CamundaGrpc__Endpoint: ${CAMUNDA_ADDRESS_GRPC}
-
-       Camunda__JobWorkers__Default__TimeoutInMs: 60000
-       Camunda__JobWorkers__Default__PoolingMaxJobsToActivate: 5
-       Camunda__JobWorkers__Default__PoolingRequestTimeoutInMs: 10000
-       Camunda__JobWorkers__Default__PoolingDelayInMs: 200
-       Camunda__JobWorkers__Default__UseStream: "false"
-       Camunda__JobWorkers__Default__StreamTimeoutInSec: 900
-
-       ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
-       
-       ServiceBusProvider: "kafka"
-       
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: credit-processes
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
-    # env_file:
-    #   - otel-dotnet.env
-
-
-
   # creditprocessfunctions:
   #   image: ${DOCKER_REGISTRY-}creditprocessfunctions
   #   build:
@@ -347,31 +305,23 @@ services:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: example
 
-  # seq:
-  #   image: datalust/seq
-  #   container_name: seq
-  #   environment:
-  #       - ACCEPT_EULA=Y
-  #   volumes:
-  #       - seq_data:/data
+  # db:
+  #   image: "mcr.microsoft.com/mssql/server"
+  #   container_name: db
   #   ports:
-  #       - 5341:80
-
-  # mongo-express:
-  #   image: mongo-express
-  #   restart: always
-  #   ports:
-  #       - 8081:8081
+  #     - "1433:1433"
   #   environment:
-  #       ME_CONFIG_MONGODB_ADMINUSERNAME: root
-  #       ME_CONFIG_MONGODB_ADMINPASSWORD: example
-  #       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-  #       ME_CONFIG_BASICAUTH: false
+  #     SA_PASSWORD: "S3cur3P@ssW0rd!"
+  #     ACCEPT_EULA: "Y"
 
 volumes:
   zeebe:
   elastic:
   kibana:
-  seq_data:
   certs:
     driver: local
+
+
+
+
+

@@ -6,7 +6,6 @@ using Common.Application.Dictionary;
 using Wolverine;
 using Wolverine.Attributes;
 
-
 [MessageIdentity("simulation", Version = 1)]
 public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
@@ -31,7 +30,7 @@ public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalcu
 
         var calculation = new CreditCalculation
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             ApplicationId = notification.ApplicationId,
             Amount = notification.Amount,
             CreditPeriodInMonths = notification.CreditPeriodInMonths,

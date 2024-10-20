@@ -1,22 +1,14 @@
-﻿using GatewayProtocol;
-using Google.Protobuf;
+﻿using Camunda.Client.Rest;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
 
-internal class DeployBPMNDefinitionService : IHostedService
+internal class DeployBPMNDefinitionService(ICamundaClientRest client, IBpmnProvider provider, IOptions<ProcessDefinitionOptions> processDefinitionsOptions) : IHostedService
 {
-    private readonly Gateway.GatewayClient _client;
-    private readonly IBpmnProvider _provider;
-    private readonly ProcessDefinitionOptions _processDefinitionsOptions;
-
-    public DeployBPMNDefinitionService(Gateway.GatewayClient client, IBpmnProvider provider, IOptions<ProcessDefinitionOptions> processDefinitionsOptions)
-    {
-        _client = client;
-        _provider = provider;
-        _processDefinitionsOptions = processDefinitionsOptions.Value;
-    }
+    private readonly ICamundaClientRest _client = client;
+    private readonly IBpmnProvider _provider = provider;
+    private readonly ProcessDefinitionOptions _processDefinitionsOptions = processDefinitionsOptions.Value;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -26,21 +18,16 @@ internal class DeployBPMNDefinitionService : IHostedService
             foreach (var processDefinition in _processDefinitionsOptions.ProcessDefinitions)
             {
                 var file = await _provider.GetBpmn(processDefinition);
-                _ = await _client.DeployResourceAsync(new DeployResourceRequest
-                {
-                    Resources =
-                    {
-                        new Resource
-                        {
-                            Name = processDefinition.Name + ".bpmn",
-                            Content = ByteString.CopyFrom(file),
-                        }
-                    }
-                });
+
+                using var memoryStream = new MemoryStream(file, writable: false);
+
+                FileParameter[] paramers = [ new FileParameter(memoryStream, processDefinition.Name + ".bpmn")];
+                var response = await _client.DeploymentsAsync(paramers, string.Empty);
             }
         }
         catch (Exception ex)
         {
+
         }
     }
 

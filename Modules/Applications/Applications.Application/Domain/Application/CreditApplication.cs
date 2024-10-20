@@ -1,13 +1,9 @@
 ﻿using Common.Application.Dictionary;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace Applications.Application.Domain.Application;
 
 public class CreditApplication
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.String)]
     public string Id { get; protected set; }
     public decimal Amount { get; protected set; }
     public int CreditPeriodInMonths { get; protected set; }

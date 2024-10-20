@@ -2,7 +2,6 @@
 using Camunda.Client.Rest;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace Camunda.Client.Workers;
 
@@ -80,13 +79,13 @@ internal class RestPoolCamundaWorker<T>(
     {
         return new InternalJob
         {
-            BpmnProcessId = activatedJob.BpmnProcessId,
-            CustomHeaders = Newtonsoft.Json.JsonConvert.SerializeObject(activatedJob.Variables),
+            BpmnProcessId = activatedJob.ProcessDefinitionId,
+            CustomHeaders = Newtonsoft.Json.JsonConvert.SerializeObject(activatedJob.CustomHeaders),
             Deadline = DateTimeOffset.FromUnixTimeMilliseconds(activatedJob.Deadline).ToLocalTime(),
             Variables = Newtonsoft.Json.JsonConvert.SerializeObject(activatedJob.Variables),
             ElementId = activatedJob.ElementId,
             ElementInstanceKey = activatedJob.ElementInstanceKey,
-            Key = activatedJob.Key,
+            Key = activatedJob.JobKey,
             ProcessDefinitionKey = activatedJob.ProcessDefinitionKey,
             ProcessDefinitionVersion = activatedJob.ProcessDefinitionVersion,
             ProcessInstanceKey = activatedJob.ProcessInstanceKey,

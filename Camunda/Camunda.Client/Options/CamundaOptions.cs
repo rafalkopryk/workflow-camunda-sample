@@ -2,7 +2,6 @@
 
 public record CamundaOptions
 {
-    public bool UseRest { get; init; }
     public GrpcCamundaOptions? CamundaGrpc { get; init; }
     public RestCamundaOptions? CamundaRest { get; init; }
 }

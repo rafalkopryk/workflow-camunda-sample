@@ -54,7 +54,6 @@ public static class ServiceCollectionExtensions
                     x.SetDbStatementForStoredProcedure = true;
                     x.RecordException = true;
                 })
-                .AddElasticsearchClientInstrumentation(options => options.SetDbStatementForRequest = true)
                 .AddSource("Wolverine")
                 .SetErrorStatusOnException()
                 .SetResourceBuilder(resourceBuilder)
