@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0-rc.1.24511.1" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>ff3f8d08-5588-4e36-9ada-475dbd9f87ce</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.Kafka" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Applications\Applications.WebApi\Applications.WebApi.csproj" />
+    <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
+    <ProjectReference Include="..\..\..\Front\Credit.Front\Server\Credit.Front.Server.csproj" />
+    <ProjectReference Include="..\..\..\Processes\Processes.WebApi\Processes.WebApi.csproj" />
+  </ItemGroup>
+
+</Project>

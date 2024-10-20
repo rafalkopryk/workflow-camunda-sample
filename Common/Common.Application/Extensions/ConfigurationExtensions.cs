@@ -42,15 +42,16 @@ public static class ConfigurationExtensions
 
     public static string GetkafkaConnectionString(this IConfiguration configuration)
     {
-        return configuration.GetValue<string>("EventBus:bootstrapservers");
+        return configuration.GetConnectionString("Kafka");
     }
 
     public static ConsumerConfig? GetkafkaConsumer(this IConfiguration configuration)
     {
-        var section = configuration.GetSection("EventBus");
+        var bootstrapServers = configuration.GetkafkaConnectionString();
+        var section = configuration.GetSection("Kafka");
         var config = new ConsumerConfig
         {
-            BootstrapServers = section.GetValue<string>("bootstrapservers"),
+            BootstrapServers = bootstrapServers,
             GroupId = section.GetValue<string>("groupid"),
             EnableAutoCommit = section.GetValue<bool>("enableautocommit"),
             StatisticsIntervalMs = section.GetValue<int>("statisticsintervalms"),
@@ -63,10 +64,12 @@ public static class ConfigurationExtensions
 
     public static ProducerConfig? GetkafkaProducer(this IConfiguration configuration)
     {
-        var section = configuration.GetSection("EventBus");
+        var bootstrapServers = configuration.GetkafkaConnectionString();
+
+        var section = configuration.GetSection("Kafka");
         var config = new ProducerConfig
         {
-            BootstrapServers = section.GetValue<string>("bootstrapservers"),
+            BootstrapServers = bootstrapServers,
             Acks = Acks.All,
             StatisticsIntervalMs = section.GetValue<int>("statisticsintervalms"),
             AllowAutoCreateTopics = true,

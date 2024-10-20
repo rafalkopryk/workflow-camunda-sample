@@ -14,7 +14,7 @@ using OpenTelemetry;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ResourceBuilder resourceBuilder)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton(TimeProvider.System);
 
@@ -56,14 +56,12 @@ public static class ServiceCollectionExtensions
                 })
                 .AddSource("Wolverine")
                 .SetErrorStatusOnException()
-                .SetResourceBuilder(resourceBuilder)
                 .AddZeebeWorkerInstrumentation()
                 .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources"))
             .WithMetrics(builder => builder
                 .AddAspNetCoreInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddProcessInstrumentation()
-                .SetResourceBuilder(resourceBuilder)
                 .AddZeebeWorkerInstrumentation());
     }
 }

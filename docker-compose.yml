@@ -21,16 +21,16 @@ services:
        ConnectionStrings__AzCosmosDB: ${AZ_COSMOSDB_CONNECTION_STRING}
        ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
-       
+       ConnectionStrings__Kafka: kafka:9092
+
        DatabaseProvider: "mongodb"
        ServiceBusProvider: "kafka"
        
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: credit-applications
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
+       Kafka__groupid: credit-applications
+       Kafka__enableautocommit: "false"
+       Kafka__statisticsintervalms: 5000
+       Kafka__autooffsetreset: earliest
+       Kafka__enablepartitioneof: "true"
 
   calculations.webapi:
     image: ${DOCKER_REGISTRY-}calculationswebapi
@@ -52,16 +52,16 @@ services:
        ConnectionStrings__MongoDB: ${MONGODB_CONNECTION_STRING}
        ConnectionStrings__Default: ${CREDIT_CALCULATIONS_CONNECTION_STRING}       
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
-       
+       ConnectionStrings__Kafka: kafka:9092
+
        DatabaseProvider: "mongodb"
        ServiceBusProvider: "kafka"
        
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: credit-calculations
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
+       Kafka__groupid: credit-calculations
+       Kafka__enableautocommit: "false"
+       Kafka__statisticsintervalms: 5000
+       Kafka__autooffsetreset: earliest
+       Kafka__enablepartitioneof: "true"
 
   processes.webapi:
     image: ${DOCKER_REGISTRY-}processeswebapi
@@ -91,15 +91,16 @@ services:
        Camunda__JobWorkers__Default__StreamTimeoutInSec: 900
 
        ConnectionStrings__AzServiceBus: ${AZ_SERVICE_BUS_CONNECTION_STRING}
-       
+       ConnectionStrings__Kafka: kafka:9092
+
        ServiceBusProvider: "kafka"
        
-       EventBus__bootstrapservers: kafka:9092
-       EventBus__groupid: credit-processes
-       EventBus__enableautocommit: "false"
-       EventBus__statisticsintervalms: 5000
-       EventBus__autooffsetreset: earliest
-       EventBus__enablepartitioneof: "true"
+       Kafka__groupid: credit-processes
+       Kafka__enableautocommit: "false"
+       Kafka__statisticsintervalms: 5000
+       Kafka__autooffsetreset: earliest
+       Kafka__enablepartitioneof: "true"
+
 
   credit.front.server:
     image: ${DOCKER_REGISTRY-}creditfrontserver

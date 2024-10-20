@@ -5,6 +5,8 @@ using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.Configure<HostOptions>(options =>
 {
     options.ServicesStartConcurrently = true;
@@ -13,16 +15,14 @@ builder.Services.Configure<HostOptions>(options =>
 
 builder.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
-var resourceBuilder = ResourceBuilder.CreateDefault()
-    .AddService("Credit.Processes", serviceVersion: "1.0.0")
-    .AddTelemetrySdk();
-
-builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.MapOpenApi();
 app.UseSwaggerUI(x => x.SwaggerEndpoint("/openapi/v1.json", "Processes Api"));

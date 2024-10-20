@@ -5,17 +5,13 @@ using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SignContract;
 using Common.Application.Extensions;
 using MediatR;
-using OpenTelemetry.Resources;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var resourceBuilder = ResourceBuilder.CreateDefault()
-    .AddService("Credit.Applications", serviceVersion: "1.0.0")
-    .AddTelemetrySdk();
+builder.AddServiceDefaults();
 
-builder.Services.AddInfrastructure(builder.Configuration, resourceBuilder);
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddCors();
@@ -24,6 +20,8 @@ builder.Services.AddOpenApi();
 builder.Host.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.MapOpenApi();
 app.UseSwaggerUI(x => x.SwaggerEndpoint("/openapi/v1.json", "Applications Api"));

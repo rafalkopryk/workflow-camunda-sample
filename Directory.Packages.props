@@ -1,5 +1,7 @@
 <Project>
   <ItemGroup>
+    <PackageVersion Include="Aspire.Hosting.Kafka" Version="8.2.1" />
+    <PackageVersion Include="Aspire.Hosting.MongoDB" Version="8.2.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0-rc.2.24473.5" />
     <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="1.5.0" />
@@ -74,5 +76,8 @@
     <PackageVersion Include="WolverineFx" Version="3.0.0" />
     <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.0.0" />
     <PackageVersion Include="WolverineFx.Kafka" Version="3.0.0" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0-rc.1.24511.1" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0-rc.1.24511.1" />
   </ItemGroup>
 </Project>

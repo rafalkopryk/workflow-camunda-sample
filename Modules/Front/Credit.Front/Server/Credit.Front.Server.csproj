@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Client\Credit.Front.Client.csproj" />
     <ProjectReference Include="..\Shared\Credit.Front.Shared.csproj" />
   </ItemGroup>
