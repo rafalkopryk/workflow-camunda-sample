@@ -11,12 +11,10 @@ public record DecisionCommand(string ApplicationId, string Decision);
 [JobWorker(Type = "credit-decision:1")]
 internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
 {
-    private readonly IMessageBus _busProducer = busProducer;
-
     public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
         var processInstance = job.GetVariablesAsType<CreditProcessInstance>();
-        await _busProducer.PublishAsync(new DecisionCommand
+        await busProducer.PublishAsync(new DecisionCommand
         (
             ApplicationId: processInstance.ApplicationId,
             Decision: processInstance.Decision

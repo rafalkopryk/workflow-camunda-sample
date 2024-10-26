@@ -1,8 +1,31 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var kafka = builder.AddKafka("kafka").WithKafkaUI();
-var mongo = builder.AddMongoDB("mongodb");
-var zeebe = builder.AddZeebe("zeebe", 8089);
+var elastic = builder.AddElasticsearch("elastic")
+    .WithEnvironment("xpack.security.enabled", "false")
+    .WithDataVolume("elastic");
+
+var elasticConnectionString = ReferenceExpression.Create(
+    $"http://{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
+
+var kibana = builder.AddResource(new ContainerResource("kibana"))
+            .WithHttpEndpoint(port: 5602, targetPort: 5601, "http")
+            .WithImage("kibana/kibana", "8.15.3")
+            .WithImageRegistry("docker.elastic.co")
+            .WithEnvironment("ELASTICSEARCH_HOSTS", elasticConnectionString)
+            .WithVolume("kibana", "/usr/share/kibana/data")
+            .WaitFor(elastic);
+
+var kafka = builder.AddKafka("kafka")
+    .WithDataVolume("kafka")
+    .WithKafkaUI();
+
+var mongo = builder.AddMongoDB("mongodb")
+    .WithDataVolume("mongo");
+
+var zeebe = builder.AddZeebe("zeebe", elasticConnectionString, 8089)
+    .WithDataVolume("zeebe")
+    .WaitFor(elastic)
+    .WithOperate("Operate", elasticConnectionString);
 
 builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
     .WithHttpsEndpoint(63111, 8081, "public", isProxied: true)

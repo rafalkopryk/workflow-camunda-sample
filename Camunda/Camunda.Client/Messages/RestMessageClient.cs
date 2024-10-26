@@ -6,8 +6,6 @@ namespace Camunda.Client;
 
 internal class RestMessageClient(ICamundaClientRest client) : IMessageClient
 {
-    private readonly ICamundaClientRest _client = client;
-
     public async Task Publish<T>(string correlationKey, T message, string? messageId = null)
     {
         try
@@ -18,7 +16,7 @@ internal class RestMessageClient(ICamundaClientRest client) : IMessageClient
             var json = JsonSerializer.Serialize(message, JsonSerializerCustomOptions.CamelCase);
             var jsonAsObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 
-            await _client.PublicationAsync(new MessagePublicationRequest
+            await client.PublicationAsync(new MessagePublicationRequest
             {
                 Name = attribute!.Name,
                 CorrelationKey = correlationKey ?? string.Empty,

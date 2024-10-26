@@ -11,10 +11,8 @@ public record DecisionGenerated(string ApplicationId, string Decision);
 [WolverineHandler]
 public class DecisionGeneratedEventHandler(IMessageClient messageClient)
 {
-    private readonly IMessageClient _client = messageClient;
-
     public async Task Handle(DecisionGenerated message)
     {
-        await _client.Publish(message.ApplicationId, message);
+        await messageClient.Publish(message.ApplicationId, message);
     }
 }

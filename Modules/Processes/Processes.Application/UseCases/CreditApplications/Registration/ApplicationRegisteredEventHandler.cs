@@ -11,10 +11,8 @@ public record ApplicationRegistered(string ApplicationId, decimal Amount, int Cr
 [WolverineHandler]
 public class ApplicationRegisteredEventHandler(IMessageClient messageClient)
 {
-    private readonly IMessageClient _client = messageClient;
-
     public async Task Handle(ApplicationRegistered message)
     {
-        await _client.Publish(null, message, message.ApplicationId);
+        await messageClient.Publish(null, message, message.ApplicationId);
     }
 }

@@ -10,10 +10,8 @@ public record ContractSigned(string ApplicationId);
 
 public class ContractSignedEventHandler(IMessageClient messageClient) 
 {
-    private readonly IMessageClient _client = messageClient;
-
     public async Task Handle(ContractSigned message)
     {
-        await _client.Publish(message.ApplicationId, message);
+        await messageClient.Publish(message.ApplicationId, message);
     }
 }

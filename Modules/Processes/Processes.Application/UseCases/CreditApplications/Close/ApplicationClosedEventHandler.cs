@@ -10,10 +10,8 @@ public record ApplicationClosed(string ApplicationId);
 
 public class ApplicationClosedEventHandler(IMessageClient messageClient) 
 {
-    private readonly IMessageClient _client = messageClient;
-
     public async Task Handle(ApplicationClosed message)
     {
-        await _client.Publish(message.ApplicationId, message);
+        await messageClient.Publish(message.ApplicationId, message);
     }
 }

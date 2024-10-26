@@ -47,8 +47,6 @@ public class CamundaBuilder(IServiceCollection services) : ICamundaBuilder
 
                 return new GrpcStreamCamundaWorker<T>(client, internalJobWorkerConfiguration, jobExecutor, logger);
             });
-
-            return this;
         }
 
         _services.AddHostedService(x =>

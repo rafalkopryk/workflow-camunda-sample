@@ -15,7 +15,7 @@ public record JobWorkerConfiguration
     public string[] TenatIds { get; init; } = [];
     public int PoolingMaxJobsToActivate { get; init; } = 20;
     public long PoolingRequestTimeoutInMs { get; set; } = 20_000;
-    public int PoolingDelayInMs { get; init; } = 100;
+    public int PoolingDelayInMs { get; init; } = 200;
     public bool UseStream { get; init; }
     public int StreamTimeoutInSec { get; init; } = 900;
 }

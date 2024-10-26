@@ -11,12 +11,10 @@ public record CloseApplicationCommand(string ApplicationId);
 [JobWorker(Type = "credit-closeApplication:1")]
 internal class CloseApplicationJobHandler(IMessageBus busProducer) : IJobHandler
 {
-    private readonly IMessageBus _busProducer = busProducer;
-
     public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
     {
         var processInstance = job.GetVariablesAsType<CreditProcessInstance>();
-        await _busProducer.PublishAsync(new CloseApplicationCommand
+        await busProducer.PublishAsync(new CloseApplicationCommand
         (
             ApplicationId: processInstance.ApplicationId
         ));

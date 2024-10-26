@@ -27,10 +27,11 @@ internal static class Diagnostics
             return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
         }
 
-        internal static Activity StartHandleTask(string elementId)
+        internal static Activity StartHandleTask(string elementId, ActivityLink link)
         {
             var activityName = $"CamundaWorker Task RECEIVE from {elementId}";
-            return ActivitySource.StartActivity(activityName, ActivityKind.Consumer);
+            
+            return ActivitySource.StartActivity(ActivityKind.Consumer, links: [link], name: activityName);
         }
     }
 

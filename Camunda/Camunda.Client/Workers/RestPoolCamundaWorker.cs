@@ -40,13 +40,12 @@ internal class RestPoolCamundaWorker<T>(
                 var response = await _client.ActivationAsync(request, stoppingToken);
                 var jobs = response.Jobs.ToArray();
                 var jobsCount = jobs.Length;
-
-                if (jobsCount == 0)
+                
+                if (jobsCount == 1)
                 {
-                    continue;
+                    await _jobExecutor.HandleJob<T>(Map(jobs.First()), _jobWorkerConfiguration, CancellationToken.None);
                 }
-
-                if (jobsCount > 1)
+                else if (jobsCount > 1)
                 {
                     var parallelOptions = new ParallelOptions
                     {
@@ -56,13 +55,10 @@ internal class RestPoolCamundaWorker<T>(
                             : jobsCount,
                     };
 
-                    await Parallel.ForEachAsync(jobs, parallelOptions, async (job, cancellationToken) => await _jobExecutor.HandleJob<T>(Map(job), _jobWorkerConfiguration, cancellationToken));
+                    await Parallel.ForEachAsync(jobs, parallelOptions,
+                        async (job, cancellationToken) =>
+                            await _jobExecutor.HandleJob<T>(Map(job), _jobWorkerConfiguration, cancellationToken));                
                 }
-                else
-                {
-                    await _jobExecutor.HandleJob<T>(Map(jobs.First()), _jobWorkerConfiguration, CancellationToken.None);
-                }
-                
             }
             catch (Exception ex)
             {
