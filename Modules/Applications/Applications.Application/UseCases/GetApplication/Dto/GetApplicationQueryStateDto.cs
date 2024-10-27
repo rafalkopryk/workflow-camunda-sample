@@ -10,5 +10,5 @@ public record GetApplicationStateDto
 
     public DateTimeOffset? ContractSigningDate { get; init; }
 
-    public Decision? Decision { get; init; }
+    public Decision Decision { get; init; }
 }

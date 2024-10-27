@@ -421,13 +421,14 @@ namespace Credit.Frontend.Clients.Applications
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Decision
     {
-
+        [System.Runtime.Serialization.EnumMember(Value = @"NotExists")]
+        NotExists = 0,
+        
         [System.Runtime.Serialization.EnumMember(Value = @"Positive")]
-        Positive = 0,
+        Positive = 1,
 
         [System.Runtime.Serialization.EnumMember(Value = @"Negative")]
-        Negative = 1,
-
+        Negative = 2,
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -455,7 +456,6 @@ namespace Credit.Frontend.Clients.Applications
 
         [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetApplicationStateDto State { get; set; }
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -502,8 +502,7 @@ namespace Credit.Frontend.Clients.Applications
 
         [Newtonsoft.Json.JsonProperty("decision", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Decision? Decision { get; set; }
-
+        public Decision Decision { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]

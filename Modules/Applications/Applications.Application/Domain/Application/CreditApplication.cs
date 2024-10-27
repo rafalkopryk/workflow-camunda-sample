@@ -1,4 +1,5 @@
-﻿using Common.Application.Dictionary;
+﻿using System.Collections.Immutable;
+using Common.Application.Dictionary;
 
 namespace Applications.Application.Domain.Application;
 
@@ -7,11 +8,11 @@ public class CreditApplication
     public string Id { get; protected set; }
     public decimal Amount { get; protected set; }
     public int CreditPeriodInMonths { get; protected set; }
-    public List<State> States { get; protected set; } = [];
+    public ApplicationState[] States { get; protected set; } = [];
     public CustomerPersonalData CustomerPersonalData { get; protected set; }
     public Declaration Declaration { get; protected set; }
 
-    public State State => States?.OrderByDescending(x => x.Date).FirstOrDefault(); 
+    public ApplicationState State => States?.OrderByDescending(x => x.Date).FirstOrDefault(); 
     
     protected CreditApplication() { }
 
@@ -32,23 +33,32 @@ public class CreditApplication
             Declaration = declaration,
             States =
             [
-                State.ApplicationRegistered(timeProvider.GetLocalNow()),
+                new ApplicationState.ApplicationRegistered(timeProvider.GetLocalNow())
             ]
         };
     }
 
     public void GenerateDecision(Decision decision, TimeProvider timeProvider)
     {
-        States.Add(State.DecisionGenerated(State, decision, timeProvider.GetLocalNow()));
+        States = [
+            ..States,
+            new ApplicationState.DecisionGenerated(timeProvider.GetLocalNow(), decision)
+        ];
     }
 
     public void SignContract(TimeProvider timeProvider)
     {
-        States.Add(State.ContractSigned(State, timeProvider.GetLocalNow()));
+        States = [
+            ..States,
+            new ApplicationState.ContractSigned(timeProvider.GetLocalNow())
+        ];
     }
 
     public void CloseApplication(TimeProvider timeProvider)
     {
-        States.Add(State.ApplicationClosed(State, timeProvider.GetLocalNow()));
+        States = [
+            ..States,
+            new ApplicationState.ApplicationClosed(timeProvider.GetLocalNow(), State.Decision)
+        ];
     }
 }

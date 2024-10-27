@@ -138,10 +138,10 @@
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
     };
 
-    public const string APPLICATION_REGISTERED = nameof(APPLICATION_REGISTERED);
-    public const string DECISION_GENERATED = nameof(DECISION_GENERATED);
-    public const string CONTRACT_SIGNED = nameof(CONTRACT_SIGNED);
-    public const string APPLICATION_CLOSED = nameof(APPLICATION_CLOSED);
+    public const string APPLICATION_REGISTERED = "ApplicationRegistered";
+    public const string DECISION_GENERATED = "DecisionGenerated";
+    public const string CONTRACT_SIGNED = "ContractSigned";
+    public const string APPLICATION_CLOSED = "ApplicationClosed";
 
     [Parameter]
     public string? ApplicationId { get; set; }

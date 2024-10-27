@@ -30,7 +30,6 @@ public class Decision(ILogger<Decision> logger, IAzureClientFactory<ServiceBusSe
     }
 }
 
-
 public record DecisionGenerated(string ApplicationId, DecisionEnum Decision);
 
 public record CloseApplicationCommand(string ApplicationId);

@@ -44,7 +44,7 @@ internal class GetApplicationQuerydHandler(CreditApplicationDbContext creditAppl
             {
                 Level = creditApplication.State.Level,
                 Decision = creditApplication.State.Decision,
-                ContractSigningDate = creditApplication.State.ContractSigningDate,
+                ContractSigningDate = creditApplication.States.OfType<ApplicationState.ContractSigned>().FirstOrDefault()?.Date,
                 Date = creditApplication.State.Date,
             }
         };

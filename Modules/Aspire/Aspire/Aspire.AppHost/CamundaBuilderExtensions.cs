@@ -5,9 +5,9 @@ public static class CamundaBuilderExtensions
 {
     private const int DefaultGrpcPort = 26500;
     private const int DefaultRestPort = 8080;
+    
     public static IResourceBuilder<ZeebeResource> WithOperate(this IResourceBuilder<ZeebeResource> builder, string name, ReferenceExpression elasticConnectionString , int port = 8085)
     {
-        
         var zeebeConnectionString = ReferenceExpression.Create($"{builder.Resource.GrpcEndpoint.Property(EndpointProperty.Host)}:{builder.Resource.GrpcEndpoint.Property(EndpointProperty.Port)}");
 
         var operateContainer = new ContainerResource(name);
@@ -18,6 +18,7 @@ public static class CamundaBuilderExtensions
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS", zeebeConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ELASTICSEARCH_URL", elasticConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL", elasticConnectionString)
+            //.WithHttpHealthCheck("actuator/health/readiness", 200, "http")
             .WaitFor(builder);
 
         return builder;
