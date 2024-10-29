@@ -16,7 +16,7 @@ var elasticConnectionString = ReferenceExpression.Create(
 //             .WithVolume("kibana", "/usr/share/kibana/data")
 //             .WaitFor(elastic);
 
-var kafka = builder.AddKafka("kafka")
+var kafka = builder.AddKafka("kafka", 62799)
     .WithDataVolume("kafka")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithKafkaUI(x => x.WithLifetime(ContainerLifetime.Persistent));
