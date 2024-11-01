@@ -42,10 +42,10 @@ internal class GetApplicationQuerydHandler(CreditApplicationDbContext creditAppl
             },
             State = new()
             {
-                Level = creditApplication.State.Level,
-                Decision = creditApplication.State.Decision,
-                ContractSigningDate = creditApplication.States.OfType<ApplicationState.ContractSigned>().FirstOrDefault()?.Date,
-                Date = creditApplication.State.Date,
+                Level = creditApplication.States.Current.Level,
+                Decision = creditApplication.States.Current.Decision,
+                ContractSigningDate = creditApplication.States.History.OfType<ApplicationState.ContractSigned>().FirstOrDefault()?.Date,
+                Date = creditApplication.States.Current.Date,
             }
         };
     }

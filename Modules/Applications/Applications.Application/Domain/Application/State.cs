@@ -21,3 +21,13 @@ public abstract record ApplicationState(DateTimeOffset Date, Decision Decision)
 
     public record ContractSigned(DateTimeOffset Date) : ApplicationState(Date, Decision.Positive);
 }
+
+public record ApplicationStates(ApplicationState[] History)
+{
+    public ApplicationState? Current => History.OrderByDescending(x => x.Date).FirstOrDefault();
+
+    public ApplicationStates Append(ApplicationState state)
+    {
+        return new ApplicationStates([..History, state]);
+    }
+}

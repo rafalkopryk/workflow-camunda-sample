@@ -51,7 +51,7 @@ public class CreditApplicationDbContext : DbContext
             entity.OwnsOne(creditApplication => creditApplication.Declaration, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
             entity.Property(x => x.States).HasConversion<string>(
                 x => JsonSerializer.Serialize(x, JsonSerializerOptions.Web),
-                y => JsonSerializer.Deserialize<ApplicationState[]>(y, JsonSerializerOptions.Web));
+                y => JsonSerializer.Deserialize<ApplicationStates>(y, JsonSerializerOptions.Web));
         });
     }
     
