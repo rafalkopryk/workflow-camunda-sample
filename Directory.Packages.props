@@ -5,13 +5,13 @@
     <PackageVersion Include="Aspire.Hosting.MongoDB" Version="9.0.0-rc.1.24511.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0-rc.2.24473.5" />
-    <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="1.5.0" />
-    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.1.1" />
+    <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="2.0.0" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.2.0" />
     <PackageVersion Include="NSwag.AspNetCore" Version="14.0.7" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule" Version="1.9.0-beta.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.ConfluentKafka" Version="0.1.0-alpha.2" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageVersion Include="Google.Protobuf" Version="3.28.2" />
+    <PackageVersion Include="Google.Protobuf" Version="3.28.3" />
     <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.66.0" />
     <PackageVersion Include="Grpc.Tools" Version="2.67.0">
       <PrivateAssets>all</PrivateAssets>
@@ -63,9 +63,9 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.9.0-beta.1" />
     <PackageVersion Include="Confluent.Kafka" Version="2.3.0" />
     <PackageVersion Include="NEST" Version="7.17.5" />
-    <PackageVersion Include="MudBlazor" Version="6.19.1" />
+    <PackageVersion Include="MudBlazor" Version="7.15.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.0.7">
+    <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
@@ -74,9 +74,9 @@
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.1.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
-    <PackageVersion Include="WolverineFx" Version="3.0.1" />
-    <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.0.1" />
-    <PackageVersion Include="WolverineFx.Kafka" Version="3.0.1" />
+    <PackageVersion Include="WolverineFx" Version="3.1.0" />
+    <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.1.0" />
+    <PackageVersion Include="WolverineFx.Kafka" Version="3.1.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0-rc.1.24511.1" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0-preview.9.24507.7" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0-rc.1.24511.1" />
