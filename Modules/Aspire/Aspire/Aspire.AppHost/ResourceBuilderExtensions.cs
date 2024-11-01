@@ -12,10 +12,27 @@
             .WithEnvironment("ServiceBusProvider", "kafka");
     }
 
-    public static IResourceBuilder<T> WithMongoReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<MongoDBServerResource> source) where T : IResourceWithEnvironment
+    public static IResourceBuilder<T> WithMongoReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<MongoDBDatabaseResource> source) where T : IResourceWithEnvironment
     {
         return builder
             .WithReference(source, "MongoDB")
             .WithEnvironment("DatabaseProvider", "mongodb");
+    }
+    
+    public static IResourceBuilder<T> WithSqlServerReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<SqlServerDatabaseResource> source) where T : IResourceWithEnvironment
+    {
+        return builder
+            .WithReference(source, "Default")
+            .WithEnvironment("DatabaseProvider", "sql");
+    }
+
+    public static IResourceBuilder<T> WithDatabaseReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<IResource> source) where T : IResourceWithEnvironment
+    {
+        return source switch
+        {
+            IResourceBuilder<MongoDBDatabaseResource> mongoDbResource =>  WithMongoReference(builder, mongoDbResource),
+            IResourceBuilder<SqlServerDatabaseResource> sqlServerResource =>  WithSqlServerReference(builder, sqlServerResource),
+            _ => throw new NotSupportedException("Not supported database"),
+        };
     }
 }
