@@ -14,7 +14,7 @@ public static class CamundaBuilderExtensions
         var resource = builder.ApplicationBuilder
             .AddResource(operateContainer)
             .WithHttpEndpoint(port: port, targetPort: 8080, name: "http")
-            .WithImage("camunda/operate", "8.6.3")
+            .WithImage("camunda/operate", "8.6.4")
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS", zeebeConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ELASTICSEARCH_URL", elasticConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL", elasticConnectionString)
@@ -24,7 +24,7 @@ public static class CamundaBuilderExtensions
         return builder;
     }
 
-    public static IResourceBuilder<ZeebeResource> AddZeebe(this IDistributedApplicationBuilder builder, string name, ReferenceExpression? elasticConnectionString ,int? restPort = 8089)
+    public static IResourceBuilder<ZeebeResource> AddZeebe(this IDistributedApplicationBuilder builder, string name, ReferenceExpression? elasticConnectionString = null ,int? restPort = 8089)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(name);
@@ -35,21 +35,28 @@ public static class CamundaBuilderExtensions
             .WithHttpEndpoint(port: DefaultGrpcPort, targetPort: DefaultGrpcPort, ZeebeResource.GprcEndpointName)
             .WithHttpEndpoint(port: restPort, targetPort: DefaultRestPort, name: ZeebeResource.RestEndpointName)
             .WithHttpEndpoint(port: 9600, targetPort: 9600, name: "internal")
-            .WithImage("camunda/zeebe", "8.6.3")
+            .WithImage("camunda/zeebe", "8.6.4")
             .WithEnvironment("CAMUNDA_REST_QUERY_ENABLED", "true")
             .WithEnvironment("ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK", "0.998")
             .WithEnvironment("ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK", "0.999");
         
         if (elasticConnectionString != null)
-        {   
-            resource.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME", "io.camunda.zeebe.exporter.ElasticsearchExporter");
-            resource.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL", elasticConnectionString);
-            resource.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE", "1000");
-            resource.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_DELAY", "1");
+        {
+            resource.WithElasticExporter(elasticConnectionString);
         }
 
         resource.WithHttpHealthCheck("actuator/health/readiness", 200, "internal");
         return resource;
+    }
+    
+    public static IResourceBuilder<ZeebeResource> WithElasticExporter(this IResourceBuilder<ZeebeResource> builder, ReferenceExpression? elasticConnectionString)
+    {
+        builder.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME", "io.camunda.zeebe.exporter.ElasticsearchExporter");
+        builder.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL", elasticConnectionString);
+        builder.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE", "1000");
+        builder.WithEnvironment("ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_DELAY", "1");
+
+        return builder;
     }
     
     public static IResourceBuilder<ZeebeResource> WithDataVolume(this IResourceBuilder<ZeebeResource> builder, string? name = null, bool isReadOnly = false)

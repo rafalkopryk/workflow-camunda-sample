@@ -202,6 +202,11 @@
 
             model = await GetApplication();
 
+            if (model.State.Level is DECISION_GENERATED)
+            {
+                _periodicTimer.Period = TimeSpan.FromSeconds(5);
+            }
+            
             await InvokeAsync(StateHasChanged);
         }
     }
