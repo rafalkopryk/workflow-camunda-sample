@@ -45,6 +45,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credit.Front.Shared", "Modules\Front\Credit.Front\Shared\Credit.Front.Shared.csproj", "{885C53AE-1881-4FDD-A56E-2255CBC4D58C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0BDACD16-4720-441D-8B18-8C5DC739A9C1}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{2FD540FE-6287-483D-B4DF-377D049D783B}"
 EndProject
