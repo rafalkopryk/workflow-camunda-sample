@@ -19,5 +19,5 @@ An example of using the camunda platfrom to control the process with kafka
 ![image](./img/Traces.png)
 
 ## to run
-* configure the `Aspire.AppHost` [appsetings.json](Modules\Aspire\Aspire\Aspire.AppHost\appsettings.json) profile. 
+* configure the `Aspire.AppHost` [appsetings.json](Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json) profile. 
 * run `Aspire.AppHost`
