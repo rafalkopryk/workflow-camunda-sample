@@ -13,14 +13,11 @@ An example of using the camunda platfrom to control the process with kafka
 
 
 ## Application modules
-![image](https://github.com/user-attachments/assets/bcbbe0d0-ffec-4278-adea-fcb6dba1ac82)
+![image](./img/Modules.png)
 
 ## Tracing
-![image](https://github.com/user-attachments/assets/e10f2c48-715c-42cd-841c-63bab53a5f5a)
+![image](./img/Traces.png)
 
 ## to run
-*  complete the .env file
-*  run command
-```
-docker compose up
-```
+* configure the `Aspire.AppHost` [appsetings.json](\Modules\Aspire\Aspire\Aspire.AppHost\appsettings.json) profile. 
+* run `Aspire.AppHost`
