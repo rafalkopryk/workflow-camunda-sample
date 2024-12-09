@@ -9,10 +9,10 @@ import { delay } from '../../../../../libs/delay';
 import { CancelApplicationButton, SignContractButton } from '../(components)/buttons';
 import { CreditParamsContent, CreditStatusContent } from '../(components)/contents';
 
-type ApplicationDetailsDto = WithCreditParams & WithCreditApplicationState;
+type CreditApplicationDto = WithCreditParams & WithCreditApplicationState;
 
 export default function ApplicationDetailsPage() {
-    const [creditApplication, setCreditApplication] = useState<ApplicationDetailsDto>();
+    const [creditApplication, setCreditApplication] = useState<CreditApplicationDto>();
     const { applicationId } = useParams();
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function ApplicationDetailsPage() {
     }, []);
 
     if (!creditApplication) {
-        return <p><em>Loading...</em></p>
+        return <p>Loading...</p>
     }
 
     return (
@@ -56,14 +56,14 @@ export default function ApplicationDetailsPage() {
         }
     }
     
-    async function getApplication(applicationId: string): Promise<ApplicationDetailsDto> {
+    async function getApplication(applicationId: string): Promise<CreditApplicationDto> {
         const response = await fetch(`${process.env.APPLICATION_URL}/applications/${applicationId}/`);
         if (response.status !== 200) {
             //todo
         }
 
         const data = await response.json();
-        return data.creditApplication as ApplicationDetailsDto;
+        return data.creditApplication as CreditApplicationDto;
     }
 
     async function signConract() : Promise<void> {

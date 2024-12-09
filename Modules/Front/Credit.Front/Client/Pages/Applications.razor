@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject IOptions<ExternalServicesOptions> ExternalServicesOptions;
 
+@using Credit.Front.Client.Components
 @using Credit.Frontend.Clients.Applications;
 @using Microsoft.Extensions.Options;
 @using MudBlazor;
@@ -85,7 +86,7 @@
 
 
         <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Register())">Register</MudButton>
+            <RegisterApplicationButton OnRegisterApplication="@Register" />
         </MudCardActions>
     </MudCard>
 </MudForm>

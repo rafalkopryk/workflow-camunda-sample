@@ -72,9 +72,9 @@
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.1.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.1.0" />
-    <PackageVersion Include="WolverineFx" Version="3.4.0" />
-    <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.4.0" />
-    <PackageVersion Include="WolverineFx.Kafka" Version="3.4.0" />
+    <PackageVersion Include="WolverineFx" Version="3.3.0" />
+    <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.3.0" />
+    <PackageVersion Include="WolverineFx.Kafka" Version="3.3.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
