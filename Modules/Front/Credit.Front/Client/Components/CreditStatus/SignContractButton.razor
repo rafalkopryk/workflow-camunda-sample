@@ -1,11 +1,11 @@
 ﻿@using MudBlazor;
 
-@if (IsApplcationCancelAllowed)
+@if (@IsContractSignedAllowed)
 {
     <MudButton Variant="Variant.Filled"
                Color="Color.Primary"
                OnClick="@HandleOnClick">
-        Cancel Application
+        Sign Contract
     </MudButton>
 }
 
@@ -14,12 +14,12 @@
     public IWithCreditApplicationState CreditApplication { get; init; }
 
     [Parameter]
-    public EventCallback OnCancelApplication { get; init; }
+    public EventCallback OnSignContract { get; init; }
 
     private async Task HandleOnClick()
     {
-        await OnCancelApplication.InvokeAsync();
+        await OnSignContract.InvokeAsync();
     }
 
-    public bool IsApplcationCancelAllowed => CreditApplication?.State.Level is Level.ApplicationRegistered or Level.DecisionGenerated;
+    public bool IsContractSignedAllowed => CreditApplication.State.Level is Level.DecisionGenerated && CreditApplication.State.Decision is Decision.Positive;
 }

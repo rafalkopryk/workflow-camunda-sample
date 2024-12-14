@@ -1,0 +1,23 @@
+﻿@using MudBlazor;
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h6">Declaration incomes</MudText>
+    </MudItem>
+</MudGrid>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+
+        <MudTextField @bind-Value="@CreditApplication.Declaration.AverageNetMonthlyIncome"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Label="Average Net Monthly Income"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public IWithDeclerations CreditApplication { get; init; }
+}

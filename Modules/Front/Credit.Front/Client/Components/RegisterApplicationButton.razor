@@ -1,9 +1,0 @@
-﻿@using MudBlazor;
-
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await OnRegisterApplication())">Register</MudButton>
-
-@code {
-
-    [Parameter]
-    public Func<Task> OnRegisterApplication { get; init; }
-}

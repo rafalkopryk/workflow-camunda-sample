@@ -9,6 +9,8 @@
 @using Credit.Front.Client.Components
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
+@using Credit.Front.Client.Components.CreditParams
+@using Credit.Front.Client.Components.CreditStatus
 @using Microsoft.Extensions.Options;
 @using MudBlazor;
 
@@ -26,24 +28,19 @@
             <CreditStatusContent CreditApplication="@CreditApplication" />
         </MudCardContent>
         <MudCardActions>
-            <SignContractButton CreditApplication="@CreditApplication" OnSignContract="@SignContract" />
-            <CancelApplicationButton CreditApplication="@CreditApplication" OnCancelApplication="@CancelApplication"  />
+            <MudGrid Justify="Justify.FlexEnd">
+                <MudItem>
+                    <SignContractButton CreditApplication="@CreditApplication" OnSignContract="@SignContract" />
+                </MudItem>
+                <MudItem>
+                    <CancelApplicationButton CreditApplication="@CreditApplication" OnCancelApplication="@CancelApplication" />
+                </MudItem>
+            </MudGrid>
         </MudCardActions>
     </MudCard>
 </MudContainer>
 
 @code {
-
-    public static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
-    {
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-    };
-
-    public const Level APPLICATION_REGISTERED = Level.ApplicationRegistered;
-    public const Level DECISION_GENERATED = Level.DecisionGenerated;
-    public const Level CONTRACT_SIGNED = Level.ContractSigned;
-    public const Level APPLICATION_CLOSED = Level.ApplicationClosed;
-
     [Parameter]
     public string? ApplicationId { get; set; }
 
@@ -54,7 +51,35 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        CreditApplication = await GetApplication();
+
         RunLongPooling().Forget();
+    }
+
+    private async Task RunLongPooling()
+    {
+        while (await _periodicTimer.WaitForNextTickAsync())
+        {
+            if (CreditApplication.State.Level is not Level.ApplicationRegistered and not Level.DecisionGenerated)
+            {
+                break;
+            }
+
+            CreditApplication = await GetApplication();
+
+            if (CreditApplication.State.Level is Level.DecisionGenerated)
+            {
+                _periodicTimer.Period = TimeSpan.FromSeconds(5);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task<CreditApplicationDto> GetApplication()
+    {
+        var result = await Http.GetFromJsonAsync<GetCreditApplicationDto>($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}", options: CustomJsonSerializerOptions.Web);
+        return result.CreditApplication;
     }
 
     async Task SignContract()
@@ -70,43 +95,17 @@
         CreditApplication = await GetApplication();
     }
 
-    async Task RunLongPooling()
-    {
-        while (await _periodicTimer.WaitForNextTickAsync())
-        {
-            CreditApplication = await GetApplication();
-
-            if (CreditApplication.State.Level is DECISION_GENERATED)
-            {
-                _periodicTimer.Period = TimeSpan.FromSeconds(5);
-            }
-
-            await InvokeAsync(StateHasChanged);
-
-            if (CreditApplication.State.Level is not APPLICATION_REGISTERED and not DECISION_GENERATED)
-            {
-                break;
-            }
-        }
-    }
-
     public void Dispose()
     {
         _periodicTimer?.Dispose();
-    }
-
-    private async Task<CreditApplicationDto> GetApplication()
-    {
-        var result = await Http.GetFromJsonAsync<GetCreditApplicationDto>($"{ExternalServicesOptions.Value.Applications.Url}/applications/{ApplicationId}", options: options);
-        return result.CreditApplication;
     }
 
     record GetCreditApplicationDto(CreditApplicationDto CreditApplication);
 
     record CreditApplicationDto : IWithCreditParams, IWithCreditApplicationState
     {
-        public decimal Amount { get; init; }
-        public decimal CreditPeriodInMonths { get; init; }
-        public ApplicationState State { get; init ; }
+        public decimal Amount { get; set; }
+        public decimal CreditPeriodInMonths { get; set; }
+        public ApplicationStateDto State { get; init; }
     }
 }

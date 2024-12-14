@@ -19,10 +19,18 @@
     }
 
     <MudItem xs="12" sm="6" md="4">
-        <MudField Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney">@CreditApplication.Amount</MudField>
+        <MudTextField Label="Amount"
+            Variant="Variant.Outlined"
+            Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+            Disabled="@Disabled"
+            @bind-Value="@CreditApplication.Amount"/>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudField Label="CreditPeriodInMonths" Variant="Variant.Outlined">@CreditApplication.CreditPeriodInMonths</MudField>
+        <MudTextField Label="CreditPeriodInMonths" 
+            Variant="Variant.Outlined"
+            Disabled="@Disabled"
+            @bind-Value="@CreditApplication.CreditPeriodInMonths" />
     </MudItem>
 </MudGrid>
 
@@ -32,4 +40,6 @@
 
     [Parameter]
     public IWithCreditParams CreditApplication { get; init; }
+
+    public bool Disabled => ApplicationId is not null;
 }
