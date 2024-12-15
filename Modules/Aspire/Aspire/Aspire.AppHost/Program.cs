@@ -34,7 +34,7 @@ public static class ProgramExtensions
             ? builder.AddNpmApp("credit-front-nextjs", "../../../Front/credit.front.next", "dev")
                 .WithHttpEndpoint(env: "PORT", port: 3000)
                 .WithExternalHttpEndpoints()
-            : builder.AddProject<Projects.Credit_Front_Server>("credit-front-server");
+            : builder.AddProject<Projects.Credit_Front_Blazor>("credit-front-blazor");
     }
 
     public static IResourceBuilder<IResource> AddDatabaseServer(this IDistributedApplicationBuilder builder)

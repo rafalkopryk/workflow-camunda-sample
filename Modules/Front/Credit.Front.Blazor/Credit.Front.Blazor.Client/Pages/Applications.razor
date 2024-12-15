@@ -1,0 +1,65 @@
+﻿@page "/"
+@page "/applications"
+
+@rendermode InteractiveWebAssembly
+
+@using Credit.Front.Blazor.Client.Components.CreditParams
+@using Credit.Front.Blazor.Client.Components.CreditStatus
+@using Credit.Front.Blazor.Client.Components.CustomerDeclarations
+@using Credit.Front.Blazor.Client.Components.CustomerPersonalData
+@using Microsoft.Extensions.Options;
+@using MudBlazor;
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudCard>
+        <MudCardContent>
+            <CreditParamsContent CreditApplication="@CreditApplication" />
+            <CustomerDeclarationsContent CreditApplication="@CreditApplication" />
+            <CustomerPersonalDataContent CreditApplication="@CreditApplication" />
+        </MudCardContent>
+        <MudCardActions>
+            <RegisterApplicationButton OnRegisterApplication="@Register" />
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
+
+@code {
+    [Inject]
+    private HttpClient Http { get; init; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; init; }
+
+    [Inject]
+    private IOptions<ExternalServicesOptions> ExternalServicesOptions { get; init; }
+
+    private CreditApplicationDto CreditApplication { get; init; } = new();
+
+    private async Task Register()
+    {
+        var applicationId  = Guid.NewGuid().ToString();
+        var command = new RegisterApplicationDto(
+            applicationId,
+            CreditApplication
+        );
+
+        var result = await Http.PostAsJsonAsync<RegisterApplicationDto>($"{ExternalServicesOptions.Value.Applications.Url}/applications/", command, CustomJsonSerializerOptions.Web);
+
+        NavigationManager.NavigateTo($"/applications/{command.ApplicationId}");
+    }
+
+    record RegisterApplicationDto(string ApplicationId, CreditApplicationDto CreditApplication);
+
+    record CreditApplicationDto : IWithCreditParams, IWithDeclerations, IWithCustomerPersonal
+    {
+        public decimal Amount { get; set; }
+        public decimal CreditPeriodInMonths { get; set; }
+        public ApplicationStateDto State { get; init; } = new();
+        public DeclarationDto Declaration { get; init; } = new();
+        public CustomerPersonalDto CustomerPersonalData { get; init; } = new();
+    }
+}
