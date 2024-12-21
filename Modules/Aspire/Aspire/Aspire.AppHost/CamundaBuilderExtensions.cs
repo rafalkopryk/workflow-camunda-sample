@@ -14,7 +14,7 @@ public static class CamundaBuilderExtensions
         var resource = builder.ApplicationBuilder
             .AddResource(operateContainer)
             .WithHttpEndpoint(port: port, targetPort: 8080, name: "http")
-            .WithImage("camunda/operate", "8.6.4")
+            .WithImage("camunda/operate", "8.6.6")
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS", zeebeConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ELASTICSEARCH_URL", elasticConnectionString)
             .WithEnvironment("CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL", elasticConnectionString)
@@ -35,8 +35,7 @@ public static class CamundaBuilderExtensions
             .WithHttpEndpoint(port: DefaultGrpcPort, targetPort: DefaultGrpcPort, ZeebeResource.GprcEndpointName)
             .WithHttpEndpoint(port: restPort, targetPort: DefaultRestPort, name: ZeebeResource.RestEndpointName)
             .WithHttpEndpoint(port: 9600, targetPort: 9600, name: "internal")
-            .WithImage("camunda/zeebe", "8.6.4")
-            .WithEnvironment("CAMUNDA_REST_QUERY_ENABLED", "true")
+            .WithImage("camunda/zeebe", "8.6.6")
             .WithEnvironment("ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK", "0.998")
             .WithEnvironment("ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK", "0.999");
         

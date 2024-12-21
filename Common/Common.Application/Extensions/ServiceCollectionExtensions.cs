@@ -2,12 +2,10 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Logs;
 using Camunda.Client;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry;
@@ -51,7 +49,6 @@ public static class ServiceCollectionExtensions
                 .AddSqlClientInstrumentation(x =>
                 {
                     x.SetDbStatementForText = true;
-                    x.SetDbStatementForStoredProcedure = true;
                     x.RecordException = true;
                 })
                 .AddSource("Wolverine")

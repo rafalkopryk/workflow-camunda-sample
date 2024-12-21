@@ -1,9 +1,12 @@
+import * as React from 'react';
+import { AppProvider } from '@toolpad/core/nextjs';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import type { Navigation } from '@toolpad/core/AppProvider';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import LinearProgress from '@mui/material/LinearProgress'
+import type { Navigation } from '@toolpad/core/AppProvider';
 
-import { AppProvider } from '@toolpad/core/AppProvider';
+import theme from '../../theme';
 
 const NAVIGATION: Navigation = [
     {
@@ -11,7 +14,7 @@ const NAVIGATION: Navigation = [
         title: 'Main items',
     },
     {
-        segment: 'applications',
+        segment: '',
         title: 'Applications',
         icon: <DashboardIcon />,
     },
@@ -20,25 +23,45 @@ const NAVIGATION: Navigation = [
 
 const BRANDING = {
     title: 'Credit application',
-    Icon: <AttachMoneyIcon />
+    Icon: <AttachMoneyIcon />,
 };
 
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
 
-
     return (
-        <html lang="en" suppressHydrationWarning>
-            <body >
+        <html lang="en" data-toolpad-color-scheme="light" suppressHydrationWarning>
+            <body>
+
                 <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-                    <AppProvider
-                        navigation={NAVIGATION}
-                        branding={BRANDING}
-                    >
-                        {props.children}
-                    </AppProvider>
+                    <React.Suspense fallback={<LinearProgress />}>
+                        <AppProvider
+                            navigation={NAVIGATION}
+                            branding={BRANDING}
+
+                            theme={theme}
+                        >
+                            {props.children}
+                        </AppProvider>
+                    </React.Suspense>
                 </AppRouterCacheProvider>
+
             </body>
         </html>
     );
+
+    //return (
+    //    <html lang="en" suppressHydrationWarning>
+    //        <body >
+    //            <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+    //                <AppProvider
+    //                    navigation={NAVIGATION}
+    //                    branding={BRANDING}
+    //                >
+    //                    {props.children}
+    //                </AppProvider>
+    //            </AppRouterCacheProvider>
+    //        </body>
+    //    </html>
+    //);
 }

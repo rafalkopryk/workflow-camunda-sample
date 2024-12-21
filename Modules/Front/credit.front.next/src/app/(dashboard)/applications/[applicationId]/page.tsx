@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import { delay } from '../../../../../libs/delay';
 import { CancelApplicationButton, SignContractButton } from '../(components)/buttons';
 import { CreditParamsContent, CreditStatusContent } from '../(components)/contents';
+import { PageContainer } from '@toolpad/core';
 
 type CreditApplicationDto = WithCreditParams & WithCreditApplicationState;
 
@@ -24,18 +25,25 @@ export default function ApplicationDetailsPage() {
         return <p>Loading...</p>
     }
 
-    return (
-        <Card>
-            <CardContent>
-                <Grid container spacing={2}>
-                    <CreditParamsContent creditApplication={creditApplication} applicationId={applicationId as string} />
-                    <CreditStatusContent creditApplication={creditApplication} />
+    const title = `ApplicationId: ${applicationId}`;
+    const breadcrumbs = [
+        { title: "Applications", path: "/" },
+        { title: applicationId!.toString(), path: `applications/${applicationId}` }];
 
-                    <SignContractButton creditApplication={creditApplication} onSignContract={signConract} />
-                    <CancelApplicationButton creditApplication={creditApplication} onCancelApplication={cancelApplication} />
-                </Grid>
-            </CardContent>
-        </Card>
+    return (
+        <PageContainer title={title} breadcrumbs={breadcrumbs}>
+            <Card>
+                <CardContent>
+                    <Grid container spacing={2}>
+                        <CreditParamsContent creditApplication={creditApplication} applicationId={applicationId as string} />
+                        <CreditStatusContent creditApplication={creditApplication} />
+
+                        <SignContractButton creditApplication={creditApplication} onSignContract={signConract} />
+                        <CancelApplicationButton creditApplication={creditApplication} onCancelApplication={cancelApplication} />
+                    </Grid>
+                </CardContent>
+            </Card>
+        </PageContainer>
     );
 
     async function runLongPooling(){
