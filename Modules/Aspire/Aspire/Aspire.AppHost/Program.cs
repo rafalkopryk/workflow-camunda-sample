@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var camunda = builder.AddCamunda();
+//var camunda = builder.AddCamunda();
 var kafka = builder.AddKafka();
 var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
@@ -16,12 +16,18 @@ builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithDatabaseReference(calculationsDatabase).WaitFor(calculationsDatabase)
     .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
 
-builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
-    .WithExternalHttpEndpoints()
-    .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
-    .WithZeebeReference(camunda).WaitFor(camunda);
+//builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
+//    .WithExternalHttpEndpoints()
+//    .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
+//    //.WithCustomCamundaReference("http://localhost:8080", "http://localhost:26500");
+//    .WithZeebeReference(camunda).WaitFor(camunda);
 
 builder.AddCreditFront();
+
+builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
+    .WithExternalHttpEndpoints()
+    .WithKafkaReference(kafka, "credit-processes-saga").WaitFor(kafka)
+    .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase);
 
 builder.Build().Run();
 
@@ -104,7 +110,8 @@ public static class ProgramExtensions
                 .WaitFor(elastic);
         }
 
-        return zeebe.WithElasticExporter(elasticConnectionString)
+        return zeebe.WithExporters(elasticConnectionString)
+            .WithDatabase(elasticConnectionString)
             .WaitFor(elastic)
             .WithOperate("Operate", elasticConnectionString);
     }

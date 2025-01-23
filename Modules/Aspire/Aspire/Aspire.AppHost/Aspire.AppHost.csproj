@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\..\Applications\Applications.WebApi\Applications.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Front\Credit.Front.Blazor\Credit.Front.Blazor\Credit.Front.Blazor.csproj" />
+    <ProjectReference Include="..\..\..\Processes\Processes.Saga.WebApi\Processes.Saga.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.WebApi\Processes.WebApi.csproj" />
   </ItemGroup>
 
