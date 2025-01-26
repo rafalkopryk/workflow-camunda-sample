@@ -1,6 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var camunda = builder.AddCamunda();
 var kafka = builder.AddKafka();
 var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
@@ -16,10 +15,9 @@ builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithDatabaseReference(calculationsDatabase).WaitFor(calculationsDatabase)
     .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
 
-builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
-    .WithExternalHttpEndpoints()
+builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
-    .WithZeebeReference(camunda).WaitFor(camunda);
+    .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase);
 
 builder.AddCreditFront();
 
@@ -27,6 +25,21 @@ builder.Build().Run();
 
 public static class ProgramExtensions
 {
+    public static IResourceBuilder<ProjectResource> AddProcess(this IDistributedApplicationBuilder builder)
+    {
+        var processProvider = builder.AddParameter("processProvider");
+        if (processProvider.Resource.Value == "saga")
+        {
+            return builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
+                .WithExternalHttpEndpoints();
+        }
+
+        var camunda = builder.AddCamunda();
+        return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
+            .WithExternalHttpEndpoints()
+            .WithZeebeReference(camunda).WaitFor(camunda);
+    }
+
     public static IResourceBuilder<IResource> AddCreditFront(this IDistributedApplicationBuilder builder)
     {
         var frontProvider = builder.AddParameter("creditFrontProvider");
