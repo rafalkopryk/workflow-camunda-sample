@@ -30,7 +30,10 @@ public class CloseApplicationCommandHandler
 
         await _creditApplicationDbContext.SaveChangesAsync();
 
-        await _eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId));
+        await _eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId), new DeliveryOptions
+        {
+            PartitionKey = creditApplication.Id
+        });
     }
 }
 

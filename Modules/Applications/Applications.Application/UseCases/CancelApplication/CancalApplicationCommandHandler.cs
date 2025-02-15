@@ -28,7 +28,10 @@ internal class CancalApplicationCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _eventBusProducer.PublishAsync(new ApplicationClosed(creditApplication.Id));
+        await _eventBusProducer.PublishAsync(new ApplicationClosed(creditApplication.Id), new DeliveryOptions
+        {
+            PartitionKey = creditApplication.Id
+        });
 
         return OK.Result;
     }

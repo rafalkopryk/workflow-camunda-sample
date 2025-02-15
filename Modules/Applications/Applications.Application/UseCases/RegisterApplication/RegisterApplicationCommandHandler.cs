@@ -5,11 +5,15 @@ using Wolverine;
 using Wolverine.Attributes;
 using static Applications.Application.UseCases.RegisterApplication.RegisterApplicationCommandResponse;
 
-
 namespace Applications.Application.UseCases.RegisterApplication;
 
+public interface IApplicationRegistered;
+
+[MessageIdentity("applicationRegisteredFast", Version = 1)]
+public record ApplicationRegisteredFast(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : IEvent;
+
 [MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
+public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string Pesel) : IEvent;
 
 internal class RegisterApplicationCommandHandler(
     IMessageBus bus,
@@ -30,16 +34,28 @@ internal class RegisterApplicationCommandHandler(
 
         var creditApplication = CreateCreditApplication(command);
 
-        await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken);;
+        await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken); ;
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _bus.PublishAsync(
-            new ApplicationRegistered(
+
+        var deliveryOptions = new DeliveryOptions{ PartitionKey = creditApplication.Id };
+        var task = command.ProcessCode switch
+        {
+            //"Fast" => _bus.PublishAsync(new ApplicationRegisteredFast(
+            //    creditApplication.Id,
+            //    creditApplication.Amount,
+            //    creditApplication.CreditPeriodInMonths,
+            //    creditApplication.Declaration.AverageNetMonthlyIncome)),
+            _ => _bus.PublishAsync(new ApplicationRegistered(
                 creditApplication.Id,
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
-                creditApplication.Declaration.AverageNetMonthlyIncome));
+                creditApplication.Declaration.AverageNetMonthlyIncome,
+                creditApplication.CustomerPersonalData.Pesel))
+        };
+
+        await task;
 
         return OK.Result;
     }

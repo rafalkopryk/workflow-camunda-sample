@@ -28,7 +28,10 @@ public class SetDecisionCommandCommandHandler
 
         await _creditApplicationDbContext.SaveChangesAsync();
 
-        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId, notification.Decision));
+        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId, notification.Decision), new DeliveryOptions
+        {
+            PartitionKey = creditApplication.Id
+        });
     }
 }
 

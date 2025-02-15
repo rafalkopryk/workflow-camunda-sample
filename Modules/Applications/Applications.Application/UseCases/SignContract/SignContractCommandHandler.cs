@@ -32,7 +32,10 @@ internal class SignContractCommandHandler(
 
         await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.Id));
+        await _publishEndpoint.PublishAsync(new ContractSigned(creditApplication.Id), new DeliveryOptions
+        {
+            PartitionKey = creditApplication.Id
+        });
 
         return OK.Result;
     }

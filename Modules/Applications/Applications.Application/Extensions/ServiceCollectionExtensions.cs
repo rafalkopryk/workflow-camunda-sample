@@ -51,6 +51,7 @@ public static class ServiceCollectionExtensions
                 .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
             opts.PublishMessage<ApplicationRegistered>().ToKafkaTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<ApplicationRegisteredFast>().ToKafkaTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<ApplicationClosed>().ToKafkaTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<DecisionGenerated>().ToKafkaTopic("decisions").TelemetryEnabled(true);
             opts.PublishMessage<ContractSigned>().ToKafkaTopic("contracts").TelemetryEnabled(true);
@@ -68,7 +69,7 @@ public static class ServiceCollectionExtensions
             opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString())
                 .AutoProvision();
 
-            opts.PublishMessage<ApplicationRegistered>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
+            opts.PublishMessage<ApplicationRegisteredFast>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<ApplicationClosed>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<DecisionGenerated>().ToAzureServiceBusTopic("decisions").TelemetryEnabled(true);
             opts.PublishMessage<ContractSigned>().ToAzureServiceBusTopic("contracts").TelemetryEnabled(true);

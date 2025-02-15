@@ -2,6 +2,7 @@
 
 using Calculations.Application.Infrastructure.Database;
 using Calculations.Application.UseCases.SimulateCreditCommand;
+using Calculations.Application.UseCases.VerifyCustomerCommand;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,8 +48,11 @@ public static class ServiceCollectionExtensions
                 .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
             opts.PublishMessage<SimulationCreditFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+            opts.PublishMessage<CustomerVerified>().ToKafkaTopic("customer-verifications").TelemetryEnabled(true);
 
             opts.ListenToKafkaTopic("simulations")
+                .ProcessInline().TelemetryEnabled(true);
+            opts.ListenToKafkaTopic("customer-verifications")
                 .ProcessInline().TelemetryEnabled(true);
 
             opts.Services.AddResourceSetupOnStartup();

@@ -1,44 +1,74 @@
 ﻿namespace Processes.Saga.WebApi.UseCases.CreditApplications;
 
-using JasperFx.Core;
 using Wolverine;
-using Wolverine.Attributes;
 using Wolverine.Persistence.Sagas;
 
 public class CreditApplication : Saga
 {
+    public const string POSITIVE_KEYWORD = "Postivie";
+    public const string NEGATIVE_KEYWORD = "Negative";
+
     [SagaIdentity]
     public string? Id { get; set; }
+    
+    //Processs
+    public string? SimulationResult { get; set; }
+    public string? CustomerVerificationResult { get; set; }
 
-    public string Decision { get; set; }
+    public bool HasDecision => SimulationResult != null && CustomerVerificationResult != null;
+    public string? Decision => HasDecision
+        ? SimulationResult == POSITIVE_KEYWORD && CustomerVerificationResult == POSITIVE_KEYWORD
+            ? POSITIVE_KEYWORD
+            : NEGATIVE_KEYWORD
+        : null;
 
-    public static (CreditApplication, SimulationCommand, CreditApplicationTimeout) Start(ApplicationRegistered application, ILogger<CreditApplication> logger)
+    public static (CreditApplication, SimulationCommand, CustomerVerificationCommand, CreditApplicationTimeout) Start(ApplicationRegistered application, ILogger<CreditApplication> logger)
     {
-        var creditApplication = new CreditApplication 
+        var creditApplication = new CreditApplication
         { 
-            Id = application.ApplicationId,
+            Id = application.ApplicationId
         };
 
-        var command = new SimulationCommand(application.ApplicationId, application.Amount, application.CreditPeriodInMonths, application.AverageNetMonthlyIncome);
+        var simulationCommand = new SimulationCommand(application.ApplicationId, application.Amount, application.CreditPeriodInMonths, application.AverageNetMonthlyIncome);
+        var customerVerificationCommand = new CustomerVerificationCommand(application.ApplicationId, application.Pesel);
 
-        return (creditApplication, command, new CreditApplicationTimeout { ApplicationId = application.ApplicationId });
+        return (creditApplication, simulationCommand, customerVerificationCommand, new CreditApplicationTimeout { ApplicationId = application.ApplicationId });
     }
 
-    public async Task<DecisionCommand> Handle(SimulationFinished simulation, ILogger<CreditApplication> logger)
+    public async Task Handle(CustomerVerified verification, ILogger<CreditApplication> logger, IMessageContext messageContext)
     {
-        // sample simulation delay
-        await Task.Delay(5000);
+        CustomerVerificationResult = verification.Status;
 
-        return new DecisionCommand(simulation.ApplicationId, simulation.Decision);
+        if (HasDecision)
+        {
+            await messageContext.PublishAsync(new DecisionCommand(Id, Decision), new DeliveryOptions
+            {
+                PartitionKey = Id
+            });
+        }
+    }
+
+    public async Task Consume(SimulationFinishedEvent simulation, ILogger<CreditApplication> logger, IMessageContext messageContext)
+    {
+        SimulationResult = simulation.Decision;
+
+        if (HasDecision)
+        {
+            await messageContext.PublishAsync(new DecisionCommand(Id, Decision), new DeliveryOptions
+            {
+                PartitionKey = Id
+            });
+        }
     }
 
     public async Task Handle(DecisionGenerated decision, ILogger<CreditApplication> logger, IMessageContext messageContext)
     {
-        Decision = decision.Decision;
-
-        if (Decision == "Negative")
+        if (decision.Decision == NEGATIVE_KEYWORD)
         {
-            await messageContext.PublishAsync(new CloseApplicationCommand(Id));
+            await messageContext.PublishAsync(new CloseApplicationCommand(Id), new DeliveryOptions
+            {
+                PartitionKey = Id
+            });
         }
     }
 
@@ -57,63 +87,4 @@ public class CreditApplication : Saga
         MarkCompleted();
     }
 }
-
-[MessageIdentity("applicationTimeouted", Version = 1)]
-public record CreditApplicationTimeout() : TimeoutMessage(5.Minutes())
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-};
-
-[MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered 
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-    public decimal Amount { get; init; }
-    public int CreditPeriodInMonths { get; init; }
-    public decimal AverageNetMonthlyIncome { get; init; }
-};
-
-[MessageIdentity("simulationFinished", Version = 1)]
-public record SimulationFinished
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-    public string Decision { get; init; }
-}
-
-[MessageIdentity("decisionGenerated", Version = 1)]
-public record DecisionGenerated
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-    public string Decision { get; init; }
-}
-
-
-[MessageIdentity("contractSigned", Version = 1)]
-public record ContractSigned
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-}
-
-[MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed
-{
-    [SagaIdentity]
-    public string ApplicationId { get; init; }
-}
-
-[MessageIdentity("simulation", Version = 1)]
-public record SimulationCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
-
-
-[MessageIdentity("close", Version = 1)]
-public record CloseApplicationCommand(string ApplicationId);
-
-
-[MessageIdentity("decision", Version = 1)]
-public record DecisionCommand(string ApplicationId, string Decision);
 
