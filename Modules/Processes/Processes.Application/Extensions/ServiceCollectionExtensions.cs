@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oakton.Resources;
 using Processes.Application.UseCases.CreditApplications.Close;
+using Processes.Application.UseCases.CreditApplications.CustomerVerification;
 using Processes.Application.UseCases.CreditApplications.Decision;
 using Processes.Application.UseCases.CreditApplications.Simulation;
 using Processes.Application.Utils;
@@ -32,6 +33,7 @@ public static class ServiceCollectionExtensions
             builder => builder
                 .AddWorker<SimulationJobHandler>(jobWorkerDefault!)
                 .AddWorker<DecisionJobHandler>(jobWorkerDefault!)
+                .AddWorker<CustomerVerificationJobHandler>(jobWorkerDefault!)
                 .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault!));
     }
 
@@ -46,6 +48,7 @@ public static class ServiceCollectionExtensions
             opts.PublishMessage<CloseApplicationCommand>().ToKafkaTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<SimulationCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
             opts.PublishMessage<DecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+            opts.PublishMessage<CustomerVerificationCommand>().ToKafkaTopic("customer-verifications").TelemetryEnabled(true);
 
             opts.ListenToKafkaTopic("applications")
                 .ProcessInline().TelemetryEnabled(true);
@@ -58,6 +61,9 @@ public static class ServiceCollectionExtensions
 
             opts.ListenToKafkaTopic("decisions")
                 .ProcessInline().TelemetryEnabled(true);
+
+            opts.ListenToKafkaTopic("customer-verifications")
+                .ProcessInline().TelemetryEnabled(true);
      
             opts.Services.AddResourceSetupOnStartup();
         }
@@ -69,6 +75,7 @@ public static class ServiceCollectionExtensions
             opts.PublishMessage<CloseApplicationCommand>().ToAzureServiceBusTopic("applications").TelemetryEnabled(true);
             opts.PublishMessage<SimulationCommand>().ToAzureServiceBusTopic("simulations").TelemetryEnabled(true);
             opts.PublishMessage<DecisionCommand>().ToAzureServiceBusTopic("decisions").TelemetryEnabled(true);
+            opts.PublishMessage<CustomerVerificationCommand>().ToAzureServiceBusTopic("customer-verifications").TelemetryEnabled(true);
 
             opts.ListenToAzureServiceBusSubscription("applications-processes-subs")
                 .FromTopic("applications")
@@ -84,6 +91,10 @@ public static class ServiceCollectionExtensions
 
             opts.ListenToAzureServiceBusSubscription("decisions-processes-subs")
                 .FromTopic("decisions")
+                .ProcessInline().TelemetryEnabled(true);
+
+            opts.ListenToAzureServiceBusSubscription("customer-verifications-processes-subs")
+                .FromTopic("customer-verifications")
                 .ProcessInline().TelemetryEnabled(true);
         }
 

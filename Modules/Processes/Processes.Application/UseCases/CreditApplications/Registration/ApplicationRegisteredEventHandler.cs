@@ -1,12 +1,11 @@
-﻿using Camunda.Client;
-using Camunda.Client.Messages;
+﻿using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Simulation;
 
 [ZeebeMessage(Name = "Message_ApplicationRegistered", TimeToLiveInMs = 24 * 3600 * 1000)]
 [MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
+public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string Pesel);
 
 [WolverineHandler]
 public class ApplicationRegisteredEventHandler(IMessageClient messageClient)

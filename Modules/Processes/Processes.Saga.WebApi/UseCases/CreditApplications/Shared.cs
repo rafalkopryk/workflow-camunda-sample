@@ -23,7 +23,7 @@ public record ApplicationRegisteredFast
     public decimal AverageNetMonthlyIncome { get; init; }
 };
 
-[MessageIdentity("applicationRegistered", Version = 2)]
+[MessageIdentity("applicationRegistered", Version = 1)]
 public record ApplicationRegistered : IEvent
 {
     [SagaIdentity]
@@ -48,7 +48,7 @@ public record SimulationFinishedEvent : IEvent
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
-    public string Decision { get; init; }
+    public string SimulationStatus { get; init; }
 }
 
 [MessageIdentity("contractSigned", Version = 1)]
@@ -70,7 +70,7 @@ public record CustomerVerified : IEvent
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
-    public string Status { get; init; }
+    public string CustomerVerificationStatus { get; init; }
 }
 
 [MessageIdentity("simulation", Version = 1)]
@@ -80,7 +80,7 @@ public record SimulationCommand(string ApplicationId, decimal Amount, int Credit
 public record CloseApplicationCommand(string ApplicationId);
 
 [MessageIdentity("decision", Version = 1)]
-public record DecisionCommand(string ApplicationId, string Decision);
+public record DecisionCommand(string ApplicationId, string SimulationStatus, string CustomerVerificationStatus);
 
 [MessageIdentity("customerVerification", Version = 1)]
 public record CustomerVerificationCommand(string ApplicationId, string Pesel);

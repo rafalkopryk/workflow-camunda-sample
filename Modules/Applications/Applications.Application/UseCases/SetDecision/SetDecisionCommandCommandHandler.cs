@@ -6,7 +6,7 @@ using Wolverine.Attributes;
 namespace Applications.Application.UseCases.SetDecision;
 
 [MessageIdentity("decision", Version = 1)]
-public record SetDecisionCommand(string ApplicationId, Decision Decision);
+public record SetDecisionCommand(string ApplicationId, Decision CustomerVerificationStatus, Decision SimulationStatus);
 
 public class SetDecisionCommandCommandHandler
 {
@@ -24,11 +24,18 @@ public class SetDecisionCommandCommandHandler
     public async Task Handle(SetDecisionCommand notification)
     {
         var creditApplication = await _creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
-        creditApplication.GenerateDecision(notification.Decision, _timeProvider);
+
+        var decision = (notification.CustomerVerificationStatus, notification.SimulationStatus) switch
+        {
+            (Decision.Positive, Decision.Positive) => Decision.Positive,
+            _ => Decision.Negative,
+        };
+
+        creditApplication.GenerateDecision(decision, _timeProvider);
 
         await _creditApplicationDbContext.SaveChangesAsync();
 
-        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId, notification.Decision), new DeliveryOptions
+        await _eventBusProducer.PublishAsync(new DecisionGenerated(notification.ApplicationId, decision), new DeliveryOptions
         {
             PartitionKey = creditApplication.Id
         });

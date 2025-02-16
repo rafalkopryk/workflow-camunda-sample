@@ -52,7 +52,7 @@ internal class RegisterApplicationCommandHandler(
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
                 creditApplication.Declaration.AverageNetMonthlyIncome,
-                creditApplication.CustomerPersonalData.Pesel))
+                creditApplication.CustomerPersonalData.Pesel), deliveryOptions)
         };
 
         await task;

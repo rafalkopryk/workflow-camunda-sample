@@ -6,7 +6,7 @@ using Wolverine.Attributes;
 namespace Processes.Application.UseCases.CreditApplications.Decision;
 
 [MessageIdentity("decision", Version=1)]
-public record DecisionCommand(string ApplicationId, string Decision);
+public record DecisionCommand(string ApplicationId, string CustomerVerificationStatus, string SimulationStatus);
 
 [JobWorker(Type = "credit-decision:1")]
 internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
@@ -17,7 +17,8 @@ internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
         await busProducer.PublishAsync(new DecisionCommand
         (
             ApplicationId: processInstance.ApplicationId,
-            Decision: processInstance.Decision
+            CustomerVerificationStatus: processInstance.CustomerVerificationStatus,
+            SimulationStatus: processInstance.SimulationStatus
         ));
     }
 }

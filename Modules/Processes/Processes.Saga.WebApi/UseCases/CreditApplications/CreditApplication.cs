@@ -5,22 +5,18 @@ using Wolverine.Persistence.Sagas;
 
 public class CreditApplication : Saga
 {
-    public const string POSITIVE_KEYWORD = "Postivie";
+    public const string POSITIVE_KEYWORD = "Positive";
     public const string NEGATIVE_KEYWORD = "Negative";
 
     [SagaIdentity]
     public string? Id { get; set; }
     
     //Processs
-    public string? SimulationResult { get; set; }
-    public string? CustomerVerificationResult { get; set; }
+    public string? SimulationStatus { get; set; }
+    public string? CustomerVerificationStatus { get; set; }
 
-    public bool HasDecision => SimulationResult != null && CustomerVerificationResult != null;
-    public string? Decision => HasDecision
-        ? SimulationResult == POSITIVE_KEYWORD && CustomerVerificationResult == POSITIVE_KEYWORD
-            ? POSITIVE_KEYWORD
-            : NEGATIVE_KEYWORD
-        : null;
+    public bool HasDecision => SimulationStatus != null && CustomerVerificationStatus != null;
+    public string? Decision { get; set; }
 
     public static (CreditApplication, SimulationCommand, CustomerVerificationCommand, CreditApplicationTimeout) Start(ApplicationRegistered application, ILogger<CreditApplication> logger)
     {
@@ -37,24 +33,24 @@ public class CreditApplication : Saga
 
     public async Task Handle(CustomerVerified verification, ILogger<CreditApplication> logger, IMessageContext messageContext)
     {
-        CustomerVerificationResult = verification.Status;
+        CustomerVerificationStatus = verification.CustomerVerificationStatus;
 
         if (HasDecision)
         {
-            await messageContext.PublishAsync(new DecisionCommand(Id, Decision), new DeliveryOptions
+            await messageContext.PublishAsync(new DecisionCommand(Id, SimulationStatus, CustomerVerificationStatus), new DeliveryOptions
             {
                 PartitionKey = Id
             });
         }
     }
 
-    public async Task Consume(SimulationFinishedEvent simulation, ILogger<CreditApplication> logger, IMessageContext messageContext)
+    public async Task Handle(SimulationFinishedEvent simulation, ILogger<CreditApplication> logger, IMessageContext messageContext)
     {
-        SimulationResult = simulation.Decision;
+        SimulationStatus = simulation.SimulationStatus;
 
         if (HasDecision)
         {
-            await messageContext.PublishAsync(new DecisionCommand(Id, Decision), new DeliveryOptions
+            await messageContext.PublishAsync(new DecisionCommand(Id, SimulationStatus, CustomerVerificationStatus), new DeliveryOptions
             {
                 PartitionKey = Id
             });
@@ -63,6 +59,8 @@ public class CreditApplication : Saga
 
     public async Task Handle(DecisionGenerated decision, ILogger<CreditApplication> logger, IMessageContext messageContext)
     {
+        Decision = decision.Decision;
+
         if (decision.Decision == NEGATIVE_KEYWORD)
         {
             await messageContext.PublishAsync(new CloseApplicationCommand(Id), new DeliveryOptions
