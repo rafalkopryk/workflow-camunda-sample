@@ -1,12 +1,9 @@
 ﻿using Camunda.Client.Jobs;
 using Processes.Application.Domain.CreditApplications;
+using Processes.Application.UseCases.Shared;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Simulation;
-
-[MessageIdentity("simulation", Version = 1)]
-public record SimulationCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
+namespace Processes.Application.UseCases.CreditApplications;
 
 [JobWorker(Type = "credit-simulation:1")]
 internal class SimulationJobHandler(IMessageBus busProducer) : IJobHandler

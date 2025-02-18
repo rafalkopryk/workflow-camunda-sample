@@ -1,8 +1,7 @@
-﻿using Camunda.Client;
-using Camunda.Client.Messages;
+﻿using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Contract;
+namespace Processes.Application.EventHandlers.Contract;
 
 [ZeebeMessage(Name = "Message_ContractSigned")]
 [MessageIdentity("contractSigned", Version = 1)]

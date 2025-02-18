@@ -1,7 +1,7 @@
 using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
+namespace Processes.Application.EventHandlers.CustomerVerification;
 
 [MessageIdentity("customerVerified", Version = 1)]
 [ZeebeMessage(Name = "Message_CustomerVerified")]

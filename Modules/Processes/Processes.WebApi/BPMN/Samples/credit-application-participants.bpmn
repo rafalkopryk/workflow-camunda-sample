@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0" camunda:diagramRelationId="6d2cb5a8-7b52-46ef-805f-8226eae3aa72">
+  <bpmn:error id="Error_18rg9y6" name="NegativeDecisionGenerated" errorCode="NegativeDecisionGenerated" />
+  <bpmn:escalation id="Escalation_3ivafgq" name="Escalation_DecisionNegative" escalationCode="Escalation_DecisionNegative" />
+  <bpmn:message id="Message_38cssbq" name="Message_SimulationFinished">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_08s28aa" name="Message_DecisionGenerated">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_2f2pgnl" name="Message_ContractSigned">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_20dpe48" name="Message_ApplicationClosed">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_155surk" name="Message_ApplicationRegistered" />
+  <bpmn:collaboration id="Collaboration_05lel8q">
+    <bpmn:participant id="Participant_Application" name="Application" processRef="credit-application" />
+    <bpmn:participant id="Participant_Calculator" name="Calculator" processRef="credit-calculations" />
+    <bpmn:messageFlow id="Flow_14epes4" sourceRef="Event_SimulationFinished" targetRef="Event_1d9dva1" />
+    <bpmn:messageFlow id="Flow_0nbxa3b" sourceRef="Activity_0v3w81i" targetRef="Event_SimulationOrder" />
+    <bpmn:textAnnotation id="TextAnnotation_0cwlo0u">
+      <bpmn:text>the result of the decision</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1nau8k3" sourceRef="Gateway_Decision" targetRef="TextAnnotation_0cwlo0u" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-application" name="Credit Application" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0lyiysi" />
+    <bpmn:subProcess id="Activity_ApplicationCancel" name="Application Cancel" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_ApplicationClosed" name="Application Closed">
+        <bpmn:outgoing>Flow_086c3ns</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_025q9mk" messageRef="Message_20dpe48" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_CreditApplicationCanceled" name="Credit application Canceled">
+        <bpmn:incoming>Flow_086c3ns</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_086c3ns" sourceRef="Event_ApplicationClosed" targetRef="Event_CreditApplicationCanceled" />
+    </bpmn:subProcess>
+    <bpmn:intermediateCatchEvent id="Event_ApplicationClosedByNegativeDecision" name="Application Closed">
+      <bpmn:incoming>Flow_107ssch</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v2yf13</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1tbn2pb" messageRef="Message_20dpe48" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:subProcess id="Activity_1ne8ce3" name="Application Timeout" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_ApplicaitonTimeouted" name="Applicaiton timeout 5m" isInterrupting="false">
+        <bpmn:outgoing>Flow_1brl74h</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1immfgh">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:sendTask id="Activity_CloseApplicationByTimeout" name="Close application">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="credit-closeApplication:1" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1brl74h</bpmn:incoming>
+        <bpmn:outgoing>Flow_0lt8kco</bpmn:outgoing>
+      </bpmn:sendTask>
+      <bpmn:endEvent id="Event_0p4ul82">
+        <bpmn:incoming>Flow_0lt8kco</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0lt8kco" sourceRef="Activity_CloseApplicationByTimeout" targetRef="Event_0p4ul82" />
+      <bpmn:sequenceFlow id="Flow_1brl74h" sourceRef="Event_ApplicaitonTimeouted" targetRef="Activity_CloseApplicationByTimeout" />
+    </bpmn:subProcess>
+    <bpmn:sendTask id="Activity_CloseApplicationByNegativeDecision" name="Close application">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-closeApplication:1" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19p0kag</bpmn:incoming>
+      <bpmn:outgoing>Flow_107ssch</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="Event_ContractSigned" name="Contract Signed">
+      <bpmn:incoming>Flow_0fo6sxx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ur3yzv</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_123ulns" messageRef="Message_2f2pgnl" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Event_1fe884u" name="Credit application Canceled">
+      <bpmn:incoming>Flow_0v2yf13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_CreditApplicationSigned" name="Credit application Signed ">
+      <bpmn:incoming>Flow_1ur3yzv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_Decision" name="Decision">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-decision:1" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xyu4sb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q1dubw</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="Event_DecisionGenerated" name="Decision Generated">
+      <bpmn:incoming>Flow_0q1dubw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1036uvq</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0pjchf0" messageRef="Message_08s28aa" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_19p0kag" name="Else" sourceRef="Gateway_Decision" targetRef="Activity_CloseApplicationByNegativeDecision" />
+    <bpmn:sequenceFlow id="Flow_0q1dubw" sourceRef="Activity_Decision" targetRef="Event_DecisionGenerated" />
+    <bpmn:sequenceFlow id="Flow_0v2yf13" sourceRef="Event_ApplicationClosedByNegativeDecision" targetRef="Event_1fe884u" />
+    <bpmn:sequenceFlow id="Flow_1036uvq" sourceRef="Event_DecisionGenerated" targetRef="Gateway_Decision" />
+    <bpmn:sequenceFlow id="Flow_107ssch" sourceRef="Activity_CloseApplicationByNegativeDecision" targetRef="Event_ApplicationClosedByNegativeDecision" />
+    <bpmn:sequenceFlow id="Flow_1fdmkrf" sourceRef="Activity_0v3w81i" targetRef="Event_1d9dva1" />
+    <bpmn:sequenceFlow id="Flow_1sqbwtn" sourceRef="StartEvent_CreditApplicatin" targetRef="Activity_0v3w81i" />
+    <bpmn:sequenceFlow id="Flow_1ur3yzv" sourceRef="Event_ContractSigned" targetRef="Event_CreditApplicationSigned" />
+    <bpmn:sequenceFlow id="Flow_1xyu4sb" sourceRef="Event_1d9dva1" targetRef="Activity_Decision" />
+    <bpmn:exclusiveGateway id="Gateway_Decision" default="Flow_19p0kag">
+      <bpmn:incoming>Flow_1036uvq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fo6sxx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19p0kag</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0fo6sxx" name="Positive" sourceRef="Gateway_Decision" targetRef="Event_ContractSigned">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=decision = "Positive"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="Event_1d9dva1" name="Receive Simulation">
+      <bpmn:incoming>Flow_1fdmkrf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xyu4sb</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_13943ez" messageRef="Message_38cssbq" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sendTask id="Activity_0v3w81i" name="Send to Simulations">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-simulation-order:1" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sqbwtn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fdmkrf</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:startEvent id="StartEvent_CreditApplicatin" name="Start">
+      <bpmn:outgoing>Flow_1sqbwtn</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_09axsmn" messageRef="Message_155surk" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:process id="credit-calculations" name="Credit Calculations" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_058vkb3" sourceRef="Activity_DebtCapacityFinished" targetRef="Gateway_008lte4" />
+    <bpmn:sequenceFlow id="Flow_1r52qno" sourceRef="Activity_Simulation" targetRef="Activity_DebtCapacityFinished" />
+    <bpmn:sendTask id="Activity_Simulation" name="Send to Debtcapacity">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-debtcapacity:1" />
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i03qke</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r52qno</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_SimulationFinished" name="Simulation Finished">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-simulation-finished:1" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ppaok1</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_022wl54" />
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="Activity_DebtCapacityFinished" name="Wait for Debtcapacity" messageRef="Message_24tpug0">
+      <bpmn:incoming>Flow_1r52qno</bpmn:incoming>
+      <bpmn:outgoing>Flow_058vkb3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:parallelGateway id="Gateway_008lte4">
+      <bpmn:incoming>Flow_058vkb3</bpmn:incoming>
+      <bpmn:incoming>Flow_0x14rkb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ppaok1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1ppaok1" sourceRef="Gateway_008lte4" targetRef="Event_SimulationFinished" />
+    <bpmn:manualTask id="Activity_19flz4y" name="Send to Risks">
+      <bpmn:incoming>Flow_02i59rs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x14rkb</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_0x14rkb" sourceRef="Activity_19flz4y" targetRef="Gateway_008lte4" />
+    <bpmn:parallelGateway id="Gateway_14b4kyn">
+      <bpmn:incoming>Flow_1pg72mo</bpmn:incoming>
+      <bpmn:outgoing>Flow_02i59rs</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1i03qke</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_02i59rs" sourceRef="Gateway_14b4kyn" targetRef="Activity_19flz4y" />
+    <bpmn:sequenceFlow id="Flow_1i03qke" sourceRef="Gateway_14b4kyn" targetRef="Activity_Simulation" />
+    <bpmn:startEvent id="Event_SimulationOrder" name="Simulation Order Comes In">
+      <bpmn:outgoing>Flow_1pg72mo</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ywv8mg" messageRef="Message_18vflas" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1pg72mo" sourceRef="Event_SimulationOrder" targetRef="Gateway_14b4kyn" />
+  </bpmn:process>
+  <bpmn:message id="Message_18vflas" name="Message_SimulationOrder" />
+  <bpmn:message id="Message_24tpug0" name="Message_DebtCapacityFinished">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_05lel8q">
+      <bpmndi:BPMNShape id="Participant_00ao410_di" bpmnElement="Participant_Application" isHorizontal="true">
+        <dc:Bounds x="129" y="503" width="1141" height="650" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n6wdx3_di" bpmnElement="Activity_ApplicationCancel" isExpanded="true">
+        <dc:Bounds x="762" y="930" width="445" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1i85rzy_di" bpmnElement="Event_ApplicationClosed">
+        <dc:Bounds x="789" y="1012" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="1048" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sfdrz8" bpmnElement="Event_CreditApplicationCanceled">
+        <dc:Bounds x="1119" y="1012" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1095" y="1055" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_086c3ns_di" bpmnElement="Flow_086c3ns">
+        <di:waypoint x="825" y="1030" />
+        <di:waypoint x="1119" y="1030" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0m50m19_di" bpmnElement="Event_ApplicationClosedByNegativeDecision">
+        <dc:Bounds x="1062" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1054" y="818" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i791hj" bpmnElement="Activity_1ne8ce3" isExpanded="true">
+        <dc:Bounds x="180" y="930" width="510" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rbkfb9_di" bpmnElement="Event_ApplicaitonTimeouted">
+        <dc:Bounds x="242" y="1022" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="233" y="1066" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hbnhsf_di" bpmnElement="Activity_CloseApplicationByTimeout">
+        <dc:Bounds x="370" y="1000" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0p4ul82_di" bpmnElement="Event_0p4ul82">
+        <dc:Bounds x="562" y="1022" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0lt8kco_di" bpmnElement="Flow_0lt8kco">
+        <di:waypoint x="470" y="1040" />
+        <di:waypoint x="562" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1brl74h_di" bpmnElement="Flow_1brl74h">
+        <di:waypoint x="278" y="1040" />
+        <di:waypoint x="370" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1rj504n_di" bpmnElement="Activity_CloseApplicationByNegativeDecision">
+        <dc:Bounds x="900" y="760" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_181krui_di" bpmnElement="Event_ContractSigned">
+        <dc:Bounds x="952" y="587" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="931" y="623" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ovawh0" bpmnElement="Event_1fe884u">
+        <dc:Bounds x="1152" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1128" y="825" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0k022tm" bpmnElement="Event_CreditApplicationSigned">
+        <dc:Bounds x="1152" y="587" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1131" y="630" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13bnfn0_di" bpmnElement="Activity_Decision">
+        <dc:Bounds x="500" y="565" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11ucrgd_di" bpmnElement="Event_DecisionGenerated">
+        <dc:Bounds x="654" y="587" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="646" y="623" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1wiedvw" bpmnElement="Gateway_Decision" isMarkerVisible="true">
+        <dc:Bounds x="735" y="580" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1l5qmlk" bpmnElement="Event_1d9dva1">
+        <dc:Bounds x="402" y="587" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="633" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19p4g6h_di" bpmnElement="Activity_0v3w81i">
+        <dc:Bounds x="250" y="565" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_12i08t9" bpmnElement="StartEvent_CreditApplicatin">
+        <dc:Bounds x="180" y="587" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="633" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_19p0kag_di" bpmnElement="Flow_19p0kag">
+        <di:waypoint x="760" y="630" />
+        <di:waypoint x="760" y="800" />
+        <di:waypoint x="900" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="829" y="783" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q1dubw_di" bpmnElement="Flow_0q1dubw">
+        <di:waypoint x="600" y="605" />
+        <di:waypoint x="654" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1waz5jp" bpmnElement="Flow_0v2yf13">
+        <di:waypoint x="1098" y="800" />
+        <di:waypoint x="1152" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1036uvq_di" bpmnElement="Flow_1036uvq">
+        <di:waypoint x="690" y="605" />
+        <di:waypoint x="735" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_107ssch_di" bpmnElement="Flow_107ssch">
+        <di:waypoint x="1000" y="800" />
+        <di:waypoint x="1062" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fdmkrf_di" bpmnElement="Flow_1fdmkrf">
+        <di:waypoint x="350" y="605" />
+        <di:waypoint x="402" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sqbwtn_di" bpmnElement="Flow_1sqbwtn">
+        <di:waypoint x="216" y="605" />
+        <di:waypoint x="250" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_008f3fa" bpmnElement="Flow_1ur3yzv">
+        <di:waypoint x="988" y="605" />
+        <di:waypoint x="1152" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xyu4sb_di" bpmnElement="Flow_1xyu4sb">
+        <di:waypoint x="438" y="605" />
+        <di:waypoint x="500" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ad32gp" bpmnElement="Flow_0fo6sxx">
+        <di:waypoint x="785" y="605" />
+        <di:waypoint x="952" y="605" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="825" y="588" width="39" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_09wf7s5_di" bpmnElement="Participant_Calculator" isHorizontal="true">
+        <dc:Bounds x="129" y="80" width="1141" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x6ujrz_di" bpmnElement="Activity_Simulation">
+        <dc:Bounds x="440" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v8bfof_di" bpmnElement="Event_SimulationFinished">
+        <dc:Bounds x="802" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="795" y="232" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b68myt_di" bpmnElement="Activity_DebtCapacityFinished">
+        <dc:Bounds x="580" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0n2dvqm" bpmnElement="Gateway_008lte4">
+        <dc:Bounds x="675" y="255" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1of18wl_di" bpmnElement="Activity_19flz4y">
+        <dc:Bounds x="470" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0a1c86e_di" bpmnElement="Gateway_14b4kyn">
+        <dc:Bounds x="365" y="255" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16jmdm7_di" bpmnElement="Event_SimulationOrder">
+        <dc:Bounds x="272" y="327" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="178" y="331" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_058vkb3_di" bpmnElement="Flow_058vkb3">
+        <di:waypoint x="680" y="200" />
+        <di:waypoint x="700" y="200" />
+        <di:waypoint x="700" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r52qno_di" bpmnElement="Flow_1r52qno">
+        <di:waypoint x="540" y="200" />
+        <di:waypoint x="580" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ppaok1_di" bpmnElement="Flow_1ppaok1">
+        <di:waypoint x="725" y="280" />
+        <di:waypoint x="802" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x14rkb_di" bpmnElement="Flow_0x14rkb">
+        <di:waypoint x="570" y="370" />
+        <di:waypoint x="700" y="370" />
+        <di:waypoint x="700" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02i59rs_di" bpmnElement="Flow_02i59rs">
+        <di:waypoint x="390" y="305" />
+        <di:waypoint x="390" y="370" />
+        <di:waypoint x="470" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i03qke_di" bpmnElement="Flow_1i03qke">
+        <di:waypoint x="390" y="255" />
+        <di:waypoint x="390" y="200" />
+        <di:waypoint x="440" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pg72mo_di" bpmnElement="Flow_1pg72mo">
+        <di:waypoint x="290" y="327" />
+        <di:waypoint x="290" y="280" />
+        <di:waypoint x="365" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_11b5l28" bpmnElement="TextAnnotation_0cwlo0u">
+        <dc:Bounds x="790" y="525" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0f00u91" bpmnElement="Association_1nau8k3">
+        <di:waypoint x="778" y="598" />
+        <di:waypoint x="790" y="559" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14epes4_di" bpmnElement="Flow_14epes4">
+        <di:waypoint x="820" y="298" />
+        <di:waypoint x="820" y="490" />
+        <di:waypoint x="420" y="490" />
+        <di:waypoint x="420" y="587" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nbxa3b_di" bpmnElement="Flow_0nbxa3b">
+        <di:waypoint x="290" y="565" />
+        <di:waypoint x="290" y="363" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,12 +1,9 @@
 ﻿using Camunda.Client.Jobs;
 using Processes.Application.Domain.CreditApplications;
+using Processes.Application.UseCases.Shared;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Decision;
-
-[MessageIdentity("decision", Version=1)]
-public record DecisionCommand(string ApplicationId, string CustomerVerificationStatus, string SimulationStatus);
+namespace Processes.Application.UseCases.CreditApplications;
 
 [JobWorker(Type = "credit-decision:1")]
 internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler

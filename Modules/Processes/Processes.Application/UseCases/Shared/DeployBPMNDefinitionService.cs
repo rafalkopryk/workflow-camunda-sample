@@ -26,9 +26,9 @@ internal class DeployBPMNDefinitionService(ICamundaClientRest client, IBpmnProvi
 
                     FileParameter[] paramers = [ new FileParameter(memoryStream, processDefinition.Name + ".bpmn")];
                     var response = await client.DeploymentsAsync(paramers, string.Empty);
-
-                    return;
                 }
+
+                return;
             }
             catch (Exception ex)
             {

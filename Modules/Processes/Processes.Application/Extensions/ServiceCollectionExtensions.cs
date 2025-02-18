@@ -4,10 +4,9 @@ using Common.Application.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oakton.Resources;
-using Processes.Application.UseCases.CreditApplications.Close;
-using Processes.Application.UseCases.CreditApplications.CustomerVerification;
-using Processes.Application.UseCases.CreditApplications.Decision;
-using Processes.Application.UseCases.CreditApplications.Simulation;
+using Standard = Processes.Application.UseCases.CreditApplications;
+using Fast = Processes.Application.UseCases.FastCreditApplications;
+using Processes.Application.UseCases.Shared;
 using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
 using Wolverine;
@@ -31,10 +30,13 @@ public static class ServiceCollectionExtensions
         services.AddCamunda(
             options => configuration.GetSection("Camunda").Bind(options),
             builder => builder
-                .AddWorker<SimulationJobHandler>(jobWorkerDefault!)
-                .AddWorker<DecisionJobHandler>(jobWorkerDefault!)
-                .AddWorker<CustomerVerificationJobHandler>(jobWorkerDefault!)
-                .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault!));
+                .AddWorker<Standard.SimulationJobHandler >(jobWorkerDefault!)
+                .AddWorker<Standard.DecisionJobHandler>(jobWorkerDefault!)
+                .AddWorker<Standard.CustomerVerificationJobHandler>(jobWorkerDefault!)
+                .AddWorker<Standard.CloseApplicationJobHandler>(jobWorkerDefault!)
+                .AddWorker<Fast.SimulationJobHandler>(jobWorkerDefault!)
+                .AddWorker<Fast.DecisionJobHandler>(jobWorkerDefault!)
+                .AddWorker<Fast.CloseApplicationJobHandler>(jobWorkerDefault!));
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)

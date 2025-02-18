@@ -1,8 +1,7 @@
-﻿using Camunda.Client;
-using Camunda.Client.Messages;
+﻿using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Close;
+namespace Processes.Application.EventHandlers.Close;
 
 [ZeebeMessage(Name = "Message_ApplicationClosed")]
 [MessageIdentity("applicationClosed", Version = 1)]

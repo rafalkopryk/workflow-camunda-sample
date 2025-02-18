@@ -1,8 +1,7 @@
-﻿using Camunda.Client;
-using Camunda.Client.Messages;
+﻿using Camunda.Client.Messages;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Decision;
+namespace Processes.Application.EventHandlers.Decision;
 
 [ZeebeMessage(Name = "Message_DecisionGenerated")]
 [MessageIdentity("decisionGenerated", Version = 1)]
