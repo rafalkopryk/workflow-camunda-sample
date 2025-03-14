@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Aspire.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 public static class CamundaBuilderExtensions
@@ -42,6 +43,7 @@ public static class CamundaBuilderExtensions
         if (elasticConnectionString != null)
         {
             resource.WithElasticExporter(elasticConnectionString);
+            resource.WithDatabase(elasticConnectionString);
         }
 
         resource.WithHttpHealthCheck("actuator/health/readiness", 200, "internal");
@@ -76,6 +78,16 @@ public static class CamundaBuilderExtensions
             .WithEnvironment("Camunda__JobWorkers__Default__PoolingDelayInMs", "10000")
             .WithEnvironment("Camunda__JobWorkers__Default__UseStream", "true")
             .WithEnvironment("Camunda__JobWorkers__Default__StreamTimeoutInSec", "900");
+    }
+
+    public static IResourceBuilder<ZeebeResource> WithDatabase(this IResourceBuilder<ZeebeResource> builder, ReferenceExpression? elasticConnectionString)
+    {
+        builder.WithEnvironment("CAMUNDA_DATABASE_TYPE", "elasticsearch");
+        builder.WithEnvironment("CAMUNDA_DATABASE_CLUSTERNAME", "elasticsearch");
+        builder.WithEnvironment("CAMUNDA_DATABASE_URL", elasticConnectionString);
+        //builder.WithEnvironment("CAMUNDA_REST_QUERY_ENABLED", "true");
+
+        return builder;
     }
 }
 

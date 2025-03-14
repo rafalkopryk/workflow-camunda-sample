@@ -5,18 +5,27 @@ var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
 var calculationsDatabase = databaseServer.AddDatabaseInstance("credit-calculations");
 
+
+//var azureServiceBus = builder.AddAzureServiceBus("servicebus")
+//    .RunAsEmulator();
+
+
 builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
     .WithHttpsEndpoint(63111, 8081, "public", isProxied: true)
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase)
     .WithKafkaReference(kafka, "credit-applications").WaitFor(kafka);
+    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus);
 
 builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithExternalHttpEndpoints()
     .WithDatabaseReference(calculationsDatabase).WaitFor(calculationsDatabase)
     .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
+    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus);
+
 
 builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
+    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus)
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase);
 
 builder.AddCreditFront();
@@ -119,6 +128,7 @@ public static class ProgramExtensions
 
         return zeebe.WithElasticExporter(elasticConnectionString)
             .WaitFor(elastic)
-            .WithOperate("Operate", elasticConnectionString);
+            .WithOperate("Operate", elasticConnectionString)
+            .WithDatabase(elasticConnectionString);
     }
 }

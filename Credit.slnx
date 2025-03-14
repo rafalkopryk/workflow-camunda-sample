@@ -1,0 +1,42 @@
+<Solution>
+  <Folder Name="/Camunda/">
+    <Project Path="Camunda/Camunda.Client/Camunda.Client.csproj" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="Common/Common.Application/Common.Application.csproj" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Applications/">
+    <Project Path="Modules/Applications/Applications.Application/Applications.Application.csproj" />
+    <Project Path="Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Aspire/">
+    <Project Path="Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
+    <Project Path="Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Calculations/">
+    <Project Path="Modules/Calculations/Calculations.Application/Calculations.Application.csproj" />
+    <Project Path="Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Frontend/">
+    <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj" />
+    <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj" />
+    <Project Path="Modules/Front/credit.front.next/credit.front.next.esproj">
+      <Build />
+      <Deploy Solution="Release|*" />
+    </Project>
+  </Folder>
+  <Folder Name="/Modules/Functions/">
+    <Project Path="Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Processes/">
+    <Project Path="Modules/Processes/Processes.Application/Processes.Application.csproj" />
+    <Project Path="Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" />
+    <Project Path="Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>
