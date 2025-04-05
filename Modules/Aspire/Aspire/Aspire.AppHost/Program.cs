@@ -94,16 +94,16 @@ public static class ProgramExtensions
             : kafka.WithKafkaUI(x => x.WithLifetime(ContainerLifetime.Persistent));
     }
 
-    public static IResourceBuilder<ZeebeResource> AddCamunda(this IDistributedApplicationBuilder builder)
+    public static IResourceBuilder<CamundaResource> AddCamunda(this IDistributedApplicationBuilder builder)
     {
-        var zeebe = builder.AddZeebe("zeebe", restPort: 8089)
-            .WithDataVolume("zeebe")
+        var camunda = builder.AddCamunda("camunda", restPort: 8089)
+            .WithDataVolume("camunda")
             .WithLifetime(ContainerLifetime.Persistent);
 
         var operateEnabled = builder.AddParameter("operateEnabled");
         if (operateEnabled.Resource.Value != bool.TrueString)
         {
-            return zeebe;
+            return camunda;
         }
 
         var elastic = builder.AddElasticsearch("elastic")
@@ -126,7 +126,7 @@ public static class ProgramExtensions
                 .WaitFor(elastic);
         }
 
-        return zeebe.WithElasticExporter(elasticConnectionString)
+        return camunda.WithCamundaExporter(elasticConnectionString)
             .WaitFor(elastic)
             .WithOperate("Operate", elasticConnectionString)
             .WithDatabase(elasticConnectionString);
