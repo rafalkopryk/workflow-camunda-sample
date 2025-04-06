@@ -7,7 +7,7 @@ public static class CamundaBuilderExtensions
     private const int DefaultGrpcPort = 26500;
     private const int DefaultRestPort = 8080;
     
-    public static IResourceBuilder<CamundaResource> WithOperate(this IResourceBuilder<CamundaResource> builder, string name, ReferenceExpression elasticConnectionString , int port = 8085)
+    public static IResourceBuilder<CamundaResource> WithOperate(this IResourceBuilder<CamundaResource> builder, ReferenceExpression elasticConnectionString , int port = 8085)
     {
         var zeebeConnectionString = ReferenceExpression.Create($"{builder.Resource.GrpcEndpoint.Property(EndpointProperty.Host)}:{builder.Resource.GrpcEndpoint.Property(EndpointProperty.Port)}");
 
@@ -49,7 +49,6 @@ public static class CamundaBuilderExtensions
 
         if (elasticConnectionString != null)
         {
-            resource.WithCamundaExporter(elasticConnectionString);
             resource.WithDatabase(elasticConnectionString);
         }
 
@@ -104,6 +103,8 @@ public static class CamundaBuilderExtensions
         builder.WithEnvironment("CAMUNDA_DATABASE_CLUSTERNAME", "elasticsearch");
         builder.WithEnvironment("CAMUNDA_DATABASE_URL", elasticConnectionString);
         //builder.WithEnvironment("CAMUNDA_REST_QUERY_ENABLED", "true");
+
+        builder.WithCamundaExporter(elasticConnectionString);
 
         return builder;
     }

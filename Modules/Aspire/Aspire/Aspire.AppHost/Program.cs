@@ -22,7 +22,6 @@ builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
     //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus);
 
-
 builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
     //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus)
@@ -36,8 +35,8 @@ public static class ProgramExtensions
 {
     public static IResourceBuilder<ProjectResource> AddProcess(this IDistributedApplicationBuilder builder)
     {
-        var processProvider = builder.AddParameter("processProvider");
-        if (processProvider.Resource.Value == "saga")
+        var processProvider = builder.GetParameter<string>("processProvider");
+        if (processProvider == "saga")
         {
             return builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
                 .WithExternalHttpEndpoints();
@@ -51,8 +50,8 @@ public static class ProgramExtensions
 
     public static IResourceBuilder<IResource> AddCreditFront(this IDistributedApplicationBuilder builder)
     {
-        var frontProvider = builder.AddParameter("creditFrontProvider");
-        return frontProvider.Resource.Value == "react"
+        var frontProvider = builder.GetParameter<string>("creditFrontProvider");
+        return frontProvider == "react"
             ? builder.AddNpmApp("credit-front-nextjs", "../../../Front/credit.front.next", "dev")
                 .WithHttpEndpoint(env: "PORT", port: 3000)
                 .WithExternalHttpEndpoints()
@@ -61,9 +60,9 @@ public static class ProgramExtensions
 
     public static IResourceBuilder<IResource> AddDatabaseServer(this IDistributedApplicationBuilder builder)
     {
-        var databaseProvider = builder.AddParameter("databaseProvider");
+        var databaseProvider = builder.GetParameter<string>("databaseProvider");
         var databasePassword = builder.AddParameter("databasePassword", secret: true);
-        return databaseProvider.Resource.Value == "mongodb"
+        return databaseProvider == "mongodb"
             ? builder.AddMongoDB("MongoDB", 57359, password: databasePassword)
                 .WithDataVolume("mongo")
                 .WithLifetime(ContainerLifetime.Persistent)
@@ -100,8 +99,8 @@ public static class ProgramExtensions
             .WithDataVolume("camunda")
             .WithLifetime(ContainerLifetime.Persistent);
 
-        var operateEnabled = builder.AddParameter("operateEnabled");
-        if (operateEnabled.Resource.Value != bool.TrueString)
+        var camundaDatabase = builder.GetParameter<string>("camundaDatabase");
+        if (camundaDatabase != "elasticsearch")
         {
             return camunda;
         }
@@ -114,8 +113,8 @@ public static class ProgramExtensions
         var elasticConnectionString = ReferenceExpression.Create(
             $"http://{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
 
-        var kibanaEnabled = builder.AddParameter("kibanaEnabled");
-        if (kibanaEnabled.Resource.Value == bool.TrueString)
+        var kibanaEnabled = builder.GetParameter<bool>("kibanaEnabled");
+        if (kibanaEnabled)
         {
             var kibana = builder.AddResource(new ContainerResource("kibana"))
                 .WithHttpEndpoint(port: 5602, targetPort: 5601, "http")
@@ -126,9 +125,13 @@ public static class ProgramExtensions
                 .WaitFor(elastic);
         }
 
-        return camunda.WithCamundaExporter(elasticConnectionString)
-            .WaitFor(elastic)
-            .WithOperate("Operate", elasticConnectionString)
-            .WithDatabase(elasticConnectionString);
+        var operateEnabled = builder.GetParameter<bool>("operateEnabled");   
+        if (operateEnabled)
+        {
+            camunda.WithOperate(elasticConnectionString);
+        }
+
+        return camunda.WithDatabase(elasticConnectionString)
+            .WaitFor(elastic);
     }
 }
