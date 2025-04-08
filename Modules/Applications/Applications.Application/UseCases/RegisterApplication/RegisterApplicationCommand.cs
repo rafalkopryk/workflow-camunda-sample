@@ -1,9 +1,8 @@
 ﻿using Applications.Application.UseCases.RegisterApplication.Dto;
-using MediatR;
 
 namespace Applications.Application.UseCases.RegisterApplication;
 
-public record RegisterApplicationCommand : IRequest<RegisterApplicationCommandResponse>
+public record RegisterApplicationCommand
 {
     public string ApplicationId { get; init; } 
     public RegisterApplicationCommandCreditApplicationDto CreditApplication { get; init; }

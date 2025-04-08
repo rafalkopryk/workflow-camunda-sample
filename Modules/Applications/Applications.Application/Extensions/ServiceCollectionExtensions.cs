@@ -16,6 +16,7 @@ using Wolverine.Kafka;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using Wolverine.AzureServiceBus;
+using Common.Application.Cqrs;
 
 public static class ServiceCollectionExtensions
 {
@@ -38,8 +39,8 @@ public static class ServiceCollectionExtensions
         {
             services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Applications.WebApi")));
         }
-
-        services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
+        
+        services.RegisterHandlersFromAssemblies(typeof(ServiceCollectionExtensions).Assembly);
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)

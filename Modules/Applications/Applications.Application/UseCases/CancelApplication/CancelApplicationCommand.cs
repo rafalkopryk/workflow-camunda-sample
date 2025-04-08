@@ -1,8 +1,6 @@
-﻿using MediatR;
+﻿namespace Applications.Application.UseCases.CancelApplication;
 
-namespace Applications.Application.UseCases.CancelApplication;
-
-public record CancelApplicationCommand(string ApplicationId) : IRequest<CancelApplicationCommandResponse>;
+public record CancelApplicationCommand(string ApplicationId);
 
 public abstract record CancelApplicationCommandResponse
 {

@@ -1,6 +1,6 @@
 ﻿using Applications.Application.Infrastructure.Database;
 using Applications.Application.UseCases.CloseApplication;
-using MediatR;
+using Common.Application.Cqrs;
 using Wolverine;
 using static Applications.Application.UseCases.CancelApplication.CancelApplicationCommandResponse;
 

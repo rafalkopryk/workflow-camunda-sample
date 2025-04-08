@@ -1,7 +1,7 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
 using Applications.Application.UseCases.GetApplication.Dto;
-using MediatR;
+using Common.Application.Cqrs;
 using static Applications.Application.UseCases.GetApplication.GetApplicationQueryResponse;
 
 namespace Applications.Application.UseCases.GetApplication;

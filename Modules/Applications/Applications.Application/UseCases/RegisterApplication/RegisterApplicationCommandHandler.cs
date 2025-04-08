@@ -1,6 +1,6 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
-using MediatR;
+using Common.Application.Cqrs;
 using Wolverine;
 using Wolverine.Attributes;
 using static Applications.Application.UseCases.RegisterApplication.RegisterApplicationCommandResponse;

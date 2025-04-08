@@ -3,8 +3,8 @@ using Applications.Application.UseCases.CancelApplication;
 using Applications.Application.UseCases.GetApplication;
 using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SignContract;
+using Common.Application.Cqrs;
 using Common.Application.Extensions;
-using MediatR;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,9 +37,9 @@ app.UseCors(x => x
 await app.ConfigureApplication();
 
 var applicationsEndpoints = app.MapGroup("/applications");
-applicationsEndpoints.MapPost("/", async Task<IResult> (RegisterApplicationCommand command, IMediator mediator) =>
+applicationsEndpoints.MapPost("/", async Task<IResult> (RegisterApplicationCommand command, Mediator mediator) =>
 {
-    var result = await mediator.Send(command);
+    var result = await mediator.Send<RegisterApplicationCommand, RegisterApplicationCommandResponse>(command);
     return result switch
     {
         RegisterApplicationCommandResponse.OK => TypedResults.Created(),
@@ -49,9 +49,9 @@ applicationsEndpoints.MapPost("/", async Task<IResult> (RegisterApplicationComma
 })
 .WithName("RegisterApplication");
 
-applicationsEndpoints.MapGet("/{applicationId}", async Task<IResult> (string applicationId, IMediator mediator) =>
+applicationsEndpoints.MapGet("/{applicationId}", async Task<IResult> (string applicationId, Mediator mediator) =>
 {
-    var result = await mediator.Send(new GetApplicationQuery(applicationId));
+    var result = await mediator.Send<GetApplicationQuery, GetApplicationQueryResponse>(new GetApplicationQuery(applicationId));
     return result switch
     {
         GetApplicationQueryResponse.OK ok => TypedResults.Ok(ok),
@@ -61,9 +61,9 @@ applicationsEndpoints.MapGet("/{applicationId}", async Task<IResult> (string app
 })
 .WithName("GetApplication");
 
-applicationsEndpoints.MapPost("/{applicationId}/signature", async Task<IResult> (string applicationId, IMediator mediator) =>
+applicationsEndpoints.MapPost("/{applicationId}/signature", async Task<IResult> (string applicationId, Mediator mediator) =>
 {
-    var result = await mediator.Send(new SignContractCommand(applicationId));
+    var result = await mediator.Send<SignContractCommand, SignContractCommandResponse>(new SignContractCommand(applicationId));
     return result switch
     {
         SignContractCommandResponse.OK => TypedResults.Ok(),
@@ -73,9 +73,9 @@ applicationsEndpoints.MapPost("/{applicationId}/signature", async Task<IResult> 
 })
 .WithName("SignContract");
 
-applicationsEndpoints.MapPost("/{applicationId}/cancellation", async Task<IResult> (string applicationId, IMediator mediator) =>
+applicationsEndpoints.MapPost("/{applicationId}/cancellation", async Task<IResult> (string applicationId, Mediator mediator) =>
 {
-    var result = await mediator.Send(new CancelApplicationCommand(applicationId));
+    var result = await mediator.Send<CancelApplicationCommand, CancelApplicationCommandResponse>(new CancelApplicationCommand(applicationId));
     return result switch
     {
         CancelApplicationCommandResponse.OK => TypedResults.Ok(),

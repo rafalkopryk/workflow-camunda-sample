@@ -14,6 +14,7 @@ using Oakton.Resources;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using MongoDB.Driver;
 using Wolverine.AzureServiceBus;
+using Common.Application.Cqrs;
 
 public static class ServiceCollectionExtensions
 {
@@ -36,7 +37,7 @@ public static class ServiceCollectionExtensions
             services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Calculations.WebApi")));
         }
 
-        services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceCollectionExtensions).Assembly));
+        services.RegisterHandlersFromAssemblies(typeof(ServiceCollectionExtensions).Assembly);
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)

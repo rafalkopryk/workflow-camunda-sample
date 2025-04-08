@@ -1,8 +1,6 @@
-﻿using MediatR;
+﻿namespace Applications.Application.UseCases.SignContract;
 
-namespace Applications.Application.UseCases.SignContract;
-
-public record SignContractCommand(string ApplicationId) : IRequest<SignContractCommandResponse>;
+public record SignContractCommand(string ApplicationId);
 
 public record SignContractCommandResponse
 {
