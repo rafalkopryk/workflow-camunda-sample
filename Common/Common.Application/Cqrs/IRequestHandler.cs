@@ -8,11 +8,13 @@ public interface IRequestHandler<TInput, TOutput>
     Task<TOutput> Handle(TInput input, CancellationToken cancellationToken = default);
 }
 
-public class Mediator(IServiceProvider serviceProvider)
+public class Mediator(IServiceScopeFactory serviceScopeFactory)
 {
     public async virtual Task<TOutput> Send<TInput, TOutput>(TInput input, CancellationToken cancellationToken = default)
     {
-        var handler = serviceProvider.GetRequiredService<IRequestHandler<TInput, TOutput>>();
+        using var scope = serviceScopeFactory.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<IRequestHandler<TInput, TOutput>>();
 
         return await handler.Handle(input, cancellationToken);
     }
@@ -22,7 +24,7 @@ public static class CqrsExtensions
 {
     public static void RegisterHandlersFromAssemblies(this IServiceCollection services, params Assembly[] assemblies)
     {
-        services.AddScoped<Mediator>();
+        services.AddSingleton<Mediator>();
 
         foreach (var assembly in assemblies)
         {
