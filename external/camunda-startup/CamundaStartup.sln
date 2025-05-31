@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36119.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.Client", "Camunda.Client\Camunda.Client.csproj", "{19AA761D-080C-9A19-68A3-0579FA8243B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.Aspire.Hosting.Camunda", "CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj", "{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.Aspire.Hosting.Camunda.AppHost", "CamundaStartup.Aspire.Hosting.Camunda.AppHost\CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj", "{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19AA761D-080C-9A19-68A3-0579FA8243B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19AA761D-080C-9A19-68A3-0579FA8243B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19AA761D-080C-9A19-68A3-0579FA8243B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19AA761D-080C-9A19-68A3-0579FA8243B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80FE6093-0311-4427-BDCF-5FC1B7E77C24}
+	EndGlobalSection
+EndGlobal
