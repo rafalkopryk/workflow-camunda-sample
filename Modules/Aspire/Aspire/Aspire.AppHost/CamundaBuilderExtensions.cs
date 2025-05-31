@@ -10,9 +10,9 @@ public static class CamundaBuilderExtensions
             .WithEnvironment("Camunda__CamundaRest__Endpoint", source.Resource.ConnectionStringExpression)
             .WithEnvironment("Camunda__CamundaGrpc__Endpoint", source.Resource.GrpcConnectionStringExpression)
             .WithEnvironment("Camunda__JobWorkers__Default__TimeoutInMs", "30000")
-            .WithEnvironment("Camunda__JobWorkers__Default__PoolingMaxJobsToActivate", "5")
-            .WithEnvironment("Camunda__JobWorkers__Default__PoolingRequestTimeoutInMs", "-1")
-            .WithEnvironment("Camunda__JobWorkers__Default__PoolingDelayInMs", "10000")
+            .WithEnvironment("Camunda__JobWorkers__Default__PollingMaxJobsToActivate", "5")
+            .WithEnvironment("Camunda__JobWorkers__Default__PollingRequestTimeoutInMs", "-1")
+            .WithEnvironment("Camunda__JobWorkers__Default__PollingDelayInMs", "10000")
             .WithEnvironment("Camunda__JobWorkers__Default__UseStream", "true")
             .WithEnvironment("Camunda__JobWorkers__Default__StreamTimeoutInSec", "900");
     }    
