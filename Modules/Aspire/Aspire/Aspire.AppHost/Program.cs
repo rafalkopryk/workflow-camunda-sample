@@ -1,3 +1,6 @@
+using Aspire.AppHost;
+using CamundaStartup.Aspire.Hosting.Camunda;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var kafka = builder.AddKafka();
@@ -6,25 +9,18 @@ var applicationDatabase = databaseServer.AddDatabaseInstance("credit-application
 var calculationsDatabase = databaseServer.AddDatabaseInstance("credit-calculations");
 
 
-//var azureServiceBus = builder.AddAzureServiceBus("servicebus")
-//    .RunAsEmulator();
-
-
 builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
-    .WithHttpsEndpoint(63111, 8081, "public", isProxied: true)
+    //.WithHttpsEndpoint(63112, 8081, "public", isProxied: true)
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase)
     .WithKafkaReference(kafka, "credit-applications").WaitFor(kafka);
-    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus);
 
 builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithExternalHttpEndpoints()
     .WithDatabaseReference(calculationsDatabase).WaitFor(calculationsDatabase)
     .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
-    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus);
 
 builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
-    //.WithAzureServiceBusReference(azureServiceBus).WaitFor(azureServiceBus)
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase);
 
 builder.AddCreditFront();
@@ -42,10 +38,10 @@ public static class ProgramExtensions
                 .WithExternalHttpEndpoints();
         }
 
-        var camunda = builder.AddCamunda();
+        var camunda = builder.UseCamunda();
         return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
             .WithExternalHttpEndpoints()
-            .WithZeebeReference(camunda).WaitFor(camunda);
+            .WithCamundaReference(camunda).WaitFor(camunda);
     }
 
     public static IResourceBuilder<IResource> AddCreditFront(this IDistributedApplicationBuilder builder)
@@ -93,9 +89,9 @@ public static class ProgramExtensions
             : kafka.WithKafkaUI(x => x.WithLifetime(ContainerLifetime.Persistent));
     }
 
-    public static IResourceBuilder<CamundaResource> AddCamunda(this IDistributedApplicationBuilder builder)
+    public static IResourceBuilder<CamundaResource> UseCamunda(this IDistributedApplicationBuilder builder)
     {
-        var camunda = builder.AddCamunda("camunda", restPort: 8089)
+        var camunda = builder.AddCamunda("camunda", port: 8089)
             .WithDataVolume("camunda")
             .WithLifetime(ContainerLifetime.Persistent);
 
@@ -125,13 +121,14 @@ public static class ProgramExtensions
                 .WaitFor(elastic);
         }
 
+        camunda.WithElasticDatabase(elasticConnectionString);
+
         var operateEnabled = builder.GetParameter<bool>("operateEnabled");   
         if (operateEnabled)
         {
-            camunda.WithOperate(elasticConnectionString);
+            camunda.WithOperate();
         }
 
-        return camunda.WithDatabase(elasticConnectionString)
-            .WaitFor(elastic);
+        return camunda;
     }
 }

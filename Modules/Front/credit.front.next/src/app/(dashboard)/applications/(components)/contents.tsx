@@ -146,15 +146,15 @@ export function CustomerPersonalDataContent({ creditApplication, onChange }: { c
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <TextField
-                    label="PESEL"
-                    name="customerPersonalData.pesel"
-                    value={creditApplication.customerPersonalData.pesel}
+                    label="DocumentId"
+                    name="customerPersonalData.documentId"
+                    value={creditApplication.customerPersonalData.documentId}
                     onChange={onChange ? (e) =>
                         onChange((prevState) => ({
                             ...prevState,
                             customerPersonalData: {
                                 ...prevState.customerPersonalData,
-                                pesel: e.target.value,
+                                documentId: e.target.value,
                             },
                         })) : undefined
                     }

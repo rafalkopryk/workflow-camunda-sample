@@ -26,7 +26,7 @@ public class CreditApplication : Saga
         };
 
         var simulationCommand = new SimulationCommand(application.ApplicationId, application.Amount, application.CreditPeriodInMonths, application.AverageNetMonthlyIncome);
-        var customerVerificationCommand = new CustomerVerificationCommand(application.ApplicationId, application.Pesel);
+        var customerVerificationCommand = new CustomerVerificationCommand(application.ApplicationId, application.DocumentId);
 
         return (creditApplication, simulationCommand, customerVerificationCommand, new CreditApplicationTimeout { ApplicationId = application.ApplicationId });
     }

@@ -14,7 +14,7 @@ export interface WithCustomerPersonal {
 export interface CustomerPersonalDto {
     firstName: string;
     lastName: string;
-    pesel: string;
+    documentId: string;
 }
 
 export interface DeclarationDto {

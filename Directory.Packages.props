@@ -1,12 +1,12 @@
 <Project>
   <ItemGroup>
     <PackageVersion Include="Aspire.Azure.Messaging.ServiceBus" Version="9.1.0" />
-    <PackageVersion Include="Aspire.Hosting.Azure.ServiceBus" Version="9.2.1" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ServiceBus" Version="9.3.0" />
     <PackageVersion Include="Aspire.Hosting.Elasticsearch" Version="9.2.1-preview.1.25222.1" />
-    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.2.1" />
-    <PackageVersion Include="Aspire.Hosting.MongoDB" Version="9.2.1" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.2.1" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" Version="9.4.0" />
+    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.3.0" />
+    <PackageVersion Include="Aspire.Hosting.MongoDB" Version="9.3.0" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.3.0" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" Version="9.5.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
     <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="2.0.0" />
     <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="9.0.0" />
@@ -76,7 +76,7 @@
     <PackageVersion Include="WolverineFx" Version="3.12.2" />
     <PackageVersion Include="WolverineFx.AzureServiceBus" Version="3.12.2" />
     <PackageVersion Include="WolverineFx.Kafka" Version="3.12.2" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.2.1" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.4.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.2.1" />
     <PackageVersion Include="WolverineFx.SqlServer" Version="3.12.2" />

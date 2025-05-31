@@ -34,7 +34,7 @@ internal class GetApplicationQuerydHandler(CreditApplicationDbContext creditAppl
             {
                 FirstName = creditApplication.CustomerPersonalData.FirstName,
                 LastName = creditApplication.CustomerPersonalData.LastName,
-                Pesel = creditApplication.CustomerPersonalData.Pesel,
+                DocumentId = creditApplication.CustomerPersonalData.DocumentId,
             },
             Declaration = new()
             {

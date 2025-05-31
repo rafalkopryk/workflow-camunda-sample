@@ -6,7 +6,7 @@ using Wolverine.Attributes;
 namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
 
 [MessageIdentity("customerVerification", Version = 1)]
-public record CustomerVerificationCommand(string ApplicationId, string Pesel);
+public record CustomerVerificationCommand(string ApplicationId, string DocumentId);
 
 [JobWorker(Type = "credit-customer-verification:1")]
 internal class CustomerVerificationJobHandler(IMessageBus busProducer) : IJobHandler
@@ -17,7 +17,7 @@ internal class CustomerVerificationJobHandler(IMessageBus busProducer) : IJobHan
         
         await busProducer.PublishAsync(new CustomerVerificationCommand(
             ApplicationId: processInstance.ApplicationId,
-            Pesel: processInstance.Pesel
+            DocumentId: processInstance.DocumentId
         ));
     }
 }

@@ -13,7 +13,7 @@ public interface IApplicationRegistered;
 public record ApplicationRegisteredFast(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : IEvent;
 
 [MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string Pesel) : IEvent;
+public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId) : IEvent;
 
 internal class RegisterApplicationCommandHandler(
     IMessageBus bus,
@@ -52,7 +52,7 @@ internal class RegisterApplicationCommandHandler(
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
                 creditApplication.Declaration.AverageNetMonthlyIncome,
-                creditApplication.CustomerPersonalData.Pesel), deliveryOptions)
+                creditApplication.CustomerPersonalData.DocumentId), deliveryOptions)
         };
 
         await task;
@@ -69,7 +69,7 @@ internal class RegisterApplicationCommandHandler(
             new CustomerPersonalData(
                 request.CreditApplication.CustomerPersonalData.FirstName,
                 request.CreditApplication.CustomerPersonalData.LastName,
-                request.CreditApplication.CustomerPersonalData.Pesel),
+                request.CreditApplication.CustomerPersonalData.DocumentId),
             new Declaration
             (
               request.CreditApplication.Declaration.AverageNetMonthlyIncome

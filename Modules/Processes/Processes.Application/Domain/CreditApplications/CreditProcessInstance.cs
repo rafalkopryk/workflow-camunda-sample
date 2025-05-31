@@ -3,7 +3,7 @@
 public record CreditProcessInstance
 {
     public required string ApplicationId { get; init; }
-    public required string Pesel { get; init; }
+    public required string DocumentId { get; init; }
     public decimal Amount { get; init; }
     public int CreditPeriodInMonths { get; init; }
     public decimal AverageNetMonthlyIncome { get; init; }

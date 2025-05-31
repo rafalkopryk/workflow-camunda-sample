@@ -1,6 +1,4 @@
-﻿using Aspire.Hosting.Azure;
-
-public static class ResourceBuilderExtensions
+﻿public static class ResourceBuilderExtensions
 {
     public static IResourceBuilder<T> WithKafkaReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<KafkaServerResource> source, string groupid, int? port = 9092) where T : IResourceWithEnvironment
     {
@@ -13,14 +11,7 @@ public static class ResourceBuilderExtensions
             .WithEnvironment("Kafka__enablepartitioneof", "true")
             .WithEnvironment("ServiceBusProvider", "kafka");
     }
-
-    public static IResourceBuilder<T> WithAzureServiceBusReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<AzureServiceBusResource> source) where T : IResourceWithEnvironment
-    {
-        return builder
-            .WithReference(source, "AzServiceBus")
-            .WithEnvironment("ServiceBusProvider", "AzureServiceBus");
-    }
-
+   
     public static IResourceBuilder<T> WithMongoReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<MongoDBDatabaseResource> source) where T : IResourceWithEnvironment
     {
         return builder

@@ -56,7 +56,7 @@ namespace Applications.WebApi.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("Pesel")
+                            b1.Property<string>("DocumentId")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 

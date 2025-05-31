@@ -4,5 +4,5 @@ public record GetApplicationQueryCustomerPersonalDataDto
 {
     public string FirstName { get; init; }
     public string LastName { get; init; }
-    public string Pesel { get; init; }
+    public string DocumentId { get; init; }
 }

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
-    <PackageReference Include="Aspire.Hosting.Azure.ServiceBus" />
     <PackageReference Include="Aspire.Hosting.Elasticsearch" />
     <PackageReference Include="Aspire.Hosting.Kafka" />
     <PackageReference Include="Aspire.Hosting.MongoDB" />
@@ -21,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Camunda.Startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\..\..\Applications\Applications.WebApi\Applications.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Front\Credit.Front.Blazor\Credit.Front.Blazor\Credit.Front.Blazor.csproj" />

@@ -30,7 +30,7 @@ export default function ApplicationPage() {
         customerPersonalData: {
             firstName: '',
             lastName: '',
-            pesel: '',
+            documentId: '',
         },
         declaration: {
             averageNetMonthlyIncome: 0,

@@ -28,7 +28,7 @@ public record ApplicationRegistered : IEvent
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
-    public string Pesel { get; init; }
+    public string DocumentId { get; init; }
     public decimal Amount { get; init; }
     public int CreditPeriodInMonths { get; init; }
     public decimal AverageNetMonthlyIncome { get; init; }
@@ -83,6 +83,6 @@ public record CloseApplicationCommand(string ApplicationId);
 public record DecisionCommand(string ApplicationId, string SimulationStatus, string CustomerVerificationStatus);
 
 [MessageIdentity("customerVerification", Version = 1)]
-public record CustomerVerificationCommand(string ApplicationId, string Pesel);
+public record CustomerVerificationCommand(string ApplicationId, string DocumentId);
 
 

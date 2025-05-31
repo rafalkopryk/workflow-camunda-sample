@@ -1,9 +1,10 @@
 <Solution>
-  <Folder Name="/Camunda/">
-    <Project Path="Camunda/Camunda.Client/Camunda.Client.csproj" />
-  </Folder>
   <Folder Name="/Common/">
     <Project Path="Common/Common.Application/Common.Application.csproj" />
+  </Folder>
+  <Folder Name="/External/">
+    <Project Path="../Camunda.Startup/Camunda.Client/Camunda.Client.csproj" />
+    <Project Path="../Camunda.Startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" />
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Applications/">

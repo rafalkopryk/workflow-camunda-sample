@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Camunda\Camunda.Client\Camunda.Client.csproj" />
+    <ProjectReference Include="..\..\..\Camunda.Startup\Camunda.Client\Camunda.Client.csproj" />
   </ItemGroup>
 
 </Project>
