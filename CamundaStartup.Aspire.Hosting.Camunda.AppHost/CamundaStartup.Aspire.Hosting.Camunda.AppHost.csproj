@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.1" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>857a8c44-4fb9-4d16-990c-343d4e48c425</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.0" />
+    <PackageReference Include="Aspire.Hosting.Elasticsearch" Version="9.2.1-preview.1.25222.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" IsAspireProjectResource="false" />
+  </ItemGroup>
+
+</Project>
