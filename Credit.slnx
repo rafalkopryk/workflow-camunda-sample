@@ -1,10 +1,7 @@
 <Solution>
   <Folder Name="/Common/">
     <Project Path="Common/Common.Application/Common.Application.csproj" />
-  </Folder>
-  <Folder Name="/External/">
-    <Project Path="../Camunda.Startup/Camunda.Client/Camunda.Client.csproj" />
-    <Project Path="../Camunda.Startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" />
+    <Project Path="external\camunda-startup\Camunda.Client\Camunda.Client.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Applications/">
@@ -12,6 +9,7 @@
     <Project Path="Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" />
   </Folder>
   <Folder Name="/Modules/Aspire/">
+    <Project Path="external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" Type="Classic C#" />
     <Project Path="Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
     <Project Path="Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" />
   </Folder>
@@ -22,10 +20,7 @@
   <Folder Name="/Modules/Frontend/">
     <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj" />
     <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj" />
-    <Project Path="Modules/Front/credit.front.next/credit.front.next.esproj">
-      <Build />
-      <Deploy Solution="Release|*" />
-    </Project>
+    <Project Path="Modules/Front/credit.front.next/credit.front.next.esproj" />
   </Folder>
   <Folder Name="/Modules/Functions/">
     <Project Path="Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" />
