@@ -1,7 +1,5 @@
 ﻿using Common.Application.Extensions;
-
-using Oakton.Resources;
-
+using JasperFx.Resources;
 using Processes.Saga.WebApi.UseCases.CreditApplications;
 using Wolverine;
 using Wolverine.AzureServiceBus;

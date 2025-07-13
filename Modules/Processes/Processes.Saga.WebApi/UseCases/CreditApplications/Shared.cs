@@ -24,7 +24,7 @@ public record ApplicationRegisteredFast
 };
 
 [MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered : IEvent
+public record ApplicationRegistered
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
@@ -35,7 +35,7 @@ public record ApplicationRegistered : IEvent
 };
 
 [MessageIdentity("decisionGenerated", Version = 1)]
-public record DecisionGenerated : IEvent
+public record DecisionGenerated
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
@@ -44,7 +44,7 @@ public record DecisionGenerated : IEvent
 
 
 [MessageIdentity("simulationFinished", Version = 1)]
-public record SimulationFinishedEvent : IEvent
+public record SimulationFinishedEvent
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
@@ -52,21 +52,21 @@ public record SimulationFinishedEvent : IEvent
 }
 
 [MessageIdentity("contractSigned", Version = 1)]
-public record ContractSigned : IEvent
+public record ContractSigned
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
 }
 
 [MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed : IEvent
+public record ApplicationClosed
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }
 }
 
 [MessageIdentity("customerVerified", Version = 1)]
-public record CustomerVerified : IEvent
+public record CustomerVerified
 {
     [SagaIdentity]
     public string ApplicationId { get; init; }

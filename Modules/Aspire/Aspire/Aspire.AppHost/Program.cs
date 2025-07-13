@@ -8,7 +8,6 @@ var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
 var calculationsDatabase = databaseServer.AddDatabaseInstance("credit-calculations");
 
-
 builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
     //.WithHttpsEndpoint(63112, 8081, "public", isProxied: true)
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase)
@@ -114,7 +113,7 @@ public static class ProgramExtensions
         {
             var kibana = builder.AddResource(new ContainerResource("kibana"))
                 .WithHttpEndpoint(port: 5602, targetPort: 5601, "http")
-                .WithImage("kibana/kibana", "8.15.3")
+                .WithImage("kibana/kibana", "8.17.3")
                 .WithImageRegistry("docker.elastic.co")
                 .WithEnvironment("ELASTICSEARCH_HOSTS", elasticConnectionString)
                 .WithVolume("kibana", "/usr/share/kibana/data")

@@ -1,4 +1,6 @@
-﻿namespace Applications.Application.Extensions;
+﻿using JasperFx.Resources;
+
+namespace Applications.Application.Extensions;
 
 using Applications.Application.Infrastructure.Database;
 using Applications.Application.UseCases.CloseApplication;
@@ -11,7 +13,6 @@ using Common.Application.Extensions;
 using Applications.Application.UseCases.RegisterApplication;
 using Applications.Application.UseCases.SignContract;
 using Wolverine;
-using Oakton.Resources;
 using Wolverine.Kafka;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;

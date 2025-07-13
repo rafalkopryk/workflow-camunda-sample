@@ -2,9 +2,9 @@
 using Camunda.Client.Jobs;
 using Common.Application.Cqrs;
 using Common.Application.Extensions;
+using JasperFx.Resources;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Oakton.Resources;
 using Processes.Application.UseCases.CreditApplications.Close;
 using Processes.Application.UseCases.CreditApplications.CustomerVerification;
 using Processes.Application.UseCases.CreditApplications.Decision;

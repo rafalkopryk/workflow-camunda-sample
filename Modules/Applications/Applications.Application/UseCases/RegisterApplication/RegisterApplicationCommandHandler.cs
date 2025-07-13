@@ -10,10 +10,10 @@ namespace Applications.Application.UseCases.RegisterApplication;
 public interface IApplicationRegistered;
 
 [MessageIdentity("applicationRegisteredFast", Version = 1)]
-public record ApplicationRegisteredFast(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome) : IEvent;
+public record ApplicationRegisteredFast(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
 
 [MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId) : IEvent;
+public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId);
 
 internal class RegisterApplicationCommandHandler(
     IMessageBus bus,

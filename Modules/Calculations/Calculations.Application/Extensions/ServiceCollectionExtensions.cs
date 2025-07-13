@@ -1,4 +1,6 @@
-﻿namespace Calculations.Application.Extensions;
+﻿using JasperFx.Resources;
+
+namespace Calculations.Application.Extensions;
 
 using Calculations.Application.Infrastructure.Database;
 using Calculations.Application.UseCases.SimulateCreditCommand;
@@ -10,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Common.Application.Extensions;
 using Wolverine;
 using Wolverine.Kafka;
-using Oakton.Resources;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 using MongoDB.Driver;
 using Wolverine.AzureServiceBus;

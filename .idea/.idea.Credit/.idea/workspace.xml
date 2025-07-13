@@ -9,6 +9,9 @@
     <projectFile kind="Docker">Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj</projectFile>
     <projectFile profileName="Calculations.WebApi">Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj</projectFile>
     <projectFile profileName="IIS Express">Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj</projectFile>
+    <projectFile>Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj</projectFile>
+    <projectFile profileName="http">Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj</projectFile>
+    <projectFile profileName="https">Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj</projectFile>
     <projectFile profileName="IIS Express">Modules/Front/Credit.Front/Client/Credit.Front.Client.csproj</projectFile>
     <projectFile profileName="http">Modules/Front/Credit.Front/Client/Credit.Front.Client.csproj</projectFile>
     <projectFile profileName="https">Modules/Front/Credit.Front/Client/Credit.Front.Client.csproj</projectFile>
@@ -16,7 +19,10 @@
     <projectFile profileName="IIS Express">Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj</projectFile>
     <projectFile profileName="http">Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj</projectFile>
     <projectFile profileName="https">Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj</projectFile>
+    <projectFile kind="EcmaScript">Modules/Front/credit.front.next/credit.front.next.esproj</projectFile>
     <projectFile kind="Docker">Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj</projectFile>
+    <projectFile profileName="http">Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj</projectFile>
+    <projectFile profileName="https">Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj</projectFile>
     <projectFile kind="Docker">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
     <projectFile profileName="http">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
     <projectFile profileName="https">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
@@ -27,52 +33,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d849f32d-02fc-4f1a-ab70-9ee983bf8e8d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/.vscode/launch.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/credit.front.next.esproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/libman.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/libs/delay.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/next.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/package-lock.json.bak" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/public/file.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/public/globe.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/public/next.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/public/vercel.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/public/window.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/applications/(components)/buttons.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/applications/(components)/contents.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/applications/(dto)/creditApplicationDto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/applications/[applicationId]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/applications/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/(dashboard)/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/src/app/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modules/Front/credit.front.next/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cluster.bicep" beforeDir="false" afterPath="$PROJECT_DIR$/azure/Cluster.bicep" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cluster.bicepparam" beforeDir="false" afterPath="$PROJECT_DIR$/azure/Cluster.bicepparam" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Credit.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Credit.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.Application/UseCases/RegisterApplication/RegisterApplicationCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.Application/UseCases/RegisterApplication/RegisterApplicationCommandHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aks.bicep" beforeDir="false" afterPath="$PROJECT_DIR$/azure/aks.bicep" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aks.bicepparam" beforeDir="false" afterPath="$PROJECT_DIR$/azure/aks.bicepparam" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/otel-collector-config.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/credit-demo-azure.bicep" beforeDir="false" afterPath="$PROJECT_DIR$/azure/credit-demo-azure.bicep" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/credit-demo-azure.bicepparam" beforeDir="false" afterPath="$PROJECT_DIR$/azure/credit-demo-azure.bicepparam" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.dcproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.override.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/otel-dotnet.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Calculations/Calculations.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/UseCases/CreditApplications/Shared.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/UseCases/CreditApplications/Shared.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,8 +80,14 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/175ac5a1a49e755715c4dd78fe917d534b88b76adea8e98310b9f35cd1ebdd/MudField.razor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7cdd8636b484ec192988a4624375c67a7c20aeb6cca0568722cabbe5229ce5/ElasticsearchContainerImageTags.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c17d2b1e3db71d9afd6dfa537fd4f12328d7dd49af7b8d7453422e177dfeaa/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d225eadf16f0e845b8a66571b5ba70636ac340ce9b75dd39e1e840c2d67d2089/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 2
@@ -119,7 +100,9 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Aspire Host.Aspire.AppHost: http.executor&quot;: &quot;Debug&quot;,
+    &quot;Aspire Host.Aspire.AppHost: https.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
@@ -130,10 +113,11 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;npm.dev.executor&quot;: &quot;Debug&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib&quot;
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="npm.dev">
+  <component name="RunManager" selected="Aspire Host.Aspire.AppHost: https">
     <configuration name="Aspire.AppHost: http" type="AspireHostConfiguration" factoryName="Aspire Host" activateToolWindowBeforeRun="false">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
       <option name="PROJECT_TFM" value="net9.0" />
@@ -153,6 +137,7 @@
       </envs>
       <option name="USE_PODMAN_RUNTIME" value="0" />
       <option name="TRACK_URL" value="1" />
+      <option name="TRACK_BROWSER_LAUNCH" value="1" />
       <browser url="http://localhost:15077" start="true" />
       <method v="2">
         <option name="Build" />
@@ -177,7 +162,31 @@
       </envs>
       <option name="USE_PODMAN_RUNTIME" value="0" />
       <option name="TRACK_URL" value="1" />
+      <option name="TRACK_BROWSER_LAUNCH" value="1" />
       <browser url="https://localhost:17011" start="true" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Credit.Front.Blazor.Client" type="DotNetProject" factoryName=".NET Project">
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="PTY_MODE" value="Auto" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="DotNetCore" />
+      <option name="PROJECT_TFM" value="" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -231,6 +240,36 @@
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="IIS Express" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Credit.Front.Blazor: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="http" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Credit.Front.Blazor: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="https" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
@@ -319,6 +358,36 @@
     </configuration>
     <configuration name="Credit.Front.Server: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="https" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Processes.Saga.WebApi: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="http" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Processes.Saga.WebApi: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="https" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -458,6 +527,16 @@
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
     </configuration>
+    <configuration name="credit.front.next: run" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/Modules/Front/credit.front.next/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/Modules/Front/credit.front.next/package.json" />
       <command value="run" />
@@ -474,6 +553,10 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue=".NET Launch Settings Profile.Credit.Front.Blazor: http" />
+      <item itemvalue=".NET Launch Settings Profile.Credit.Front.Blazor: https" />
+      <item itemvalue=".NET Launch Settings Profile.Processes.Saga.WebApi: http" />
+      <item itemvalue=".NET Launch Settings Profile.Processes.Saga.WebApi: https" />
       <item itemvalue=".NET Launch Settings Profile.Applications.WebApi" />
       <item itemvalue=".NET Launch Settings Profile.Applications.WebApi: IIS Express" />
       <item itemvalue=".NET Launch Settings Profile.Calculations.WebApi" />
@@ -486,6 +569,7 @@
       <item itemvalue=".NET Launch Settings Profile.Credit.Front.Server: IIS Express" />
       <item itemvalue=".NET Launch Settings Profile.Processes.WebApi: http" />
       <item itemvalue=".NET Launch Settings Profile.Processes.WebApi: https" />
+      <item itemvalue=".NET Project.Credit.Front.Blazor.Client" />
       <item itemvalue="Aspire Host.Aspire.AppHost: http" />
       <item itemvalue="Aspire Host.Aspire.AppHost: https" />
       <item itemvalue="Docker.Applications.WebApi/Dockerfile" />
@@ -494,6 +578,7 @@
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
       <item itemvalue="Docker.Processes.WebApi/Dockerfile" />
       <item itemvalue="Docker.Server/Dockerfile" />
+      <item itemvalue="npm.credit.front.next: run" />
       <item itemvalue="npm.dev" />
     </list>
     <recent_temporary>
@@ -515,12 +600,17 @@
       <workItem from="1733094180616" duration="8152000" />
       <workItem from="1733432433745" duration="2232000" />
       <workItem from="1733679133680" duration="59000" />
+      <workItem from="1751404082790" duration="1046000" />
+      <workItem from="1751824642508" duration="522000" />
+      <workItem from="1752429368203" duration="91000" />
+      <workItem from="1752429638699" duration="3020000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
@@ -532,6 +622,18 @@
           <line>84</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="38" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="39" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="40" />
+        </breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
