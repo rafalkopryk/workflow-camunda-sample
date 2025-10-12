@@ -1,18 +1,17 @@
 <Project>
   <ItemGroup>
-
     <PackageVersion Include="Aspire.Hosting.Elasticsearch" Version="9.5.0" />
     <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.5.1" />
     <PackageVersion Include="Aspire.Hosting.MongoDB" Version="9.5.1" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.5.1" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" Version="9.6.0" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" Version="9.8.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
     <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="2.1.0" />
     <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="9.0.0" />
     <PackageVersion Include="NSwag.AspNetCore" Version="14.0.7" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule" Version="1.9.0-beta.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.ConfluentKafka" Version="0.1.0-alpha.2" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageVersion Include="Google.Protobuf" Version="3.30.2" />
     <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.71.0" />
     <PackageVersion Include="Grpc.Tools" Version="2.71.0">
@@ -52,8 +51,8 @@
     <PackageVersion Include="OpenTelemetry.Api" Version="1.11.2" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.ElasticsearchClient" Version="1.0.0-beta.5" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.11.0-beta.2" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.2" />
@@ -71,13 +70,13 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.4" />
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.1.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
     <PackageVersion Include="WolverineFx" Version="4.5.3" />
     <PackageVersion Include="WolverineFx.AzureServiceBus" Version="4.5.3" />
     <PackageVersion Include="WolverineFx.Kafka" Version="4.5.3" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.1" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.4.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.2.1" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.1" />
     <PackageVersion Include="WolverineFx.SqlServer" Version="4.5.3" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.2.0" />
   </ItemGroup>
