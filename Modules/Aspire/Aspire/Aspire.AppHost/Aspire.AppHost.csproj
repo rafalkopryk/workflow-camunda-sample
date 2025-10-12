@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.5.1" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -16,7 +16,7 @@
     <PackageReference Include="Aspire.Hosting.MongoDB" />
     <PackageReference Include="Aspire.Hosting.SqlServer" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" />
-    <PackageReference Include="Elastic.Aspire.Hosting.Elasticsearch" />
+    <PackageReference Include="Aspire.Hosting.Elasticsearch" />
   </ItemGroup>
 
   <ItemGroup>

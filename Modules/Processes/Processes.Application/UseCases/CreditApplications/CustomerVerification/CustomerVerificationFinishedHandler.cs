@@ -4,7 +4,7 @@ using Wolverine.Attributes;
 namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
 
 [MessageIdentity("customerVerified", Version = 1)]
-[ZeebeMessage(Name = "Message_CustomerVerified")]
+[CamundaMessage(Name = "Message_CustomerVerified")]
 public record CustomerVerified(string ApplicationId, string CustomerVerificationStatus);
 
 public class CustomerVerificationFinishedHandler(IMessageClient messageClient)

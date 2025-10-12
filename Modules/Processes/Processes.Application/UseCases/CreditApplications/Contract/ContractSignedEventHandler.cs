@@ -4,7 +4,7 @@ using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Contract;
 
-[ZeebeMessage(Name = "Message_ContractSigned")]
+[CamundaMessage(Name = "Message_ContractSigned")]
 [MessageIdentity("contractSigned", Version = 1)]
 public record ContractSigned(string ApplicationId);
 

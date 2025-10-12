@@ -4,7 +4,7 @@ using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Decision;
 
-[ZeebeMessage(Name = "Message_DecisionGenerated")]
+[CamundaMessage(Name = "Message_DecisionGenerated")]
 [MessageIdentity("decisionGenerated", Version = 1)]
 public record DecisionGenerated(string ApplicationId, string Decision);
 

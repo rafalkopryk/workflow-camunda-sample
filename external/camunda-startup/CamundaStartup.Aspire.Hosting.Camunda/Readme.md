@@ -40,9 +40,7 @@ var elastic = builder.AddElasticsearch("elastic")
 var elasticConnectionString = ReferenceExpression.Create(
             $"http://{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Port)}"); ;
 
-var camunda = builder.AddCamunda("camunda", 8080)
-    .WithElasticDatabase(elasticConnectionString)
-    .WithOperate()
+var camunda = builder.AddCamunda("camunda", 8080, elasticConnectionString)
     .WithDataVolume("camunda")
     .WithLifetime(ContainerLifetime.Persistent)
     .WaitFor(elastic);

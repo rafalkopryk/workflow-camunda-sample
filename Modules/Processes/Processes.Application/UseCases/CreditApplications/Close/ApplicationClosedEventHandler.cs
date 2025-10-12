@@ -4,7 +4,7 @@ using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Close;
 
-[ZeebeMessage(Name = "Message_ApplicationClosed")]
+[CamundaMessage(Name = "Message_ApplicationClosed")]
 [MessageIdentity("applicationClosed", Version = 1)]
 public record ApplicationClosed(string ApplicationId);
 

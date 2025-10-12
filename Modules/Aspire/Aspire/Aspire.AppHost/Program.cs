@@ -90,16 +90,6 @@ public static class ProgramExtensions
 
     public static IResourceBuilder<CamundaResource> UseCamunda(this IDistributedApplicationBuilder builder)
     {
-        var camunda = builder.AddCamunda("camunda", port: 8089)
-            .WithDataVolume("camunda")
-            .WithLifetime(ContainerLifetime.Persistent);
-
-        var camundaDatabase = builder.GetParameter<string>("camundaDatabase");
-        if (camundaDatabase != "elasticsearch")
-        {
-            return camunda;
-        }
-
         var elastic = builder.AddElasticsearch("elastic")
             .WithEnvironment("xpack.security.enabled", "false")
             .WithDataVolume("elastic")
@@ -107,6 +97,10 @@ public static class ProgramExtensions
 
         var elasticConnectionString = ReferenceExpression.Create(
             $"http://{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
+
+        var camunda = builder.AddCamunda("camunda", port: 8089, elasticConnectionString)
+            .WithDataVolume("camunda")
+            .WithLifetime(ContainerLifetime.Persistent);
 
         var kibanaEnabled = builder.GetParameter<bool>("kibanaEnabled");
         if (kibanaEnabled)
@@ -118,14 +112,6 @@ public static class ProgramExtensions
                 .WithEnvironment("ELASTICSEARCH_HOSTS", elasticConnectionString)
                 .WithVolume("kibana", "/usr/share/kibana/data")
                 .WaitFor(elastic);
-        }
-
-        camunda.WithElasticDatabase(elasticConnectionString);
-
-        var operateEnabled = builder.GetParameter<bool>("operateEnabled");   
-        if (operateEnabled)
-        {
-            camunda.WithOperate();
         }
 
         return camunda;

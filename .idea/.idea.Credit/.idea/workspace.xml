@@ -33,21 +33,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d849f32d-02fc-4f1a-ab70-9ee983bf8e8d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Camunda.Startup.DemoApp.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Camunda.Startup.DemoApp.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Dtos/WeatherForecast.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Feature/DeployBPMNDefinitionService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Feature/RetrieveWeatherForecastJobHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Program.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Properties/launchSettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/appsettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/weather-forecast.bpmn" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.Development.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.ServiceDefaults/CamundaStartup.ServiceDefaults.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.ServiceDefaults/Extensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.Application/UseCases/RegisterApplication/RegisterApplicationCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.Application/UseCases/RegisterApplication/RegisterApplicationCommandHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/CamundaBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/CamundaBuilderExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Calculations/Calculations.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/UseCases/CreditApplications/Shared.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/UseCases/CreditApplications/Shared.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Close/ApplicationClosedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Close/ApplicationClosedEventHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Contract/ContractSignedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Contract/ContractSignedEventHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/CustomerVerification/CustomerVerificationFinishedHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/CustomerVerification/CustomerVerificationFinishedHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Decision/DecisionGeneratedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Decision/DecisionGeneratedEventHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Registration/ApplicationRegisteredEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Registration/ApplicationRegisteredEventHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Simulation/SimulationFinishedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Simulation/SimulationFinishedEventHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/IMessageClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/IMessageClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/RestMessageClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/RestMessageClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/ZeebeMessageAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/CamundaMessageAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Options/CamundaOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Options/CamundaOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/ElasticsearchResourceExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/ElasticsearchResourceExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaBuilderExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.sln" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,26 +123,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Aspire Host.Aspire.AppHost: http.executor&quot;: &quot;Debug&quot;,
-    &quot;Aspire Host.Aspire.AppHost: https.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Debug&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Aspire Host.Aspire.AppHost: http.executor": "Debug",
+    "Aspire Host.Aspire.AppHost: https.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Merging main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.dev.executor": "Debug",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Aspire Host.Aspire.AppHost: https">
     <configuration name="Aspire.AppHost: http" type="AspireHostConfiguration" factoryName="Aspire Host" activateToolWindowBeforeRun="false">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
@@ -604,6 +630,7 @@
       <workItem from="1751824642508" duration="522000" />
       <workItem from="1752429368203" duration="91000" />
       <workItem from="1752429638699" duration="3020000" />
+      <workItem from="1760284829639" duration="132000" />
     </task>
     <servers />
   </component>
