@@ -20,8 +20,8 @@ public static class ServiceCollectionExtensions
         var camundaOptions = new CamundaOptions();
         options?.Invoke(camundaOptions);
 
-        ConfigureCamundaGrpc(services, configure, camundaOptions.CamundaGrpc);
-        ConfigureCamundaRest(services, configure, camundaOptions.CamundaRest);
+        ConfigureCamundaGrpc(services, configure, camundaOptions);
+        ConfigureCamundaRest(services, configure, camundaOptions);
 
         services.AddSingleton<JobExecutor>();
         services.AddSingleton<IJobClient, RestJobClient>();
@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
         configure?.Invoke(camundaBuilder);
     }
 
-    private static void ConfigureCamundaGrpc(IServiceCollection services, Action<CamundaBuilder>? configure, GrpcCamundaOptions camundaOptions)
+    private static void ConfigureCamundaGrpc(IServiceCollection services, Action<CamundaBuilder>? configure, CamundaOptions camundaOptions)
     {
         var defaultMethodConfig = new MethodConfig
         {
@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
         };
         services.AddGrpcClient<Gateway.GatewayClient>(client =>
         {
-            client.Address = new Uri(camundaOptions!.Endpoint);
+            client.Address = new Uri(camundaOptions!.GrpcEndpoint);
         })
         .ConfigureChannel(configureChannel =>
         {
@@ -68,7 +68,7 @@ public static class ServiceCollectionExtensions
         });
     }
 
-    private static void ConfigureCamundaRest(IServiceCollection services, Action<CamundaBuilder>? configure, RestCamundaOptions camundaOptions)
+    private static void ConfigureCamundaRest(IServiceCollection services, Action<CamundaBuilder>? configure, CamundaOptions camundaOptions)
     {
         services.AddHttpClient<ICamundaClientRest, CamundaClientRest>(client =>
         {

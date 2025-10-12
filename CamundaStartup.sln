@@ -7,12 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.Client", "Camunda.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.Aspire.Hosting.Camunda", "CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj", "{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.Aspire.Hosting.Camunda.AppHost", "CamundaStartup.Aspire.Hosting.Camunda.AppHost\CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj", "{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.ServiceDefaults", "Demo\CamundaStartup.ServiceDefaults\CamundaStartup.ServiceDefaults.csproj", "{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.Startup.DemoApp", "Demo\Camunda.Startup.DemoApp\Camunda.Startup.DemoApp.csproj", "{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamundaStartup.Aspire.Hosting.Camunda.AppHost", "Demo\CamundaStartup.Aspire.Hosting.Camunda.AppHost\CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj", "{060F8764-3AEA-4E8B-859D-87DDCBF84A7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,13 +34,26 @@ Global
 		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F34543F0-DB9B-B5E3-F7A6-AECCDB9494C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDB2C1CD-F6F6-389A-7FE7-AB7489AE4C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{060F8764-3AEA-4E8B-859D-87DDCBF84A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{060F8764-3AEA-4E8B-859D-87DDCBF84A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{060F8764-3AEA-4E8B-859D-87DDCBF84A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{060F8764-3AEA-4E8B-859D-87DDCBF84A7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0CFE0E6-B3D9-A30F-E665-755E0B1EF92B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7F4BA30D-6A92-4A99-BECE-B3B40BD5FE87} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{060F8764-3AEA-4E8B-859D-87DDCBF84A7E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80FE6093-0311-4427-BDCF-5FC1B7E77C24}

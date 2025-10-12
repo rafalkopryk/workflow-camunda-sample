@@ -10,7 +10,7 @@ internal class RestMessageClient(ICamundaClientRest client) : IMessageClient
     {
         try
         {
-            var attribute = message.GetType().GetAttribute<ZeebeMessageAttribute>();
+            var attribute = message.GetType().GetAttribute<CamundaMessageAttribute>();
             ArgumentNullException.ThrowIfNull(attribute);
 
             var json = JsonSerializer.Serialize(message, JsonSerializerCustomOptions.CamelCase);

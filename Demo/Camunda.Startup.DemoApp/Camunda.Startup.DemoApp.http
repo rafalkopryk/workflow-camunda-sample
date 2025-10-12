@@ -1,0 +1,12 @@
+@DemoApp_HostAddress = https://localhost:7230
+@requestedDate =  2025-10-01
+
+
+POST {{DemoApp_HostAddress}}/weatherforecast/{{requestedDate}}
+Content-Type: application/json
+
+###
+
+GET {{DemoApp_HostAddress}}/weatherforecast/{{requestedDate}}
+
+###
