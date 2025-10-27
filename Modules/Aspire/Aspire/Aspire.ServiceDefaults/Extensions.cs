@@ -61,6 +61,10 @@ public static class Extensions
                 tracing.AddAspNetCoreInstrumentation()
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()
+                    .AddSource("Temporalio.Extensions.OpenTelemetry.Client",
+                        "Temporalio.Extensions.OpenTelemetry.Workflow",
+                        "Temporalio.Extensions.OpenTelemetry.Activity",
+                        "Temporalio.Extensions.OpenTelemetry.Nexus")
                     .AddHttpClientInstrumentation();
             });
 

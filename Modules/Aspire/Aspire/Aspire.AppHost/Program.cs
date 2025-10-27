@@ -31,16 +31,30 @@ public static class ProgramExtensions
     public static IResourceBuilder<ProjectResource> AddProcess(this IDistributedApplicationBuilder builder)
     {
         var processProvider = builder.GetParameter<string>("processProvider");
-        if (processProvider == "saga")
+        return processProvider switch
         {
-            return builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
-                .WithExternalHttpEndpoints();
-        }
+            "temporal" => AddProcessesTemporalWebApi(),
+            "saga" => builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
+                .WithExternalHttpEndpoints(),
+            _ => AddProcessesCamundaWebApi(),
+        };
 
-        var camunda = builder.UseCamunda();
-        return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
-            .WithExternalHttpEndpoints()
-            .WithCamundaReference(camunda).WaitFor(camunda);
+        IResourceBuilder<ProjectResource> AddProcessesTemporalWebApi()
+        {
+            var temporal = builder.AddTemporalServerContainer("temporal");
+            return builder.AddProject<Projects.Processes_Temporal_WebApi>("processes-temporal-webapi")
+                .WithReference(temporal)
+                .WithExternalHttpEndpoints()
+                .WaitFor(temporal);
+        }
+        
+        IResourceBuilder<ProjectResource>  AddProcessesCamundaWebApi()
+        {
+            var camunda = builder.UseCamunda();
+            return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
+                .WithExternalHttpEndpoints()
+                .WithCamundaReference(camunda).WaitFor(camunda);
+        }
     }
 
     public static IResourceBuilder<IResource> AddCreditFront(this IDistributedApplicationBuilder builder)

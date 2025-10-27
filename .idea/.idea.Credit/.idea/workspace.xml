@@ -21,11 +21,17 @@
     <projectFile profileName="https">Modules/Front/Credit.Front/Server/Credit.Front.Server.csproj</projectFile>
     <projectFile kind="EcmaScript">Modules/Front/credit.front.next/credit.front.next.esproj</projectFile>
     <projectFile kind="Docker">Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj</projectFile>
+    <projectFile profileName="http">Modules/Processes/Processes.Conductor/Processes.Conductor.csproj</projectFile>
+    <projectFile profileName="https">Modules/Processes/Processes.Conductor/Processes.Conductor.csproj</projectFile>
     <projectFile profileName="http">Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj</projectFile>
     <projectFile profileName="https">Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj</projectFile>
+    <projectFile profileName="http">Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj</projectFile>
+    <projectFile profileName="https">Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj</projectFile>
     <projectFile kind="Docker">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
     <projectFile profileName="http">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
     <projectFile profileName="https">Modules/Processes/Processes.WebApi/Processes.WebApi.csproj</projectFile>
+    <projectFile profileName="http">Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj</projectFile>
+    <projectFile profileName="https">Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj</projectFile>
     <projectFile kind="DockerCompose">docker-compose.dcproj</projectFile>
   </component>
   <component name="AutoImportSettings">
@@ -33,47 +39,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d849f32d-02fc-4f1a-ab70-9ee983bf8e8d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Camunda.Startup.DemoApp.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Camunda.Startup.DemoApp.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Dtos/WeatherForecast.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Feature/DeployBPMNDefinitionService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Feature/RetrieveWeatherForecastJobHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/weather-forecast.bpmn" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.ServiceDefaults/CamundaStartup.ServiceDefaults.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.ServiceDefaults/Extensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Domain/CreditApplications/CreditApplicationKeyword.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Credit.slnx" beforeDir="false" afterPath="$PROJECT_DIR$/Credit.slnx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/CamundaBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/CamundaBuilderExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Close/ApplicationClosedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Close/ApplicationClosedEventHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Contract/ContractSignedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Contract/ContractSignedEventHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/CustomerVerification/CustomerVerificationFinishedHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/CustomerVerification/CustomerVerificationFinishedHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Decision/DecisionGeneratedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Decision/DecisionGeneratedEventHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Registration/ApplicationRegisteredEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Registration/ApplicationRegisteredEventHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Simulation/SimulationFinishedEventHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/UseCases/CreditApplications/Simulation/SimulationFinishedEventHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/IMessageClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/IMessageClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/RestMessageClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/RestMessageClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/ZeebeMessageAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Messages/CamundaMessageAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Options/CamundaOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Options/CamundaOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/ElasticsearchResourceExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/ElasticsearchResourceExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaBuilderExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaContainerImageTags.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/Readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.sln" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,14 +79,51 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/00/4d797f0c/WorkerTask.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/34/bd50b9d0/WorkflowDef.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/57/f154577c/StartWorkflowRequest.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/77/523cd4da/ConductorTaskExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/79/a0be08f7/WorkflowTaskHost.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/7a/f8f8d373/TaskResourceApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/9f/331e3e70/WorkflowTaskHttpClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/ab/bd801e39/IWorkflowTaskClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/bd/de89d6cd/WorkflowTaskExecutor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/c3/641aff60/IWorkflowTask.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/ce/957f2229/DependencyInjectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/d2/ed0358a6/WorkflowTaskExecutorConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/e0/f2d7a685/TaskResult.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/e5/8795497d/Configuration.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55f3931622ae4cb0aa7b447186153190d2b10/3a/ab18f8a4/TimeSpan.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55f3931622ae4cb0aa7b447186153190d2b10/c5/576267c2/Environment.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/433fc1edc72fa9b1476d164ac492e3b8e45e49673a91e60489ff7fa2e8b14e4/TracingInterceptor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/643577ce82dc175168896ee8a8e3d67c35dcfbc3db4246579589dfefdb6c87ff/ActivitySource.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6e10b279a86349fd69973bfebf7aefa694edf177c8e9b2d5fc4563c178e446/WorkflowInstance.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fc9511aeaf987340d51d93541457a16a5c5ead8f2bafcf6ae12189d84ad38/TemporalWorkerServiceOptionsBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7cdd8636b484ec192988a4624375c67a7c20aeb6cca0568722cabbe5229ce5/ElasticsearchContainerImageTags.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ce114c636c155f684a4e214656d8da2c6cd9ba1ea2c949ee49861219956c510/ServiceProviderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7e333a9f3297ba553cccfd3b7c3f1f96125b23d09f883e4d6e66d531559a4c/Type.CoreCLR.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/81c92d5795833d647a22738c7d2eeacbde835930e8b4a2d46cae52cdc0dd/TemporalHostingServiceCollectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/821eadf8c89b36691b3def72d04889d8d4cd791563a97558876f873a81a1a085/StackFrameIterator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/93e3c5e15e94e971b2776e899e94114db2b88bd0e6db52bce6297a829dbe8f/ITemporalClientExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9773e9184cb8aedeb9b1c4c1a45a059d92f67ea7688ded8d53082c2b4d376/ActivityOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a6c776bda2e251a77c71a48953c849eb1bebaefe5cc9e82c37471d0dd329526/DelayOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a6f52f75db0c77bb83f322fb52f52cef9cff6cdafbb94dfec214bab243d18/Task.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ba408bbefe5c813576b4417369c21d24248b94d040ec72a9753bc546f9308190/OpenApiServiceCollectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c17d2b1e3db71d9afd6dfa537fd4f12328d7dd49af7b8d7453422e177dfeaa/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d225eadf16f0e845b8a66571b5ba70636ac340ce9b75dd39e1e840c2d67d2089/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d6b757e154dd7f8c23e0e785431c97a76e4b9c6bdae38b978238421dbab55d/MethodBaseInvoker.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f1624f1823cc1b42dcde371e7e8a4fc2cde07d57b33ca65f2f06f6946b13cbc/Workflow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f7cfd5de25e262753adc223a7a59a7803a2749ed63276b3b3cf29c1bc321b44/ITemporalClient.Workflow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/obj/Debug/net9.0/Aspire/references/Processes_Saga_WebApi.ProjectMetadata.g.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 2
@@ -123,26 +133,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Aspire Host.Aspire.AppHost: http.executor": "Debug",
-    "Aspire Host.Aspire.AppHost: https.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.dev.executor": "Debug",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Aspire Host.Aspire.AppHost: http.executor&quot;: &quot;Debug&quot;,
+    &quot;Aspire Host.Aspire.AppHost: https.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Debug&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Aspire Host.Aspire.AppHost: https">
     <configuration name="Aspire.AppHost: http" type="AspireHostConfiguration" factoryName="Aspire Host" activateToolWindowBeforeRun="false">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
@@ -427,6 +437,36 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration name="Processes.Temporal.WebApi: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="http" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Processes.Temporal.WebApi: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="https" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
     <configuration name="Processes.WebApi: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
@@ -579,6 +619,8 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue=".NET Launch Settings Profile.Processes.Temporal.WebApi: http" />
+      <item itemvalue=".NET Launch Settings Profile.Processes.Temporal.WebApi: https" />
       <item itemvalue=".NET Launch Settings Profile.Credit.Front.Blazor: http" />
       <item itemvalue=".NET Launch Settings Profile.Credit.Front.Blazor: https" />
       <item itemvalue=".NET Launch Settings Profile.Processes.Saga.WebApi: http" />
@@ -631,13 +673,27 @@
       <workItem from="1752429368203" duration="91000" />
       <workItem from="1752429638699" duration="3020000" />
       <workItem from="1760284829639" duration="132000" />
+      <workItem from="1761593598225" duration="1145000" />
+      <workItem from="1761594976621" duration="8225000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
@@ -661,6 +717,19 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="40" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Program.cs</url>
+          <line>20</line>
+          <properties documentPath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Program.cs" containingFunctionPresentation="">
+            <startOffsets>
+              <option value="832" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1582" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

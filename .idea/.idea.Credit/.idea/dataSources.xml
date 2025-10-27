@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="MongoDB" uuid="a12f2e45-599c-46a4-9c9a-bcc5ae2856e1">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:64444/credit-applications?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="e31e26b6-812b-4da1-971e-003eab14abb0">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:64444/credit-calculations?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="ba52f1e1-90a6-4ca5-902e-e2e16c46b3b2">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:52297/credit-calculations?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="44d86706-3e16-417a-9d21-b4af7dad3f46">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:52297/credit-applications?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="cbb69d29-8c1d-4661-b68f-4fa1906d4d1d">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:62666/credit-applications?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="1aa7646c-adf0-4acf-9bd6-827cad9d9c63">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:62666/credit-calculations?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="9fb93868-2377-4228-96ff-41143b24ab2f">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:55625/credit-calculations?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MongoDB" uuid="caadfbed-c075-4d71-a83c-db039f1f629c">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:Test123!@localhost:55625/credit-applications?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

@@ -5,6 +5,7 @@
     <PackageVersion Include="Aspire.Hosting.MongoDB" Version="9.5.1" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.5.1" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" Version="9.8.0" />
+    <PackageVersion Include="InfinityFlow.Aspire.Temporal" Version="0.8.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
     <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="2.1.0" />
     <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="9.0.0" />
@@ -79,5 +80,7 @@
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.1" />
     <PackageVersion Include="WolverineFx.SqlServer" Version="4.5.3" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.2.0" />
+    <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.9.0" />
+    <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.9.0" />
   </ItemGroup>
 </Project>

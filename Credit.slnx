@@ -29,6 +29,7 @@
     <Project Path="Modules/Processes/Processes.Application/Processes.Application.csproj" />
     <Project Path="Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" />
     <Project Path="Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" />
+    <Project Path="Modules\Processes\Processes.Temporal.WebApi\Processes.Temporal.WebApi.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />

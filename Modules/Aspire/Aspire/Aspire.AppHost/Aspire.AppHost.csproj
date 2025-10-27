@@ -17,6 +17,7 @@
     <PackageReference Include="Aspire.Hosting.SqlServer" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" />
     <PackageReference Include="Aspire.Hosting.Elasticsearch" />
+    <PackageReference Include="InfinityFlow.Aspire.Temporal" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Front\Credit.Front.Blazor\Credit.Front.Blazor\Credit.Front.Blazor.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.Saga.WebApi\Processes.Saga.WebApi.csproj" />
+    <ProjectReference Include="..\..\..\Processes\Processes.Temporal.WebApi\Processes.Temporal.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.WebApi\Processes.WebApi.csproj" />
   </ItemGroup>
 
