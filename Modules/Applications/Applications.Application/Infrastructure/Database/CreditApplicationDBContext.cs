@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Applications.Application.Domain.Application;
+using Microsoft.Azure.Amqp.Framing;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -37,6 +38,11 @@ public class CreditApplicationDbContext : DbContext
                 entity.ToTable("CreditApplication");
             }
 
+            if (Database.IsNpgsql())
+            {
+                entity.ToTable("CreditApplication");
+            }
+
             if (Database.ProviderName == "MongoDB.EntityFrameworkCore")
             {
                 entity.ToCollection("CreditApplication");
@@ -49,9 +55,18 @@ public class CreditApplicationDbContext : DbContext
             
             entity.OwnsOne(creditApplication => creditApplication.CustomerPersonalData, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
             entity.OwnsOne(creditApplication => creditApplication.Declaration, ownedNavigationBuilder => ownedNavigationBuilder.ToJson());
-            entity.Property(x => x.States).HasConversion<string>(
-                x => JsonSerializer.Serialize(x, JsonSerializerOptions.Web),
-                y => JsonSerializer.Deserialize<ApplicationStates>(y, JsonSerializerOptions.Web));
+
+
+            // if (Database.IsNpgsql())
+            // {
+            //     entity.ComplexProperty(x => x.States, d => d.ToJson());
+            // }
+            // else
+            {
+                entity.Property(x => x.States).HasConversion<string>(
+                    x => JsonSerializer.Serialize(x, JsonSerializerOptions.Web),
+                    y => JsonSerializer.Deserialize<ApplicationStates>(y, JsonSerializerOptions.Web));
+            }
         });
     }
     

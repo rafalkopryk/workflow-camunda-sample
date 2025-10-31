@@ -14,6 +14,7 @@
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.Kafka" />
     <PackageReference Include="Aspire.Hosting.MongoDB" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="Aspire.Hosting.SqlServer" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" />
     <PackageReference Include="Aspire.Hosting.Elasticsearch" />
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\..\..\Applications\Applications.WebApi\Applications.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Front\Credit.Front.Blazor\Credit.Front.Blazor\Credit.Front.Blazor.csproj" />
+    <ProjectReference Include="..\..\..\Processes\Processes.Conductor.WebApi\Processes.Conductor.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.Saga.WebApi\Processes.Saga.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.Temporal.WebApi\Processes.Temporal.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.WebApi\Processes.WebApi.csproj" />

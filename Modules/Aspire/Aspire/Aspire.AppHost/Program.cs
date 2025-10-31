@@ -71,13 +71,18 @@ public static class ProgramExtensions
     {
         var databaseProvider = builder.GetParameter<string>("databaseProvider");
         var databasePassword = builder.AddParameter("databasePassword", secret: true);
-        return databaseProvider == "mongodb"
-            ? builder.AddMongoDB("MongoDB", 57359, password: databasePassword)
+        return databaseProvider switch
+        {
+            "postgres" => builder.AddPostgres("Postgres", port: 5432, password: databasePassword)
+                .WithDataVolume("postgres")
+                .WithLifetime(ContainerLifetime.Persistent),
+            "mongodb" => builder.AddMongoDB("MongoDB", 57359, password: databasePassword)
                 .WithDataVolume("mongo")
-                .WithLifetime(ContainerLifetime.Persistent)
-            : builder.AddSqlServer("SqlServer", databasePassword, 62448)
+                .WithLifetime(ContainerLifetime.Persistent),
+            _ => builder.AddSqlServer("SqlServer", databasePassword, 62448)
                 .WithDataVolume("sqlserver")
-                .WithLifetime(ContainerLifetime.Persistent);
+                .WithLifetime(ContainerLifetime.Persistent),
+        };
     }
 
     public static IResourceBuilder<IResource> AddDatabaseInstance(this IResourceBuilder<IResource> resourceBuilder, string database)
@@ -86,6 +91,7 @@ public static class ProgramExtensions
         {
             IResourceBuilder<MongoDBServerResource> mongoDbResource => mongoDbResource.AddDatabase(database),
             IResourceBuilder<SqlServerServerResource> sqlServerResource => sqlServerResource.AddDatabase(database),
+            IResourceBuilder<PostgresServerResource> postgresResource => postgresResource.AddDatabase(database),
             _ => throw new NotSupportedException("Not supported database server"),
         };
     }

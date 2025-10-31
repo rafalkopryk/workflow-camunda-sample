@@ -7,6 +7,7 @@ using Wolverine.Kafka;
 using Wolverine.RDBMS;
 using Wolverine.SqlServer;
 using Wolverine.Configuration;
+using Wolverine.Postgresql;
 
 
 namespace Processes.Application.Extensions;
@@ -21,8 +22,14 @@ public static class ServiceCollectionExtensions
         //opts.AddSagaType<CreditApplicationFast>();
         opts.AddSagaType<CreditApplication>();
 
-
-        opts.PersistMessagesWithSqlServer(configuration.GetSqlConnectionString(), "creditapplication_sagas");
+        if (configuration.IsPostgres())
+        {
+            opts.PersistMessagesWithPostgresql(configuration.GetPostgresConnectionString(), "creditapplication_sagas");
+        }
+        else
+        {
+            opts.PersistMessagesWithSqlServer(configuration.GetSqlConnectionString(), "creditapplication_sagas");
+        }
 
         if (configuration.IsKafka())
         {

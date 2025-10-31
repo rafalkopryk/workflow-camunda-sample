@@ -25,6 +25,7 @@
 	<PackageReference Include="Microsoft.Extensions.Options" />
 	<PackageReference Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" />
 	<PackageReference Include="MongoDB.EntityFrameworkCore" />
+	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
 	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
 	<PackageReference Include="OpenTelemetry.Extensions.Hosting" />

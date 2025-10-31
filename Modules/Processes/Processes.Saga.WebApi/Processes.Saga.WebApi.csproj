@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="WolverineFx.Postgresql" />
     <PackageReference Include="WolverineFx.SqlServer" />
   </ItemGroup>
 

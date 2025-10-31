@@ -33,6 +33,11 @@ public class CreditCalculationDbContext : DbContext
                 entity.ToTable("CreditCalculation");
             }
 
+            if (Database.IsNpgsql())
+            {
+                entity.ToTable("CreditApplication");
+            }
+            
             if (Database.ProviderName == "MongoDB.EntityFrameworkCore")
             {
                 entity.ToCollection("Calculations");

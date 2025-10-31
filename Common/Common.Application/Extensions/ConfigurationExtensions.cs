@@ -14,6 +14,11 @@ public static class ConfigurationExtensions
     {
         return configuration.GetValue<string>("DatabaseProvider")?.ToLower() == "mongodb";
     }
+    
+    public static bool IsPostgres(this IConfiguration configuration)
+    {
+        return configuration.GetValue<string>("DatabaseProvider")?.ToLower() == "postgres";
+    }
 
     public static bool IsKafka(this IConfiguration configuration)
     {
@@ -38,6 +43,11 @@ public static class ConfigurationExtensions
     public static string GetMongoDbConnectionString(this IConfiguration configuration)
     {
         return configuration.GetConnectionString("MongoDB");
+    }
+    
+    public static string GetPostgresConnectionString(this IConfiguration configuration)
+    {
+        return configuration.GetConnectionString("Postgres");
     }
 
     public static string GetkafkaConnectionString(this IConfiguration configuration)

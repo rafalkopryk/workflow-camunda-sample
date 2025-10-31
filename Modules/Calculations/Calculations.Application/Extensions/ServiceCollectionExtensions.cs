@@ -33,6 +33,10 @@ public static class ServiceCollectionExtensions
             var mongoClient = new MongoClient(clientSettings);
             services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseMongoDB(mongoClient, "Credit_Calculations"));
         }
+        else if (configuration.IsPostgres())
+        {
+            services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseNpgsql(configuration.GetPostgresConnectionString(), b => b.MigrationsAssembly("Calculations.WebApi")));
+        }
         else
         {
             services.AddDbContextPool<CreditCalculationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Calculations.WebApi")));

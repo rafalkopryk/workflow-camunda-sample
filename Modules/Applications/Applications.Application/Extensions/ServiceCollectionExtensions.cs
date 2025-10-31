@@ -36,6 +36,10 @@ public static class ServiceCollectionExtensions
 
             services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseMongoDB(mongoClient, "Credit_Applications"));
         }
+        else if (configuration.IsPostgres())
+        {
+            services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseNpgsql(configuration.GetPostgresConnectionString(), b => b.MigrationsAssembly("Applications.WebApi")));
+        }
         else
         {
             services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Applications.WebApi")));

@@ -1,4 +1,6 @@
-﻿public static class ResourceBuilderExtensions
+﻿using Npgsql;
+
+public static class ResourceBuilderExtensions
 {
     public static IResourceBuilder<T> WithKafkaReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<KafkaServerResource> source, string groupid, int? port = 9092) where T : IResourceWithEnvironment
     {
@@ -19,6 +21,13 @@
             .WithEnvironment("DatabaseProvider", "mongodb");
     }
     
+    public static IResourceBuilder<T> WithPostgresReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<PostgresDatabaseResource> source) where T : IResourceWithEnvironment
+    {
+        return builder
+            .WithReference(source, "Postgres")
+            .WithEnvironment("DatabaseProvider", "postgres");
+    }
+    
     public static IResourceBuilder<T> WithSqlServerReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<SqlServerDatabaseResource> source) where T : IResourceWithEnvironment
     {
         return builder
@@ -32,6 +41,7 @@
         {
             IResourceBuilder<MongoDBDatabaseResource> mongoDbResource =>  WithMongoReference(builder, mongoDbResource),
             IResourceBuilder<SqlServerDatabaseResource> sqlServerResource =>  WithSqlServerReference(builder, sqlServerResource),
+            IResourceBuilder<PostgresDatabaseResource> postgresResource => WithPostgresReference(builder, postgresResource),
             _ => throw new NotSupportedException("Not supported database"),
         };
     }
