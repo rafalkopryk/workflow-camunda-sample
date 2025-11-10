@@ -39,14 +39,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d849f32d-02fc-4f1a-ab70-9ee983bf8e8d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Domain/CreditApplications/CreditApplicationKeyword.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Credit.slnx" beforeDir="false" afterPath="$PROJECT_DIR$/Credit.slnx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/Common.Application/Common.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Common.Application/Common.Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/Common.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Common.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Dockerfile" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Properties/launchSettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Processes.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Processes.Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/TracerProviderBuilderExtensions.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,46 +92,11 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/rafalkopryk/workflow-camunda-sample.git&quot;,
-    &quot;accountId&quot;: &quot;a33023b9-e301-4e80-a999-ede92dc2da25&quot;
+    &quot;accountId&quot;: &quot;a8ff416d-8c08-4c77-82c3-63035151e729&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/00/4d797f0c/WorkerTask.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/34/bd50b9d0/WorkflowDef.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/57/f154577c/StartWorkflowRequest.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/77/523cd4da/ConductorTaskExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/79/a0be08f7/WorkflowTaskHost.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/7a/f8f8d373/TaskResourceApi.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/9f/331e3e70/WorkflowTaskHttpClient.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/ab/bd801e39/IWorkflowTaskClient.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/bd/de89d6cd/WorkflowTaskExecutor.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/c3/641aff60/IWorkflowTask.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/ce/957f2229/DependencyInjectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/d2/ed0358a6/WorkflowTaskExecutorConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/e0/f2d7a685/TaskResult.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/54115dfd5a5f4388b0db4fdbf37171e1d6c00/e5/8795497d/Configuration.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55f3931622ae4cb0aa7b447186153190d2b10/3a/ab18f8a4/TimeSpan.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55f3931622ae4cb0aa7b447186153190d2b10/c5/576267c2/Environment.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/433fc1edc72fa9b1476d164ac492e3b8e45e49673a91e60489ff7fa2e8b14e4/TracingInterceptor.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/643577ce82dc175168896ee8a8e3d67c35dcfbc3db4246579589dfefdb6c87ff/ActivitySource.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6e10b279a86349fd69973bfebf7aefa694edf177c8e9b2d5fc4563c178e446/WorkflowInstance.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fc9511aeaf987340d51d93541457a16a5c5ead8f2bafcf6ae12189d84ad38/TemporalWorkerServiceOptionsBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7cdd8636b484ec192988a4624375c67a7c20aeb6cca0568722cabbe5229ce5/ElasticsearchContainerImageTags.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ce114c636c155f684a4e214656d8da2c6cd9ba1ea2c949ee49861219956c510/ServiceProviderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7e333a9f3297ba553cccfd3b7c3f1f96125b23d09f883e4d6e66d531559a4c/Type.CoreCLR.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/81c92d5795833d647a22738c7d2eeacbde835930e8b4a2d46cae52cdc0dd/TemporalHostingServiceCollectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/821eadf8c89b36691b3def72d04889d8d4cd791563a97558876f873a81a1a085/StackFrameIterator.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/93e3c5e15e94e971b2776e899e94114db2b88bd0e6db52bce6297a829dbe8f/ITemporalClientExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9773e9184cb8aedeb9b1c4c1a45a059d92f67ea7688ded8d53082c2b4d376/ActivityOptions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a6c776bda2e251a77c71a48953c849eb1bebaefe5cc9e82c37471d0dd329526/DelayOptions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a6f52f75db0c77bb83f322fb52f52cef9cff6cdafbb94dfec214bab243d18/Task.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ba408bbefe5c813576b4417369c21d24248b94d040ec72a9753bc546f9308190/OpenApiServiceCollectionExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c17d2b1e3db71d9afd6dfa537fd4f12328d7dd49af7b8d7453422e177dfeaa/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d225eadf16f0e845b8a66571b5ba70636ac340ce9b75dd39e1e840c2d67d2089/ElasticsearchBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d6b757e154dd7f8c23e0e785431c97a76e4b9c6bdae38b978238421dbab55d/MethodBaseInvoker.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f1624f1823cc1b42dcde371e7e8a4fc2cde07d57b33ca65f2f06f6946b13cbc/Workflow.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f7cfd5de25e262753adc223a7a59a7803a2749ed63276b3b3cf29c1bc321b44/ITemporalClient.Workflow.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/obj/Debug/net9.0/Aspire/references/Processes_Saga_WebApi.ProjectMetadata.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///usr/local/share/dotnet/sdk/10.0.100-rc.2.25502.107/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -213,10 +195,10 @@
       <option name="ENV_FILE_PATHS" value="" />
       <option name="REDIRECT_INPUT_PATH" value="" />
       <option name="PTY_MODE" value="Auto" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
       <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -238,6 +220,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -253,6 +236,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -268,6 +252,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -283,6 +268,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -298,6 +284,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -313,6 +300,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -328,6 +316,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -343,6 +332,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -358,6 +348,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -373,6 +364,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -388,6 +380,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -403,6 +396,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -418,6 +412,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -433,6 +428,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -448,6 +444,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -463,6 +460,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -478,6 +476,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -493,6 +492,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -675,6 +675,10 @@
       <workItem from="1760284829639" duration="132000" />
       <workItem from="1761593598225" duration="1145000" />
       <workItem from="1761594976621" duration="8225000" />
+      <workItem from="1762723451797" duration="408000" />
+      <workItem from="1762723975638" duration="170000" />
+      <workItem from="1762778561048" duration="24000" />
+      <workItem from="1762778651382" duration="1903000" />
     </task>
     <servers />
   </component>

@@ -58,21 +58,33 @@ public static class Extensions
             })
             .WithTracing(tracing =>
             {
-                tracing.AddAspNetCoreInstrumentation()
-                    // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-                    //.AddGrpcClientInstrumentation()
+                tracing.AddAspNetCoreInstrumentation(x =>
+                    {
+                        x.Filter = (filter) => !filter.Request.Path.Value.Contains("swagger", StringComparison.OrdinalIgnoreCase);
+                        x.RecordException = true;
+                    })
                     .AddSource("Temporalio.Extensions.OpenTelemetry.Client",
                         "Temporalio.Extensions.OpenTelemetry.Workflow",
                         "Temporalio.Extensions.OpenTelemetry.Activity",
-                        "Temporalio.Extensions.OpenTelemetry.Nexus")
-                    .AddHttpClientInstrumentation();
+                        "Temporalio.Extensions.OpenTelemetry.Nexus",
+                        "MongoDB.Driver.Core.Extensions.DiagnosticSources",
+                        "Wolverine",
+                        "Npgsql",
+                        "Camunda.Client")
+                    .AddSqlClientInstrumentation(x =>
+                    {
+                        x.RecordException = true;
+                    })
+                    .AddGrpcClientInstrumentation()
+                    .AddHttpClientInstrumentation(x => x.RecordException = true);
             });
 
         builder.AddOpenTelemetryExporters();
 
         return builder;
     }
-
+    
+    
     private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);

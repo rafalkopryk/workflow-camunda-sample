@@ -7,9 +7,9 @@ var kafka = builder.AddKafka();
 var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
 var calculationsDatabase = databaseServer.AddDatabaseInstance("credit-calculations");
+var processesDatabase = databaseServer.AddDatabaseInstance("credit-processes");
 
-builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
-    //.WithHttpsEndpoint(63112, 8081, "public", isProxied: true)
+var application = builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase)
     .WithKafkaReference(kafka, "credit-applications").WaitFor(kafka);
 
@@ -20,9 +20,10 @@ builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
 
 builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)
-    .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase);
+    .WithDatabaseReference(processesDatabase).WaitFor(processesDatabase);
 
-builder.AddCreditFront();
+builder.AddCreditFront()
+    .WithReferenceRelationship(application);
 
 builder.Build().Run();
 
