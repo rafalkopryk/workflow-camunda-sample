@@ -62,7 +62,8 @@ public static class ProgramExtensions
     {
         var frontProvider = builder.GetParameter<string>("creditFrontProvider");
         return frontProvider == "react"
-            ? builder.AddNpmApp("credit-front-nextjs", "../../../Front/credit.front.next", "dev")
+            ? builder.AddJavaScriptApp("credit-front-nextjs", "../../../Front/credit.front.next")
+                .WithRunScript("dev")
                 .WithHttpEndpoint(env: "PORT", port: 3000)
                 .WithExternalHttpEndpoints()
             : builder.AddProject<Projects.Credit_Front_Blazor>("credit-front-blazor");
@@ -103,8 +104,8 @@ public static class ProgramExtensions
             .WithDataVolume("kafka")
             .WithLifetime(ContainerLifetime.Persistent);
 
-        var kafkaUiEnabled = builder.AddParameter("kafkaUiEnabled");
-        return kafkaUiEnabled.Resource.Value != bool.TrueString
+        var kafkaUiEnabled = builder.GetParameter<bool>("kafkaUiEnabled");
+        return !kafkaUiEnabled
             ? kafka
             : kafka.WithKafkaUI(x => x.WithLifetime(ContainerLifetime.Persistent));
     }
