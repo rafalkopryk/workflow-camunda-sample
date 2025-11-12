@@ -2,10 +2,13 @@
 
 internal static class ElasticsearchResourceExtensions
 {
-    public static ReferenceExpression GetConnectionStringExpressionWithoutCredentials(this ElasticsearchResource resource)
+    extension(ElasticsearchResource resource)
     {
-        ArgumentNullException.ThrowIfNull(resource);
-        return ReferenceExpression.Create(
-            $"http://{resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
+        public ReferenceExpression GetConnectionStringExpressionWithoutCredentials()
+        {
+            ArgumentNullException.ThrowIfNull(resource);
+            return ReferenceExpression.Create(
+                $"http://{resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
+        }
     }
 }

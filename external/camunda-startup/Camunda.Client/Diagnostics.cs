@@ -1,7 +1,6 @@
 ﻿namespace Camunda.Client;
 
 using Camunda.Client.Jobs;
-using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -52,7 +51,7 @@ internal static class Diagnostics
 
     public static void AddException(this Activity? activity, Exception ex)
     {
-        activity?.RecordException(ex);
+        activity?.AddException(ex);
         activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
     }
 }
