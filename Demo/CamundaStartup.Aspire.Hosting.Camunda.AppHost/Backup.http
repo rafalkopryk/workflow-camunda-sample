@@ -1,0 +1,29 @@
+@ORCHESTRATION_CLUSTER_MANAGEMENT_API = http://localhost:9600
+
+###
+
+POST {{ORCHESTRATION_CLUSTER_MANAGEMENT_API}}/actuator/exporting/pause?soft=true
+Content-Type: application/json
+
+###
+< {%
+    client.global.set("fixedTimestamp", Math.floor(Date.now() / 1000));
+%}
+
+POST {{ORCHESTRATION_CLUSTER_MANAGEMENT_API}}/actuator/backupRuntime
+Content-Type: application/json
+
+{
+  "backupId": {{fixedTimestamp}}
+}
+
+###
+
+GET {{ORCHESTRATION_CLUSTER_MANAGEMENT_API}}/actuator/backupRuntime/{{fixedTimestamp}}
+
+###
+
+POST {{ORCHESTRATION_CLUSTER_MANAGEMENT_API}}/actuator/exporting/resume
+Content-Type: application/json
+
+###

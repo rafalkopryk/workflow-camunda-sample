@@ -1,17 +1,18 @@
-﻿using Camunda.Client.Jobs;
+using Camunda.Orchestration.Sdk;
 using Camunda.Startup.DemoApp.Dtos;
+using Camunda.Client.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Camunda.Startup.DemoApp.Feature;
 
-[JobWorker(Type = "weather-forecast-retrieve:1")]
 public class RetrieveWeatherForecastJobHandler(IMemoryCache memoryCache) : IJobHandler
 {
-    public async Task Handle(IJobClient client, IJob job, CancellationToken cancellationToken)
+    public Task HandleAsync(ActivatedJob job, CancellationToken ct)
     {
-        var input = job.GetVariablesAsType<WeatherForecastState>();
+        var input = job.GetVariables<WeatherForecastState>();
 
-        string[] summaries = [
+        string[] summaries =
+        [
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         ];
 
@@ -23,8 +24,8 @@ public class RetrieveWeatherForecastJobHandler(IMemoryCache memoryCache) : IJobH
         );
 
         memoryCache.Set($"WeatherForecast-{input.RequestedDate:yyyy-MM-dd}", forecast, TimeSpan.FromMinutes(5));
-        
-        //await client.CompleteJobCommand(job);
+
+        return Task.CompletedTask;
     }
 }
 
