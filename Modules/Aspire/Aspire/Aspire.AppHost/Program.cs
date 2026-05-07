@@ -1,4 +1,4 @@
-using Aspire.AppHost;
+using Aspire;
 using CamundaStartup.Aspire.Hosting.Camunda;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -54,7 +54,9 @@ public static class ProgramExtensions
             var camunda = builder.UseCamunda();
             return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
                 .WithExternalHttpEndpoints()
-                .WithCamundaReference(camunda).WaitFor(camunda);
+                .WithReference(camunda)
+                .WithEnvironment("CAMUNDA_REST_ADDRESS", camunda)
+                .WaitFor(camunda);
         }
     }
 
@@ -112,29 +114,14 @@ public static class ProgramExtensions
 
     public static IResourceBuilder<CamundaResource> UseCamunda(this IDistributedApplicationBuilder builder)
     {
-        var elastic = builder.AddElasticsearch("elastic")
-            .WithEnvironment("xpack.security.enabled", "false")
-            .WithDataVolume("elastic")
-            .WithLifetime(ContainerLifetime.Persistent);
+        var h2Password = builder.AddParameter("h2Password", "", secret: true);
+        var h2JdbcUrl = ReferenceExpression.Create(
+            $"jdbc:h2:file:/usr/local/camunda/data/h2/camunda;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE");
 
-        var elasticConnectionString = ReferenceExpression.Create(
-            $"http://{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{elastic.Resource.PrimaryEndpoint.Property(EndpointProperty.Port)}");
-
-        var camunda = builder.AddCamunda("camunda", port: 8089, elasticConnectionString)
+        var camunda = builder.AddCamunda("camunda", 8080)
             .WithDataVolume("camunda")
-            .WithLifetime(ContainerLifetime.Persistent);
-
-        var kibanaEnabled = builder.GetParameter<bool>("kibanaEnabled");
-        if (kibanaEnabled)
-        {
-            var kibana = builder.AddResource(new ContainerResource("kibana"))
-                .WithHttpEndpoint(port: 5602, targetPort: 5601, "http")
-                .WithImage("kibana/kibana", "8.17.3")
-                .WithImageRegistry("docker.elastic.co")
-                .WithEnvironment("ELASTICSEARCH_HOSTS", elasticConnectionString)
-                .WithVolume("kibana", "/usr/share/kibana/data")
-                .WaitFor(elastic);
-        }
+            .WithLifetime(ContainerLifetime.Persistent)
+            .WithRdmbsDatabase(h2JdbcUrl, ReferenceExpression.Create($"sa"), h2Password.Resource);
 
         return camunda;
     }

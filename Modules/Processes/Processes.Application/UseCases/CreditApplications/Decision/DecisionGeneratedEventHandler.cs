@@ -1,18 +1,22 @@
-﻿using Camunda.Client;
-using Camunda.Client.Messages;
+using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Decision;
 
-[CamundaMessage(Name = "Message_DecisionGenerated")]
 [MessageIdentity("decisionGenerated", Version = 1)]
 public record DecisionGenerated(string ApplicationId, string Decision);
 
 [WolverineHandler]
-public class DecisionGeneratedEventHandler(IMessageClient messageClient)
+public class DecisionGeneratedEventHandler(CamundaClient camundaClient)
 {
     public async Task Handle(DecisionGenerated message)
     {
-        await messageClient.Publish(message.ApplicationId, message);
+        await camundaClient.PublishMessageAsync(new MessagePublicationRequest
+        {
+            Name = "Message_DecisionGenerated",
+            CorrelationKey = message.ApplicationId,
+            Variables = message,
+            MessageId = Guid.CreateVersion7().ToString(),
+        });
     }
 }

@@ -1,10 +1,11 @@
-﻿using Camunda.Client;
-using Camunda.Client.Jobs;
+using Camunda.Client.Extensions;
+using Camunda.Orchestration.Sdk;
 using Common.Application.Cqrs;
 using Common.Application.Extensions;
 using JasperFx.Resources;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Processes.Application.UseCases.CreditApplications.Close;
 using Processes.Application.UseCases.CreditApplications.CustomerVerification;
 using Processes.Application.UseCases.CreditApplications.Decision;
@@ -28,14 +29,32 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IBpmnProvider, PathFileProvider>();
         services.AddHostedService<DeployBPMNDefinitionService>();
 
-        var jobWorkerDefault = configuration.GetSection("Camunda:JobWorkers:Default").Get<JobWorkerConfiguration>();
-        services.AddCamunda(
-            options => configuration.GetSection("Camunda").Bind(options),
-            builder => builder
-                .AddWorker<SimulationJobHandler>(jobWorkerDefault!)
-                .AddWorker<DecisionJobHandler>(jobWorkerDefault!)
-                .AddWorker<CustomerVerificationJobHandler>(jobWorkerDefault!)
-                .AddWorker<CloseApplicationJobHandler>(jobWorkerDefault!));
+        services.AddCamundaClient();
+    }
+
+    public static IHost MapCreditJobWorkers(this IHost host)
+    {
+        host.CreateJobWorker<SimulationJobHandler>(new JobWorkerConfig
+        {
+            JobType = "credit-simulation:1",
+            JobTimeoutMs = 30_000,
+        });
+        host.CreateJobWorker<DecisionJobHandler>(new JobWorkerConfig
+        {
+            JobType = "credit-decision:1",
+            JobTimeoutMs = 30_000,
+        });
+        host.CreateJobWorker<CustomerVerificationJobHandler>(new JobWorkerConfig
+        {
+            JobType = "credit-customer-verification:1",
+            JobTimeoutMs = 30_000,
+        });
+        host.CreateJobWorker<CloseApplicationJobHandler>(new JobWorkerConfig
+        {
+            JobType = "credit-closeApplication:1",
+            JobTimeoutMs = 30_000,
+        });
+        return host;
     }
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
@@ -65,7 +84,7 @@ public static class ServiceCollectionExtensions
 
             opts.ListenToKafkaTopic("customer-verifications")
                 .ProcessInline().TelemetryEnabled(true);
-     
+
             opts.Services.AddResourceSetupOnStartup();
         }
         else

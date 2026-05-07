@@ -1,3 +1,4 @@
+using Camunda.Client.Extensions;
 using Common.Application.Extensions;
 using OpenTelemetry.Resources;
 using Processes.Application.Extensions;
@@ -17,10 +18,13 @@ builder.UseWolverine(opts => opts.ConfigureWolverine(builder.Configuration));
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
+builder.AddCamundaWorkers();
 
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.MapCreditJobWorkers();
 
 app.MapDefaultEndpoints();
 

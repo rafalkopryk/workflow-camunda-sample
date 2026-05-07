@@ -1,8 +1,7 @@
-using Camunda.Client;
-using Camunda.Client.Jobs;
-using Camunda.Client.Messages;
+using Camunda.Orchestration.Sdk;
 using Camunda.Startup.DemoApp.Dtos;
 using Camunda.Startup.DemoApp.Feature;
+using Camunda.Client.Extensions;
 using Camunda.Startup.DemoApp.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,25 +14,47 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddHostedService<DeployBPMNDefinitionService>();
 
-var jobWorkerDefault = new JobWorkerConfiguration();
-builder.Services.AddCamunda(
-    options =>
+builder.Services.AddCamundaClient(options =>
+{
+    options.Config = new()
     {
-        options.Endpoint = builder.Configuration.GetConnectionString("camunda");
-    },
-    builder => builder
-        .AddWorker<RetrieveWeatherForecastJobHandler>(jobWorkerDefault!));
+       ["CAMUNDA_REST_ADDRESS"] = builder.Configuration.GetConnectionString("camunda"),
+    };
+});
+
+builder.AddCamundaWorkers();
 
 var app = builder.Build();
+
+app.CreateJobWorker<RetrieveWeatherForecastJobHandler>(new JobWorkerConfig
+{
+    JobType = "weather-forecast-retrieve:1",
+    JobTimeoutMs = 30_000,
+    PollTimeoutMs = 10_000,
+    MaxConcurrentJobs = 2,
+});
+
+app.CreateJobWorker<SendNotificationJobHandler>(new JobWorkerConfig
+{
+    JobType = "send-notification:1",
+    JobTimeoutMs = 30_000,
+});
+
 
 app.MapDefaultEndpoints();
 
 app.MapOpenApi();
 app.UseHttpsRedirection();
 
-app.MapPost("/weatherforecast/{requestedDate}", async ([FromRoute] DateOnly requestedDate, IMessageClient messageClient) =>
-{
-    await messageClient.Publish(new WeatherForecastRequestReceived(requestedDate), Guid.NewGuid().ToString());
+app.MapPost("/weatherforecast/{requestedDate}", async ([FromRoute] DateOnly requestedDate, CamundaClient messageClient) =>
+    {
+        await messageClient.PublishMessageAsync(new MessagePublicationRequest
+        {
+            Name = "Message_WeatherForecastRequestReceived",
+            Variables = new WeatherForecastRequestReceived(requestedDate),
+            MessageId = Guid.CreateVersion7().ToString(),
+            TimeToLive = 60_000,
+        });
 
     return TypedResults.Accepted(string.Empty);
 })
@@ -49,5 +70,4 @@ app.MapGet("/weatherforecast/{requestedDate}", IResult ([FromRoute] DateOnly req
 
 app.Run();
 
-[CamundaMessage(Name = "Message_WeatherForecastRequestReceived", TimeToLiveInMs = 60_000)]
 public record WeatherForecastRequestReceived(DateOnly RequestedDate);

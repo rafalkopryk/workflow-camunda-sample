@@ -1,4 +1,4 @@
-﻿<Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+<Project Sdk="Aspire.AppHost.Sdk/13.3.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,18 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.JavaScript" />
     <PackageReference Include="Aspire.Hosting.Kafka" />
     <PackageReference Include="Aspire.Hosting.MongoDB" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="Aspire.Hosting.SqlServer" />
-    <PackageReference Include="Aspire.Hosting.Elasticsearch" />
     <PackageReference Include="InfinityFlow.Aspire.Temporal" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" IsAspireProjectResource="false"/>
+    <ProjectReference Include="..\..\..\..\external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\..\..\Applications\Applications.WebApi\Applications.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Calculations\Calculations.WebApi\Calculations.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Front\Credit.Front.Blazor\Credit.Front.Blazor\Credit.Front.Blazor.csproj" />

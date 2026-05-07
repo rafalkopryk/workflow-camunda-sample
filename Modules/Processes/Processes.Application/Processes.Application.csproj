@@ -5,7 +5,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
-    <ProjectReference Include="..\..\..\external\camunda-startup\Camunda.Client\Camunda.Client.csproj" />
+    <ProjectReference Include="..\..\..\external\camunda-startup\CamundaClient.Extensions\CamundaClient.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

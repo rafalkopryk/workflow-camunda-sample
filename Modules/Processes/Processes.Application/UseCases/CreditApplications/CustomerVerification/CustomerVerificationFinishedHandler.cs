@@ -1,16 +1,21 @@
-using Camunda.Client.Messages;
+using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
 
 [MessageIdentity("customerVerified", Version = 1)]
-[CamundaMessage(Name = "Message_CustomerVerified")]
 public record CustomerVerified(string ApplicationId, string CustomerVerificationStatus);
 
-public class CustomerVerificationFinishedHandler(IMessageClient messageClient)
+public class CustomerVerificationFinishedHandler(CamundaClient camundaClient)
 {
     public async Task Handle(CustomerVerified message, CancellationToken ct)
     {
-        await messageClient.Publish(message.ApplicationId, message);
+        await camundaClient.PublishMessageAsync(new MessagePublicationRequest
+        {
+            Name = "Message_CustomerVerified",
+            CorrelationKey = message.ApplicationId,
+            Variables = message,
+            MessageId = Guid.CreateVersion7().ToString(),
+        });
     }
 }

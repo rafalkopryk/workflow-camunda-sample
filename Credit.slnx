@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/Common/">
     <Project Path="Common/Common.Application/Common.Application.csproj" />
-    <Project Path="external\camunda-startup\Camunda.Client\Camunda.Client.csproj" Type="Classic C#" />
+    <Project Path="external/camunda-startup/CamundaClient.Extensions/CamundaClient.Extensions.csproj" />
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Applications/">
@@ -9,7 +9,7 @@
     <Project Path="Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" />
   </Folder>
   <Folder Name="/Modules/Aspire/">
-    <Project Path="external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" Type="Classic C#" />
+    <Project Path="external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" Type="C#" />
     <Project Path="Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
     <Project Path="Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" />
   </Folder>

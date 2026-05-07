@@ -1,16 +1,21 @@
-﻿using Camunda.Client.Messages;
+using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
 namespace Processes.Application.UseCases.CreditApplications.Simulation;
 
-[CamundaMessage(Name = "Message_SimulationFinished")]
 [MessageIdentity("simulationFinished", Version=1)]
 public record SimulationFinished(string ApplicationId, string SimulationStatus);
 
-public class SimulationFinishedEventHandler(IMessageClient messageClient)
+public class SimulationFinishedEventHandler(CamundaClient camundaClient)
 {
     public async Task Handle(SimulationFinished message)
     {
-        await messageClient.Publish(message.ApplicationId, message);
+        await camundaClient.PublishMessageAsync(new MessagePublicationRequest
+        {
+            Name = "Message_SimulationFinished",
+            CorrelationKey = message.ApplicationId,
+            Variables = message,
+            MessageId = Guid.CreateVersion7().ToString(),
+        });
     }
 }
