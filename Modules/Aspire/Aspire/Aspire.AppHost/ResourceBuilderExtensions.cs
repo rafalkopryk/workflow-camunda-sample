@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Aspire.Hosting.EntityFrameworkCore;
+using Npgsql;
 
 public static class ResourceBuilderExtensions
 {
@@ -44,5 +45,35 @@ public static class ResourceBuilderExtensions
             IResourceBuilder<PostgresDatabaseResource> postgresResource => WithPostgresReference(builder, postgresResource),
             _ => throw new NotSupportedException("Not supported database"),
         };
+    }
+}
+
+public static class EFMigrationsExtensions
+{
+    public static IResourceBuilder<ProjectResource> WithEFMigrations(
+        this IResourceBuilder<ProjectResource> project,
+        string migrationResourceName,
+        string baseDbContextTypeName,
+        IResourceBuilder<IResource> database,
+        string databaseProvider)
+    {
+        // EF migrations don't apply to MongoDB (no migrations) or Cosmos (uses EnsureCreated).
+        if (string.Equals(databaseProvider, "mongodb", StringComparison.OrdinalIgnoreCase))
+            return project;
+
+        // Pick the design-time-only DbContext subclass matching the active provider so
+        // dotnet-ef loads the correct per-provider migration track.
+        var dbContextTypeName = databaseProvider switch
+        {
+            "postgres" => $"{baseDbContextTypeName}Postgres",
+            _          => $"{baseDbContextTypeName}SqlServer",
+        };
+
+        var migrations = project
+            .AddEFMigrations(migrationResourceName, dbContextTypeName)
+            .WaitFor(database)
+            .RunDatabaseUpdateOnStart();
+
+        return project.WaitForCompletion(migrations);
     }
 }

@@ -94,14 +94,12 @@ public static class ServiceCollectionExtensions
 
     public static async Task ConfigureApplication(this IHost host)
     {
-        using var scope = host.Services.CreateScope();
-        var serviceProvider = scope.ServiceProvider;
+        var configuration = host.Services.GetRequiredService<IConfiguration>();
+        if (!configuration.IsMongoDb() && !configuration.IsCosmosDb())
+            return;
 
-        var context = serviceProvider.GetRequiredService<CreditApplicationDbContext>();
-        //if (context.Database.GetPendingMigrations().Any())
-        //{
-        //    context.Database.Migrate();
-        //}
+        using var scope = host.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<CreditApplicationDbContext>();
         await context.Database.EnsureCreatedAsync();
     }
 }

@@ -4,6 +4,7 @@ using CamundaStartup.Aspire.Hosting.Camunda;
 var builder = DistributedApplication.CreateBuilder(args);
 
 var kafka = builder.AddKafka();
+var databaseProvider = builder.GetParameter<string>("databaseProvider");
 var databaseServer = builder.AddDatabaseServer();
 var applicationDatabase = databaseServer.AddDatabaseInstance("credit-applications");
 var calculationsDatabase = databaseServer.AddDatabaseInstance("credit-calculations");
@@ -11,12 +12,22 @@ var processesDatabase = databaseServer.AddDatabaseInstance("credit-processes");
 
 var application = builder.AddProject<Projects.Applications_WebApi>("applications-webapi")
     .WithDatabaseReference(applicationDatabase).WaitFor(applicationDatabase)
-    .WithKafkaReference(kafka, "credit-applications").WaitFor(kafka);
+    .WithKafkaReference(kafka, "credit-applications").WaitFor(kafka)
+    .WithEFMigrations(
+        "applications-migrations",
+        "Applications.WebApi.CreditApplicationDbContext",
+        applicationDatabase,
+        databaseProvider);
 
 builder.AddProject<Projects.Calculations_WebApi>("calculations-webapi")
     .WithExternalHttpEndpoints()
     .WithDatabaseReference(calculationsDatabase).WaitFor(calculationsDatabase)
-    .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka);
+    .WithKafkaReference(kafka, "credit-calculations").WaitFor(kafka)
+    .WithEFMigrations(
+        "calculations-migrations",
+        "Calculations.WebApi.CreditCalculationDbContext",
+        calculationsDatabase,
+        databaseProvider);
 
 builder.AddProcess()
     .WithKafkaReference(kafka, "credit-processes").WaitFor(kafka)

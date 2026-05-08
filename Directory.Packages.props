@@ -1,6 +1,7 @@
 <Project>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.Elasticsearch" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.3.0-preview.1.26256.5" />
     <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.3.0" />
     <PackageVersion Include="Aspire.Hosting.Kafka" Version="13.3.0" />
     <PackageVersion Include="Aspire.Hosting.MongoDB" Version="13.3.0" />

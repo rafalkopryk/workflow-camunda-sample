@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Calculations.WebApi.Migrations
+namespace Calculations.WebApi.Migrations.SqlServer
 {
     /// <inheritdoc />
     public partial class Init : Migration

@@ -37,33 +37,16 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="d849f32d-02fc-4f1a-ab70-9ee983bf8e8d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Credit/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Common/Common.Application/Common.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Common.Application/Common.Application.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Common/Common.Application/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Common.Application/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Applications/Applications.WebApi/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.ServiceDefaults/Extensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Calculations/Calculations.WebApi/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Processes.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Application/Processes.Application.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.Temporal.WebApi/Processes.Temporal.WebApi.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Processes/Processes.WebApi/Processes.WebApi.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/Camunda.Client.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/Camunda.Client/TracerProviderBuilderExtensions.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/external/camunda-startup/CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +56,9 @@
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
   </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -81,6 +67,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -96,12 +87,22 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/aspire.config.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/external/camunda-startup/CamundaClient.Extensions/IJobHandler.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/external/camunda-startup/Demo/Camunda.Startup.DemoApp/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/external/camunda-startup/Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/appsettings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/external/camunda-startup/aspire.config.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/local/share/dotnet/sdk/10.0.100-rc.2.25502.107/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="Toolset" />
@@ -115,27 +116,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Aspire Host.Aspire.AppHost: http.executor&quot;: &quot;Debug&quot;,
-    &quot;Aspire Host.Aspire.AppHost: https.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Debug&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Aspire Host.Aspire.AppHost: http.executor": "Debug",
+    "Aspire Host.Aspire.AppHost: https.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "git.auto.fetch.suggestion.counter": "1",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.dev.executor": "Debug",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\rafal\\source\\repos\\workflow-camunda-sample1\\Modules\\Front\\credit.front.next\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Aspire Host.Aspire.AppHost: https">
+}]]></component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.Processes.Temporal.WebApi: http">
     <configuration name="Aspire.AppHost: http" type="AspireHostConfiguration" factoryName="Aspire Host" activateToolWindowBeforeRun="false">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
       <option name="PROJECT_TFM" value="net9.0" />
@@ -636,8 +638,8 @@
       <item itemvalue=".NET Launch Settings Profile.Processes.WebApi: http" />
       <item itemvalue=".NET Launch Settings Profile.Processes.WebApi: https" />
       <item itemvalue=".NET Project.Credit.Front.Blazor.Client" />
-      <item itemvalue="Aspire Host.Aspire.AppHost: http" />
-      <item itemvalue="Aspire Host.Aspire.AppHost: https" />
+      <item itemvalue="Aspire.Aspire.AppHost: http" />
+      <item itemvalue="Aspire.Aspire.AppHost: https" />
       <item itemvalue="Docker.Applications.WebApi/Dockerfile" />
       <item itemvalue="Docker.Calculations.WebApi/Dockerfile" />
       <item itemvalue="Docker.CreditProcessFunctions/Dockerfile" />
@@ -677,7 +679,17 @@
       <workItem from="1762723975638" duration="170000" />
       <workItem from="1762778561048" duration="24000" />
       <workItem from="1762778651382" duration="1903000" />
+      <workItem from="1778183384294" duration="4377000" />
     </task>
+    <task id="LOCAL-00001">
+      <option name="closed" value="true" />
+      <created>1778189616936</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778189616936</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -690,7 +702,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="camunda-startup/master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
