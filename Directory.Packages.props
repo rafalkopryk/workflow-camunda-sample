@@ -49,7 +49,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.15.2" />
     <PackageVersion Include="Confluent.Kafka" Version="2.3.0" />
     <PackageVersion Include="NEST" Version="7.17.5" />
-    <PackageVersion Include="MudBlazor" Version="8.14.0" />
+    <PackageVersion Include="MudBlazor" Version="9.4.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.3.0">
       <PrivateAssets>all</PrivateAssets>
