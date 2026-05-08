@@ -363,3 +363,9 @@ MigrationBackup/
 FodyWeavers.xsd
 .env
 /Common/Common.Application/Result.cs
+
+# macOS metadata
+.DS_Store
+
+# Stray Next.js build artifact created on Windows (literal backslash in dir name)
+obj\\Debug/
