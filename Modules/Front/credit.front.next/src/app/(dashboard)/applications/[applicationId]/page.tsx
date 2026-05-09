@@ -1,14 +1,18 @@
 ﻿"use client"
 
 import { Card, CardContent } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import MuiLink from '@mui/material/Link';
+import Link from 'next/link';
 import { WithCreditParams, WithCreditApplicationState } from '../(dto)/creditApplicationDto';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { delay } from '../../../../../libs/delay';
 import { CancelApplicationButton, SignContractButton } from '../(components)/buttons';
 import { CreditParamsContent, CreditStatusContent } from '../(components)/contents';
-import { PageContainer } from '@toolpad/core';
 
 type CreditApplicationDto = WithCreditParams & WithCreditApplicationState;
 
@@ -26,12 +30,14 @@ export default function ApplicationDetailsPage() {
     }
 
     const title = `ApplicationId: ${applicationId}`;
-    const breadcrumbs = [
-        { title: "Applications", path: "/" },
-        { title: applicationId!.toString(), path: `applications/${applicationId}` }];
 
     return (
-        <PageContainer title={title} breadcrumbs={breadcrumbs}>
+        <Stack spacing={2}>
+            <Breadcrumbs>
+                <MuiLink component={Link} href="/" underline="hover" color="inherit">Applications</MuiLink>
+                <Typography color="text.primary">{applicationId!.toString()}</Typography>
+            </Breadcrumbs>
+            <Typography variant="h4" component="h1">{title}</Typography>
             <Card>
                 <CardContent>
                     <Grid container spacing={2}>
@@ -43,7 +49,7 @@ export default function ApplicationDetailsPage() {
                     </Grid>
                 </CardContent>
             </Card>
-        </PageContainer>
+        </Stack>
     );
 
     async function runLongPooling(){

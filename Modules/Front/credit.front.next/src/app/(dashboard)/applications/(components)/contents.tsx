@@ -1,7 +1,7 @@
 "use client"
 
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { WithCreditApplicationState, WithCreditParams, WithCustomerPersonal, WithDeclerations } from "../(dto)/creditApplicationDto";
 import { Dispatch } from "react";
 import AttachMoney from '@mui/icons-material/AttachMoney';

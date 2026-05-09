@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Card, CardContent, MenuItem } from '@mui/material';
 
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 import { useRouter } from 'next/navigation';
 import { v7 as uuidv7 } from "uuid";
