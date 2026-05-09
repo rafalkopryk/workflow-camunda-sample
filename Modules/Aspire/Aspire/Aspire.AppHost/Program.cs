@@ -74,12 +74,12 @@ public static class ProgramExtensions
     public static IResourceBuilder<IResource> AddCreditFront(this IDistributedApplicationBuilder builder)
     {
         var frontProvider = builder.GetParameter<string>("creditFrontProvider");
+#pragma warning disable ASPIREJAVASCRIPT001
         return frontProvider == "react"
-            ? builder.AddJavaScriptApp("credit-front-nextjs", "../../../Front/credit.front.next")
-                .WithRunScript("dev")
-                .WithHttpEndpoint(env: "PORT", port: 3000)
+            ? builder.AddNextJsApp("credit-front-nextjs", "../../../Front/credit.front.next")
                 .WithExternalHttpEndpoints()
             : builder.AddProject<Projects.Credit_Front_Blazor>("credit-front-blazor");
+#pragma warning restore ASPIREJAVASCRIPT001
     }
 
     public static IResourceBuilder<IResource> AddDatabaseServer(this IDistributedApplicationBuilder builder)
