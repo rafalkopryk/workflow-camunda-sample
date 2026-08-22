@@ -9,7 +9,7 @@
     <Project Path="Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" />
   </Folder>
   <Folder Name="/Modules/Aspire/">
-    <Project Path="external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" Type="C#" />
+    <Project Path="external\camunda-startup\CamundaStartup.Aspire.Hosting.Camunda\CamundaStartup.Aspire.Hosting.Camunda.csproj" />
     <Project Path="Modules/Aspire/Aspire/Aspire.AppHost/Aspire.AppHost.csproj" />
     <Project Path="Modules/Aspire/Aspire/Aspire.ServiceDefaults/Aspire.ServiceDefaults.csproj" />
   </Folder>
@@ -21,9 +21,6 @@
     <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor.Client/Credit.Front.Blazor.Client.csproj" />
     <Project Path="Modules/Front/Credit.Front.Blazor/Credit.Front.Blazor/Credit.Front.Blazor.csproj" />
     <Project Path="Modules/Front/credit.front.next/credit.front.next.esproj" />
-  </Folder>
-  <Folder Name="/Modules/Functions/">
-    <Project Path="Modules/Functions/CreditProcessFunctions/CreditProcessFunctions.csproj" />
   </Folder>
   <Folder Name="/Modules/Processes/">
     <Project Path="Modules/Processes/Processes.Application/Processes.Application.csproj" />

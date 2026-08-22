@@ -1,10 +1,10 @@
-﻿using JasperFx.Resources;
+﻿using Calculations.Application.Features.CustomerVerificationCommand;
+using Calculations.Application.Features.SimulateCreditCommand;
+using JasperFx.Resources;
 
 namespace Calculations.Application.Extensions;
 
 using Calculations.Application.Infrastructure.Database;
-using Calculations.Application.UseCases.SimulateCreditCommand;
-using Calculations.Application.UseCases.VerifyCustomerCommand;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

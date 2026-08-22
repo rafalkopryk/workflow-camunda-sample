@@ -95,6 +95,7 @@ public static class ProgramExtensions
                 .WithDataVolume("mongo")
                 .WithLifetime(ContainerLifetime.Persistent),
             _ => builder.AddSqlServer("SqlServer", databasePassword, 62448)
+                .WithImageTag("2025-latest")
                 .WithDataVolume("sqlserver")
                 .WithLifetime(ContainerLifetime.Persistent),
         };

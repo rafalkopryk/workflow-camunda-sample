@@ -1,17 +1,17 @@
-﻿using JasperFx.Resources;
+﻿using Applications.Application.Features.CloseApplication;
+using Applications.Application.Features.RegisterApplication;
+using Applications.Application.Features.SetDecision;
+using Applications.Application.Features.SignContract;
+using JasperFx.Resources;
 
 namespace Applications.Application.Extensions;
 
 using Applications.Application.Infrastructure.Database;
-using Applications.Application.UseCases.CloseApplication;
-using Applications.Application.UseCases.SetDecision;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Common.Application.Extensions;
-using Applications.Application.UseCases.RegisterApplication;
-using Applications.Application.UseCases.SignContract;
 using Wolverine;
 using Wolverine.Kafka;
 using MongoDB.Driver;
@@ -42,7 +42,9 @@ public static class ServiceCollectionExtensions
         }
         else
         {
-            services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseSqlServer(configuration.GetSqlConnectionString(), b => b.MigrationsAssembly("Applications.WebApi")));
+            services.AddDbContextPool<CreditApplicationDbContext>(options => options.UseSqlServer(
+                configuration.GetSqlConnectionString(),
+                b => b.MigrationsAssembly("Applications.WebApi").UseCompatibilityLevel(170)));
         }
         
         services.RegisterHandlersFromAssemblies(typeof(ServiceCollectionExtensions).Assembly);

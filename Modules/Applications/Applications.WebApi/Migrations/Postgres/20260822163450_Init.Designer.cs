@@ -4,35 +4,38 @@ using System.Collections.Generic;
 using Applications.WebApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Applications.WebApi.Migrations.SqlServer
+namespace Applications.WebApi.Migrations.Postgres
 {
-    [DbContext(typeof(CreditApplicationDbContextSqlServer))]
-    partial class CreditApplicationDbContextSqlServerModelSnapshot : ModelSnapshot
+    [DbContext(typeof(CreditApplicationDbContextPostgres))]
+    [Migration("20260822163450_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Applications.Application.Domain.Application.CreditApplication", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("CreditPeriodInMonths")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CustomerPersonalData", "Applications.Application.Domain.Application.CreditApplication.CustomerPersonalData#CustomerPersonalData", b1 =>
                         {
@@ -49,7 +52,7 @@ namespace Applications.WebApi.Migrations.SqlServer
 
                             b1
                                 .ToJson("CustomerPersonalData")
-                                .HasColumnType("json");
+                                .HasColumnType("jsonb");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Declaration", "Applications.Application.Domain.Application.CreditApplication.Declaration#Declaration", b1 =>
@@ -60,7 +63,7 @@ namespace Applications.WebApi.Migrations.SqlServer
 
                             b1
                                 .ToJson("Declaration")
-                                .HasColumnType("json");
+                                .HasColumnType("jsonb");
                         });
 
                     b.ComplexCollection(typeof(List<Dictionary<string, object>>), "States", "Applications.Application.Domain.Application.CreditApplication.States#ApplicationState", b1 =>
@@ -75,7 +78,7 @@ namespace Applications.WebApi.Migrations.SqlServer
 
                             b1
                                 .ToJson("States")
-                                .HasColumnType("json");
+                                .HasColumnType("jsonb");
                         });
 
                     b.HasKey("Id");

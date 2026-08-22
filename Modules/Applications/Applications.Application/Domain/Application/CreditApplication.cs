@@ -1,16 +1,15 @@
-﻿using System.Collections.Immutable;
-using Common.Application.Dictionary;
+﻿using Common.Application.Dictionary;
 
 namespace Applications.Application.Domain.Application;
 
 public class CreditApplication
 {
-    public string Id { get; protected set; }
-    public decimal Amount { get; protected set; }
-    public int CreditPeriodInMonths { get; protected set; }
-    public ApplicationStates States { get; protected set; }
-    public CustomerPersonalData CustomerPersonalData { get; protected set; }
-    public Declaration Declaration { get; protected set; }
+    public string Id { get; protected init; }
+    public decimal Amount { get; protected init; }
+    public int CreditPeriodInMonths { get; protected init; }
+    public List<ApplicationState> States { get; protected set; }
+    public CustomerPersonalData CustomerPersonalData { get; protected init; }
+    public Declaration Declaration { get; protected init; }
 
     protected CreditApplication() { }
 
@@ -29,25 +28,25 @@ public class CreditApplication
             CreditPeriodInMonths = creditPeriodInMonths,
             CustomerPersonalData = customerPersonalData,
             Declaration = declaration,
-            States = new ApplicationStates(
+            States = 
             [
-                new ApplicationState.ApplicationRegistered(timeProvider.GetLocalNow())
-            ]),
+                ApplicationState.ApplicationRegistered(timeProvider.GetLocalNow())
+            ],
         };
     }
 
     public void GenerateDecision(Decision decision, TimeProvider timeProvider)
     {
-        States = States.Append(new ApplicationState.DecisionGenerated(timeProvider.GetLocalNow(), decision));
+        States = States.Append(ApplicationState.DecisionGenerated(timeProvider.GetLocalNow(), decision));
     }
 
     public void SignContract(TimeProvider timeProvider)
     {
-        States = States.Append(new ApplicationState.ContractSigned(timeProvider.GetLocalNow()));
+        States = States.Append(ApplicationState.ContractSigned(timeProvider.GetLocalNow()));
     }
 
     public void CloseApplication(TimeProvider timeProvider)
     {
-        States = States.Append(new ApplicationState.ApplicationClosed(timeProvider.GetLocalNow(), States.Current.Decision));
+        States = States.Append(ApplicationState.ApplicationClosed(timeProvider.GetLocalNow(), States.Current.Decision));
     }
 }

@@ -1,8 +1,8 @@
 using Applications.Application.Extensions;
-using Applications.Application.UseCases.CancelApplication;
-using Applications.Application.UseCases.GetApplication;
-using Applications.Application.UseCases.RegisterApplication;
-using Applications.Application.UseCases.SignContract;
+using Applications.Application.Features.CancelApplication;
+using Applications.Application.Features.GetApplication;
+using Applications.Application.Features.RegisterApplication;
+using Applications.Application.Features.SignContract;
 using Common.Application.Cqrs;
 using Common.Application.Extensions;
 using Wolverine;

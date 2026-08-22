@@ -17,7 +17,9 @@ public class CreditApplicationDbContextSqlServer : CreditApplicationDbContext
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Default")
                 ?? "Server=localhost;Database=design;User Id=design;Password=design;TrustServerCertificate=True";
             var options = new DbContextOptionsBuilder<CreditApplicationDbContext>()
-                .UseSqlServer(connectionString, b => b.MigrationsAssembly("Applications.WebApi"))
+                .UseSqlServer(connectionString, b => b
+                    .MigrationsAssembly("Applications.WebApi")
+                    .UseCompatibilityLevel(170))
                 .Options;
             return new CreditApplicationDbContextSqlServer(options);
         }
