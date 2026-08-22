@@ -59,6 +59,8 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
+        opts.UseRuntimeCompilation();
+
         if (configuration.IsKafka())
         {
             opts.UseKafka(configuration.GetkafkaConnectionString())

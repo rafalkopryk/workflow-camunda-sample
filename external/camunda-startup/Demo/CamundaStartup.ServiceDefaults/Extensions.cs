@@ -67,8 +67,6 @@ namespace Microsoft.Extensions.Hosting
                                 !context.Request.Path.StartsWithSegments(HealthEndpointPath)
                                 && !context.Request.Path.StartsWithSegments(AlivenessEndpointPath)
                         )
-                        // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-                        //.AddGrpcClientInstrumentation()
                         .AddHttpClientInstrumentation()
                         .AddSource("Camunda.Client")
                         .AddSource("Camunda.Client.Extensions");
@@ -87,13 +85,6 @@ namespace Microsoft.Extensions.Hosting
             {
                 builder.Services.AddOpenTelemetry().UseOtlpExporter();
             }
-
-            // Uncomment the following lines to enable the Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
-            //if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
-            //{
-            //    builder.Services.AddOpenTelemetry()
-            //       .UseAzureMonitor();
-            //}
 
             return builder;
         }

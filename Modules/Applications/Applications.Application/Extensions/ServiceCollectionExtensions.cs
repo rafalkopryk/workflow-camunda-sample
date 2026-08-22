@@ -50,6 +50,9 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
+        opts.UseRuntimeCompilation();
+        opts.CodeGeneration.AlwaysUseServiceLocationFor<CreditApplicationDbContext>();
+
         if (configuration.IsKafka())
         {
             opts.UseKafka(configuration.GetkafkaConnectionString())
@@ -103,4 +106,3 @@ public static class ServiceCollectionExtensions
         await context.Database.EnsureCreatedAsync();
     }
 }
-

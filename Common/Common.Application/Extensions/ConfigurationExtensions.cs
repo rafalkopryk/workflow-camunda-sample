@@ -88,16 +88,6 @@ public static class ConfigurationExtensions
         return config;
     }
 
-    public static bool UseAzureMonitor(this IConfiguration configuration)
-    {
-        return configuration.GetValue<bool>("OTEL_EXPORTER_AZUREMONITOR__ENABLED");
-    }
-
-    public static string GetAzureMonitorEndpoint(this IConfiguration configuration)
-    {
-        return configuration.GetValue<string>("OTEL_EXPORTER_OTLP_ENDPOINT");
-    }
-
     public static bool UseOtlpExporter(this IConfiguration configuration)
     {
         return configuration.GetValue<bool>("OTEL_EXPORTER_OTLP_ENABLED");

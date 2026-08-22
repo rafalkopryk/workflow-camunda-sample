@@ -4,8 +4,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
-    <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
@@ -26,6 +24,7 @@
 	<PackageReference Include="MongoDB.EntityFrameworkCore" />
 	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	<PackageReference Include="WolverineFx" />
+	<PackageReference Include="WolverineFx.RuntimeCompilation" />
 	<PackageReference Include="WolverineFx.AzureServiceBus" />
 	<PackageReference Include="WolverineFx.Kafka" />
   </ItemGroup>

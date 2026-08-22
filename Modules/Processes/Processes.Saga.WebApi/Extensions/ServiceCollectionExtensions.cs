@@ -19,6 +19,8 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
+        opts.UseRuntimeCompilation();
+
         //opts.AddSagaType<CreditApplicationFast>();
         opts.AddSagaType<CreditApplication>();
 
