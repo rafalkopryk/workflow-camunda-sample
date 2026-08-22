@@ -31,6 +31,10 @@ public static class CamundaBuilderExtensions
             .WithEnvironment("CAMUNDA_SECURITY_INITIALIZATION_DEFAULTROLES_ADMIN_USERS[0]", "demo")
             
             .WithEnvironment("CAMUNDA_DATA_SECONDARYSTORAGE_TYPE", "none")
+            .WithEnvironment("ZEEBE_LOG_APPENDER", "Stackdriver")
+            .WithEnvironment("OPERATE_LOG_APPENDER", "Stackdriver")
+            .WithEnvironment("TASKLIST_LOG_APPENDER", "Stackdriver")
+            .WithEnvironment("IDENTITY_LOG_APPENDER", "Stackdriver")
             .WithHttpHealthCheck("actuator/health/readiness", 200, "internal");
     }
 
@@ -40,10 +44,10 @@ public static class CamundaBuilderExtensions
 
         builder.Resource.CamundaDatabaseConnectionStringExpression = elasticConnectionString;
 
-        builder.WithEnvironment("CAMUNDA_DATABASE_INDEX_NUMBEROFREPLICAS", "0");
         builder.WithEnvironment("CAMUNDA_DATA_SECONDARYSTORAGE_TYPE", "elasticsearch");
         builder.WithEnvironment("CAMUNDA_DATA_SECONDARYSTORAGE_ELASTICSEARCH_CLUSTERNAME", "elasticsearch");
         builder.WithEnvironment("CAMUNDA_DATA_SECONDARYSTORAGE_ELASTICSEARCH_URL", builder.Resource.CamundaDatabaseConnectionStringExpression);
+        builder.WithEnvironment("CAMUNDA_DATA_SECONDARYSTORAGE_ELASTICSEARCH_NUMBEROFREPLICAS", "0");
         
         return builder;
     }
