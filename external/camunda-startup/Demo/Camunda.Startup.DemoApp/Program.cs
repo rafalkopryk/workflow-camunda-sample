@@ -31,15 +31,18 @@ app.CreateJobWorker<RetrieveWeatherForecastJobHandler>(new JobWorkerConfig
     JobType = "weather-forecast-retrieve:1",
     JobTimeoutMs = 30_000,
     PollTimeoutMs = 10_000,
-    MaxConcurrentJobs = 2,
+    MaxConcurrentJobs = 4,
+    PollIntervalMs = 250,
 });
 
 app.CreateJobWorker<SendNotificationJobHandler>(new JobWorkerConfig
 {
     JobType = "send-notification:1",
     JobTimeoutMs = 30_000,
+    PollTimeoutMs = 10_000,
+    MaxConcurrentJobs = 4,
+    PollIntervalMs = 250,
 });
-
 
 app.MapDefaultEndpoints();
 

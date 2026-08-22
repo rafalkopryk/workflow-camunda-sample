@@ -140,12 +140,3 @@ var camunda = builder.AddCamunda("camunda", 8080)
         secretKey: secretKey.Resource,
         bucketName: "camunda-backup");
 ```
-
-## Connection strings
-
-`WithReference(camunda)` injects both REST and gRPC connection strings into the referencing project:
-
-| Connection string name | Format |
-|------------------------|--------|
-| `camunda` | `http://{host}:{port}/v2/` (REST) |
-| `camunda__grpc` | `http://{host}:{port}` (gRPC) |

@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Demo/">
+    <Project Path="Demo/Camunda.Startup.DemoApp/Camunda.Startup.DemoApp.csproj" />
+    <Project Path="Demo/CamundaStartup.Aspire.Hosting.Camunda.AppHost/CamundaStartup.Aspire.Hosting.Camunda.AppHost.csproj" />
+    <Project Path="Demo/CamundaStartup.ServiceDefaults/CamundaStartup.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="CLAUDE.md" />
+    <File Path="README.md" />
+    <File Path="Scripts/weatherforecast-load.cs" />
+  </Folder>
+  <Project Path="CamundaClient.Extensions/CamundaClient.Extensions.csproj" />
+  <Project Path="CamundaStartup.Aspire.Hosting.Camunda/CamundaStartup.Aspire.Hosting.Camunda.csproj" />
+</Solution>
