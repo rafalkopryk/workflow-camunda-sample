@@ -1,4 +1,3 @@
-using Aspire;
 using CamundaStartup.Aspire.Hosting.Camunda;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -63,7 +62,7 @@ public static class ProgramExtensions
         IResourceBuilder<ProjectResource>  AddProcessesCamundaWebApi()
         {
             var camunda = builder.UseCamunda();
-            return builder.AddProject<Projects.Processes_WebApi>("processes-webapi")
+            return builder.AddProject<Projects.Processes_Camunda_WebApi>("processes-camunda-webapi")
                 .WithExternalHttpEndpoints()
                 .WithReference(camunda)
                 .WithEnvironment("CAMUNDA_REST_ADDRESS", camunda)

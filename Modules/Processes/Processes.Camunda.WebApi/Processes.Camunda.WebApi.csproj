@@ -5,12 +5,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-	<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\Processes.Application\Processes.Application.csproj" />
+    <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
+    <ProjectReference Include="..\..\..\external\camunda-startup\CamundaClient.Extensions\CamundaClient.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
