@@ -24,7 +24,10 @@ internal sealed class SimulationTaskWorker(IWolverineRuntime runtime) : IWorkflo
 
     public string TaskType => CreditApplicationConductorNames.SimulationTask;
 
-    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new();
+    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new()
+    {
+        PollInterval = TimeSpan.FromMilliseconds(500),
+    };
 
     public async System.Threading.Tasks.Task<TaskResult> Execute(
         ConductorTask task,

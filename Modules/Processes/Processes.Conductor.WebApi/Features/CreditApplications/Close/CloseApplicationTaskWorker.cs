@@ -20,7 +20,10 @@ internal sealed class CloseApplicationTaskWorker(IWolverineRuntime runtime) : IW
 
     public string TaskType => CreditApplicationConductorNames.CloseApplicationTask;
 
-    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new();
+    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new()
+    {
+        PollInterval = TimeSpan.FromMilliseconds(500),
+    };
 
     public async System.Threading.Tasks.Task<TaskResult> Execute(
         ConductorTask task,

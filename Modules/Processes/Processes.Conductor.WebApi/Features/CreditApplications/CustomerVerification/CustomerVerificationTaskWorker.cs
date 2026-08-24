@@ -20,7 +20,10 @@ internal sealed class CustomerVerificationTaskWorker(IWolverineRuntime runtime) 
 
     public string TaskType => CreditApplicationConductorNames.CustomerVerificationTask;
 
-    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new();
+    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new()
+    {
+        PollInterval = TimeSpan.FromMilliseconds(500),
+    };
 
     public async Task<TaskResult> Execute(
         ConductorTask task,

@@ -20,7 +20,10 @@ internal sealed class DecisionTaskWorker(IWolverineRuntime runtime) : IWorkflowT
 
     public string TaskType => CreditApplicationConductorNames.DecisionTask;
 
-    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new();
+    public WorkflowTaskExecutorConfiguration WorkerSettings { get; } = new()
+    {
+        PollInterval = TimeSpan.FromMilliseconds(500),
+    };
 
     public async System.Threading.Tasks.Task<TaskResult> Execute(
         ConductorTask task,
