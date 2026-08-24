@@ -1,0 +1,13 @@
+namespace Processes.Conductor.WebApi.Domain.CreditApplications;
+
+public sealed record CreditProcessInstance
+{
+    public required string ApplicationId { get; init; }
+    public string? DocumentId { get; init; }
+    public decimal Amount { get; init; }
+    public int CreditPeriodInMonths { get; init; }
+    public decimal AverageNetMonthlyIncome { get; init; }
+    public string? CustomerVerificationStatus { get; init; }
+    public string? SimulationStatus { get; init; }
+    public string? Decision { get; init; }
+}

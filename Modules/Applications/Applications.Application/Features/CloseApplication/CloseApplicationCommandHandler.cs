@@ -1,4 +1,5 @@
 ﻿using Applications.Application.Infrastructure.Database;
+using Common.Application.Dictionary;
 using Wolverine;
 using Wolverine.Attributes;
 
@@ -19,7 +20,9 @@ public class CloseApplicationCommandHandler(
 
         await creditApplicationDbContext.SaveChangesAsync();
 
-        await eventBusProducer.PublishAsync(new ApplicationClosed(notification.ApplicationId), new DeliveryOptions
+        await eventBusProducer.PublishAsync(new ApplicationClosed(
+            notification.ApplicationId,
+            ApplicationCloseReason.NegativeDecision), new DeliveryOptions
         {
             PartitionKey = creditApplication.Id
         });
@@ -27,4 +30,4 @@ public class CloseApplicationCommandHandler(
 }
 
 [MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed(string ApplicationId);
+public record ApplicationClosed(string ApplicationId, ApplicationCloseReason Reason);

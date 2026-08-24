@@ -45,6 +45,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.18.0" />
     <PackageVersion Include="Confluent.Kafka" Version="2.3.0" />
+    <PackageVersion Include="conductor-csharp" Version="3.0.0" />
     <PackageVersion Include="NEST" Version="7.17.5" />
     <PackageVersion Include="MudBlazor" Version="9.8.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />

@@ -44,11 +44,26 @@ public static class ProgramExtensions
         var processProvider = builder.GetParameter<string>("processProvider");
         return processProvider switch
         {
+            "conductor" => AddProcessesConductorWebApi(),
             "temporal" => AddProcessesTemporalWebApi(),
             "saga" => builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
                 .WithExternalHttpEndpoints(),
             _ => AddProcessesCamundaWebApi(),
         };
+
+        IResourceBuilder<ProjectResource> AddProcessesConductorWebApi()
+        {
+            var conductor = builder.AddContainer("conductor", "conductoross/conductor", "latest")
+                .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
+                .WithHttpHealthCheck("/health")
+                .WithLifetime(ContainerLifetime.Persistent);
+
+            return builder.AddProject<Projects.Processes_Conductor_WebApi>("processes-conductor-webapi")
+                .WithExternalHttpEndpoints()
+                .WithReference(conductor.GetEndpoint("http"))
+                .WithEnvironment("CONDUCTOR_REST_ADDRESS", conductor.GetEndpoint("http"))
+                .WaitFor(conductor);
+        }
 
         IResourceBuilder<ProjectResource> AddProcessesTemporalWebApi()
         {

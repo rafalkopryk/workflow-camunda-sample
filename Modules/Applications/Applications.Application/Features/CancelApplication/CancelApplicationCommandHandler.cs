@@ -1,6 +1,7 @@
 ﻿using Applications.Application.Features.CloseApplication;
 using Applications.Application.Infrastructure.Database;
 using Common.Application.Cqrs;
+using Common.Application.Dictionary;
 using Wolverine;
 using static Applications.Application.Features.CancelApplication.CancelApplicationCommandResponse;
 
@@ -24,7 +25,9 @@ internal class CancelApplicationCommandHandler(
 
         await creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
-        await eventBusProducer.PublishAsync(new ApplicationClosed(creditApplication.Id), new DeliveryOptions
+        await eventBusProducer.PublishAsync(new ApplicationClosed(
+            creditApplication.Id,
+            ApplicationCloseReason.CancelledByUser), new DeliveryOptions
         {
             PartitionKey = creditApplication.Id
         });
