@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.5.2">
+<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\..\Processes\Processes.Temporal.WebApi\Processes.Temporal.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.Camunda.WebApi\Processes.Camunda.WebApi.csproj" />
     <ProjectReference Include="..\..\..\Processes\Processes.Conductor.WebApi\Processes.Conductor.WebApi.csproj" />
+    <ProjectReference Include="..\..\..\Processes\Processes.Operaton.WebApi\Processes.Operaton.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="NSwag.ApiDescription.Client" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Extracted from org.operaton.bpm:operaton-engine-rest-openapi:2.1.0.
+         NSwag compatibility fixes: two *Async operation IDs are renamed to *AsBatch, and the two
+         historic variableValue query parameters are strings as stated by their API descriptions. -->
+    <None Remove="Operaton\openapi.json" />
+    <OpenApiReference Include="Operaton\openapi.json"
+                      CodeGenerator="NSwagCSharp"
+                      Namespace="Processes.Operaton.WebApi.Operaton.Generated"
+                      ClassName="OperatonApiClient"
+                      Options="/UseBaseUrl:false /GenerateClientInterfaces:true /InjectHttpClient:true /DisposeHttpClient:false /JsonLibrary:SystemTextJson /GenerateNullableReferenceTypes:true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="BPMN\credit-application.bpmn">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

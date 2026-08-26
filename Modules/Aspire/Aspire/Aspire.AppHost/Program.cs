@@ -45,6 +45,7 @@ public static class ProgramExtensions
         return processProvider switch
         {
             "conductor" => AddProcessesConductorWebApi(),
+            "operaton" => AddProcessesOperatonWebApi(),
             "temporal" => AddProcessesTemporalWebApi(),
             "saga" => builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
                 .WithExternalHttpEndpoints(),
@@ -53,9 +54,21 @@ public static class ProgramExtensions
 
         IResourceBuilder<ProjectResource> AddProcessesConductorWebApi()
         {
+            var conductorPostgres = builder.AddPostgres("conductor-postgres")
+                .WithDataVolume("conductor-postgres")
+                .WithLifetime(ContainerLifetime.Persistent);
+            var conductorDatabase = conductorPostgres.AddDatabase("conductor-database", "conductor");
+
             var conductor = builder.AddContainer("conductor", "conductoross/conductor", "latest")
                 .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
                 .WithHttpHealthCheck("/health")
+                .WithEnvironment("CONFIG_PROP", "aspire-postgres.properties")
+                .WithBindMount(
+                    "conductor-postgres.properties",
+                    "/app/config/aspire-postgres.properties",
+                    isReadOnly: true)
+                .WithReference(conductorDatabase)
+                .WaitFor(conductorDatabase)
                 .WithLifetime(ContainerLifetime.Persistent);
 
             return builder.AddProject<Projects.Processes_Conductor_WebApi>("processes-conductor-webapi")
@@ -72,6 +85,36 @@ public static class ProgramExtensions
                 .WithReference(temporal)
                 .WithExternalHttpEndpoints()
                 .WaitFor(temporal);
+        }
+
+        IResourceBuilder<ProjectResource> AddProcessesOperatonWebApi()
+        {
+            var operatonPostgres = builder.AddPostgres("operaton-postgres")
+                .WithDataVolume("operaton-postgres")
+                .WithLifetime(ContainerLifetime.Persistent);
+            var operatonDatabase = operatonPostgres.AddDatabase("operaton-database", "operaton");
+
+            var operaton = builder.AddContainer("operaton", "operaton/operaton", "latest")
+                .WithBindMount(
+                    "Operaton/operaton-webapp-webjar-2.1.4.jar",
+                    "/operaton/internal/webapps/operaton-webapp-webjar-2.1.4.jar",
+                    isReadOnly: true)
+                .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
+                .WithHttpHealthCheck("/engine-rest/engine")
+                .WithEnvironment("DB_DRIVER", "org.postgresql.Driver")
+                .WithEnvironment("DB_URL", operatonDatabase.Resource.JdbcConnectionString)
+                .WithEnvironment("DB_USERNAME", operatonPostgres.Resource.UserNameReference)
+                .WithEnvironment("DB_PASSWORD", operatonPostgres.Resource.PasswordParameter)
+                .WithEnvironment("OPERATON_BPM_HISTORY_LEVEL", "FULL")
+                .WithReference(operatonDatabase)
+                .WaitFor(operatonDatabase)
+                .WithLifetime(ContainerLifetime.Persistent);
+
+            return builder.AddProject<Projects.Processes_Operaton_WebApi>("processes-operaton-webapi")
+                .WithExternalHttpEndpoints()
+                .WithReference(operaton.GetEndpoint("http"))
+                .WithEnvironment("OPERATON_REST_ADDRESS", operaton.GetEndpoint("http"))
+                .WaitFor(operaton);
         }
         
         IResourceBuilder<ProjectResource>  AddProcessesCamundaWebApi()
