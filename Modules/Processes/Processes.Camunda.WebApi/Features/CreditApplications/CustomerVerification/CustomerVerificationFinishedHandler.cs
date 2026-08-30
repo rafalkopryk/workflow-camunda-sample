@@ -1,11 +1,10 @@
+using Calculations.Contracts;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
+namespace Processes.Camunda.WebApi.Features.CreditApplications.CustomerVerification;
 
-[MessageIdentity("customerVerified", Version = 1)]
-public record CustomerVerified(string ApplicationId, string CustomerVerificationStatus);
-
+[WolverineHandler]
 public class CustomerVerificationFinishedHandler(CamundaClient camundaClient)
 {
     public async Task Handle(CustomerVerified message, CancellationToken ct)

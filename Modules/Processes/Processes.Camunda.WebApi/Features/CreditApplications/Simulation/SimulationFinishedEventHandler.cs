@@ -1,11 +1,10 @@
+using Calculations.Contracts;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Simulation;
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Simulation;
 
-[MessageIdentity("simulationFinished", Version=1)]
-public record SimulationFinished(string ApplicationId, string SimulationStatus);
-
+[WolverineHandler]
 public class SimulationFinishedEventHandler(CamundaClient camundaClient)
 {
     public async Task Handle(SimulationFinished message)

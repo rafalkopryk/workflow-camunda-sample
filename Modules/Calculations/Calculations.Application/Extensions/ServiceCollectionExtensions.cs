@@ -57,7 +57,7 @@ public static class ServiceCollectionExtensions
                 .ConfigureConsumers(consumer => consumer = configuration.GetkafkaConsumer())
                 .ConfigureProducers(producer => producer = configuration.GetkafkaProducer());
 
-            opts.PublishMessage<SimulationCreditFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+            opts.PublishMessage<SimulationFinished>().ToKafkaTopic("simulations").TelemetryEnabled(true);
             opts.PublishMessage<CustomerVerified>().ToKafkaTopic("customer-verifications").TelemetryEnabled(true);
 
             opts.ListenToKafkaTopic("simulations")
@@ -72,7 +72,7 @@ public static class ServiceCollectionExtensions
             opts.UseAzureServiceBus(configuration.GetAzServiceBusConnectionString())
                 .AutoProvision();
 
-            opts.PublishMessage<SimulationCreditFinished>().ToAzureServiceBusTopic("simulations").TelemetryEnabled(true);
+            opts.PublishMessage<SimulationFinished>().ToAzureServiceBusTopic("simulations").TelemetryEnabled(true);
 
             opts.ListenToAzureServiceBusSubscription("simulations-calculations-subs")
                 .FromTopic("simulations")

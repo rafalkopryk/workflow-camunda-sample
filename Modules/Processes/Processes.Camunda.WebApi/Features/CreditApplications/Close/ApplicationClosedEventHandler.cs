@@ -1,11 +1,10 @@
+using Applications.Contracts.Events;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Close;
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Close;
 
-[MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed(string ApplicationId);
-
+[WolverineHandler]
 public class ApplicationClosedEventHandler(CamundaClient camundaClient)
 {
     public async Task Handle(ApplicationClosed message)

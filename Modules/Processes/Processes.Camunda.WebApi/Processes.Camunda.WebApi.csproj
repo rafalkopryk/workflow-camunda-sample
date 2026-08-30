@@ -10,9 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Applications\Applications.Contracts\Applications.Contracts.csproj" />
     <ProjectReference Include="..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
     <ProjectReference Include="..\..\..\external\camunda-startup\CamundaClient.Extensions\CamundaClient.Extensions.csproj" />
+    <ProjectReference Include="..\..\Calculations\Calculations.Contracts\Calculations.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

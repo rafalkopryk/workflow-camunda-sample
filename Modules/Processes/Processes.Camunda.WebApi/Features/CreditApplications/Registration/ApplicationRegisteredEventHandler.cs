@@ -1,10 +1,8 @@
+using Applications.Contracts.Events;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Simulation;
-
-[MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId);
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Registration;
 
 [WolverineHandler]
 public class ApplicationRegisteredEventHandler(CamundaClient camundaClient)

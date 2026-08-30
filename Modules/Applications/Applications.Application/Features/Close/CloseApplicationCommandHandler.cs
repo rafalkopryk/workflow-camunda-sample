@@ -1,4 +1,5 @@
 ﻿using Applications.Application.Infrastructure.Database;
+using Applications.Contracts.Commands;
 using Applications.Contracts.Events;
 using Common.Application.Dictionary;
 using Wolverine;

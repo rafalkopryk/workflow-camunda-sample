@@ -19,7 +19,7 @@ public sealed class PublishSimulationActivity : CodeActivity
         var process = ProcessInstance.Get(context);
         var bus = context.GetRequiredService<IMessageBus>();
 
-        await bus.PublishAsync(new SimulateCreditCommand(
+        await bus.PublishAsync(new SimulationCommand(
             process.ApplicationId,
             process.Amount,
             process.CreditPeriodInMonths,

@@ -1,4 +1,3 @@
-using Applications.Application.Features.CloseApplication;
 using Applications.Contracts.Commands;
 using Calculations.Contracts;
 using Common.Application.Extensions;
@@ -26,8 +25,8 @@ public static class ServiceCollectionExtensions
                 .ConfigureProducers(producer => producer = configuration.GetkafkaProducer()!);
 
             options.PublishMessage<CloseApplicationCommand>().ToKafkaTopic("applications").TelemetryEnabled(true);
-            options.PublishMessage<SimulateCreditCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
-            options.PublishMessage<SetDecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
+            options.PublishMessage<SimulationCommand>().ToKafkaTopic("simulations").TelemetryEnabled(true);
+            options.PublishMessage<DecisionCommand>().ToKafkaTopic("decisions").TelemetryEnabled(true);
             options.PublishMessage<CustomerVerificationCommand>().ToKafkaTopic("customer-verifications").TelemetryEnabled(true);
 
             options.ListenToKafkaTopic("applications").ProcessInline().TelemetryEnabled(true);

@@ -7,7 +7,7 @@ namespace Processes.Elsa.WebApi.Features.CreditApplications.Simulation;
 [WolverineHandler]
 public class SimulationFinishedEventHandler(IEventPublisher publisher)
 {
-    public async Task Handle(SimulationCreditFinished message)
+    public async Task Handle(SimulationFinished message)
     {
         await publisher.PublishAsync(
             CreditApplicationEventNames.SimulationFinished,

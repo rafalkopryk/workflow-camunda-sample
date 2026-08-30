@@ -1,11 +1,10 @@
+using Applications.Contracts.Events;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Contract;
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Contract;
 
-[MessageIdentity("contractSigned", Version = 1)]
-public record ContractSigned(string ApplicationId);
-
+[WolverineHandler]
 public class ContractSignedEventHandler(CamundaClient camundaClient)
 {
     public async Task Handle(ContractSigned message)

@@ -1,13 +1,10 @@
+using Applications.Contracts.Commands;
 using Camunda.Client.Extensions;
 using Camunda.Orchestration.Sdk;
-using Processes.Application.Domain.CreditApplications;
+using Processes.Camunda.WebApi.Domain.CreditApplications;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Decision;
-
-[MessageIdentity("decision", Version=1)]
-public record DecisionCommand(string ApplicationId, string CustomerVerificationStatus, string SimulationStatus);
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Decision;
 
 internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
 {
@@ -17,8 +14,8 @@ internal class DecisionJobHandler(IMessageBus busProducer) : IJobHandler
         await busProducer.PublishAsync(new DecisionCommand
         (
             ApplicationId: processInstance.ApplicationId,
-            CustomerVerificationStatus: processInstance.CustomerVerificationStatus,
-            SimulationStatus: processInstance.SimulationStatus
+            CustomerVerificationStatus: processInstance.CustomerVerificationStatus ?? Common.Application.Dictionary.Decision.NotExists,
+            SimulationStatus: processInstance.SimulationStatus ?? Common.Application.Dictionary.Decision.NotExists
         ));
     }
 }

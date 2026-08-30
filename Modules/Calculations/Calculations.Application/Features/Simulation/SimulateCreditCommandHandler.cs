@@ -8,7 +8,7 @@ namespace Calculations.Application.Features.SimulateCreditCommand;
 
 public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IMessageBus eventBusProducer)
 {
-    public async Task Handle(Contracts.SimulateCreditCommand notification, CancellationToken cancellationToken)
+    public async Task Handle(Contracts.SimulationCommand notification, CancellationToken cancellationToken)
     {
         var decsion = notification switch
         {
@@ -31,7 +31,7 @@ public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalcu
 
         await creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await eventBusProducer.PublishAsync(new SimulationCreditFinished(calculation.ApplicationId, calculation.Decision.ToString()), new DeliveryOptions
+        await eventBusProducer.PublishAsync(new SimulationFinished(calculation.ApplicationId, calculation.Decision.ToString()), new DeliveryOptions
         {
             PartitionKey = calculation.ApplicationId
         });

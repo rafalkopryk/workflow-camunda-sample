@@ -22,7 +22,7 @@ public sealed class PublishDecisionActivity : CodeActivity
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
         var bus = context.GetRequiredService<IMessageBus>();
-        await bus.PublishAsync(new SetDecisionCommand(
+        await bus.PublishAsync(new DecisionCommand(
             ApplicationId.Get(context),
             CustomerVerificationStatus.Get(context),
             SimulationStatus.Get(context)));

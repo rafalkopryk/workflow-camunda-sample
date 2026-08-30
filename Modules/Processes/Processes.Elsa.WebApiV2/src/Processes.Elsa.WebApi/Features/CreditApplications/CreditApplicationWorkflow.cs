@@ -43,7 +43,7 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
         // Variables
         //
         var simulationResult = builder
-            .WithVariable<SimulationCreditFinished?>("SimulationResult", null)
+            .WithVariable<SimulationFinished?>("SimulationResult", null)
             .WithWorkflowStorage();
 
         var customerVerificationResult = builder

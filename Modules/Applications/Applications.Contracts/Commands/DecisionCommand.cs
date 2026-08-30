@@ -4,4 +4,4 @@ using Wolverine.Attributes;
 namespace Applications.Contracts.Commands;
 
 [MessageIdentity("decision", Version = 1)]
-public record SetDecisionCommand(string ApplicationId, Decision CustomerVerificationStatus, Decision SimulationStatus);
+public record DecisionCommand(string ApplicationId, Decision CustomerVerificationStatus, Decision SimulationStatus);

@@ -1,10 +1,8 @@
+using Applications.Contracts.Events;
 using Camunda.Orchestration.Sdk;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.Decision;
-
-[MessageIdentity("decisionGenerated", Version = 1)]
-public record DecisionGenerated(string ApplicationId, string Decision);
+namespace Processes.Camunda.WebApi.Features.CreditApplications.Decision;
 
 [WolverineHandler]
 public class DecisionGeneratedEventHandler(CamundaClient camundaClient)

@@ -1,7 +1,7 @@
 using Camunda.Client.Extensions;
 using Common.Application.Extensions;
 using OpenTelemetry.Resources;
-using Processes.Application.Extensions;
+using Processes.Camunda.WebApi.Extensions;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);

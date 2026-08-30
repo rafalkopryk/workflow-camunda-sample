@@ -11,7 +11,7 @@ public class SetDecisionCommandCommandHandler(
     IMessageBus eventBusProducer,
     TimeProvider timeProvider)
 {
-    public async Task Handle(SetDecisionCommand notification)
+    public async Task Handle(DecisionCommand notification)
     {
         var creditApplication = await creditApplicationDbContext.GetCreditApplicationAsync(notification.ApplicationId);
 

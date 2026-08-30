@@ -1,22 +1,21 @@
+using Applications.Contracts.Commands;
+using Calculations.Contracts;
 using Camunda.Client.Extensions;
 using Camunda.Orchestration.Sdk;
 using Common.Application.Cqrs;
 using Common.Application.Extensions;
 using JasperFx.Resources;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Processes.Application.UseCases.CreditApplications.Close;
-using Processes.Application.UseCases.CreditApplications.CustomerVerification;
-using Processes.Application.UseCases.CreditApplications.Decision;
-using Processes.Application.UseCases.CreditApplications.Simulation;
 using Processes.Application.Utils;
 using Processes.Application.Utils.Importer.File;
+using Processes.Camunda.WebApi.Features.CreditApplications.Close;
+using Processes.Camunda.WebApi.Features.CreditApplications.CustomerVerification;
+using Processes.Camunda.WebApi.Features.CreditApplications.Decision;
+using Processes.Camunda.WebApi.Features.CreditApplications.Simulation;
 using Wolverine;
 using Wolverine.AzureServiceBus;
 using Wolverine.Kafka;
 
-namespace Processes.Application.Extensions;
+namespace Processes.Camunda.WebApi.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)

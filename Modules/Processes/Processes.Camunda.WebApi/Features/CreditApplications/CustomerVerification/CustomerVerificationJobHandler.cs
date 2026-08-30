@@ -1,14 +1,13 @@
+using Calculations.Contracts;
 using Camunda.Client.Extensions;
 using Camunda.Orchestration.Sdk;
-using Processes.Application.Domain.CreditApplications;
+using Processes.Camunda.WebApi.Domain.CreditApplications;
 using Wolverine;
 using Wolverine.Attributes;
 
-namespace Processes.Application.UseCases.CreditApplications.CustomerVerification;
+namespace Processes.Camunda.WebApi.Features.CreditApplications.CustomerVerification;
 
-[MessageIdentity("customerVerification", Version = 1)]
-public record CustomerVerificationCommand(string ApplicationId, string DocumentId);
-
+[WolverineHandler]
 internal class CustomerVerificationJobHandler(IMessageBus busProducer) : IJobHandler
 {
     public async Task HandleAsync(ActivatedJob job, CancellationToken ct)

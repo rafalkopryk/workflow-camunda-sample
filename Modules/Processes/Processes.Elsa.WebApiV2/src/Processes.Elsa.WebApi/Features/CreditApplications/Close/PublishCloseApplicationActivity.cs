@@ -1,4 +1,4 @@
-using Applications.Application.Features.CloseApplication;
+using Applications.Contracts.Commands;
 using Elsa.Extensions;
 using Elsa.Workflows;
 using Elsa.Workflows.Attributes;
