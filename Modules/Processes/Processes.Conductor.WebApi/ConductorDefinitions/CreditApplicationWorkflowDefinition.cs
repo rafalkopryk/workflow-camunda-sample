@@ -50,14 +50,14 @@ internal static class CreditApplicationWorkflowDefinition
             CreditApplicationConductorNames.WaitCustomerVerificationTask,
             workflow.Input("applicationId"));
 
-        var creditChecks = new ForkJoinTask(
-            "start_credit_checks",
+        var verifications = new ForkJoinTask(
+            "start_verifications",
             [simulationRequest],
             [simulationFinished],
             [customerVerificationRequest],
             [customerVerified]);
-        var joinCreditChecks = new JoinTask(
-            "join_credit_checks",
+        var joinVerifications = new JoinTask(
+            "join_verifications",
             simulationRequest,
             simulationFinished,
             customerVerificationRequest,
@@ -115,8 +115,8 @@ internal static class CreditApplicationWorkflowDefinition
             .WithDefaultCase(closeApplicationAndWait, joinApplicationClosed, applicationClosed);
 
         workflow
-            .WithTask(creditChecks)
-            .WithTask(joinCreditChecks)
+            .WithTask(verifications)
+            .WithTask(joinVerifications)
             .WithTask(generateDecision)
             .WithTask(joinDecision)
             .WithTask(routeDecision)

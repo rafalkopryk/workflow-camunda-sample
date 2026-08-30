@@ -13,7 +13,7 @@ using Processes.Elsa.WebApi.Features.CreditApplications.Close;
 using Processes.Elsa.WebApi.Features.CreditApplications.CustomerVerification;
 using Processes.Elsa.WebApi.Features.CreditApplications.Decision;
 using Processes.Elsa.WebApi.Features.CreditApplications.Simulation;
-using Endpoint = Elsa.Workflows.Activities.Flowchart.Models.Endpoint;
+using FlowEndpoint = Elsa.Workflows.Activities.Flowchart.Models.Endpoint;
 using Event = Elsa.Workflows.Runtime.Activities.Event;
 using DecisionStatus = Common.Application.Dictionary.Decision;
 using ExpressionExecutionContext =
@@ -33,15 +33,12 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
     {
         builder.WithDefinitionId(DefinitionId);
         builder.Name = "Credit Application";
-        builder.Description =
-            "Credit application orchestration implemented with Elsa Workflows.";
+        builder.Description = "Credit application orchestration implemented with Elsa Workflows.";
         builder.Version = 1;
 
         builder.WithActivationStrategyType<CorrelationStrategy>();
 
-        //
         // Variables
-        //
         var simulationResult = builder
             .WithVariable<SimulationFinished?>("SimulationResult", null)
             .WithWorkflowStorage();
@@ -58,22 +55,33 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
             .WithVariable<CreditProcessInstance?>(ProcessInputName, null)
             .WithWorkflowStorage();
 
-        //
         // Helpers
-        //
-        CreditProcessInstance GetWorkflowProcessInput(ExpressionExecutionContext context)
-        {
-            return context
-                .GetActivityExecutionContext()
-                .GetWorkflowInput<CreditProcessInstance>(
-                    ProcessInputName);
-        }
+        CreditProcessInstance GetWorkflowProcessInput(ExpressionExecutionContext context) => context
+            .GetActivityExecutionContext()
+            .GetWorkflowInput<CreditProcessInstance>(ProcessInputName);
 
         Input<CreditProcessInstance> ProcessInput()
         {
             return new Input<CreditProcessInstance>(
                 context => processInstance.Get(context)!);
         }
+
+        Input<string> ApplicationId()
+        {
+            return new Input<string>(
+                context => processInstance.Get(context)!.ApplicationId);
+        }
+
+        Event WaitForApplicationClosed(string name) => new(CreditApplicationEventNames.ApplicationClosed)
+        {
+            Name = name
+        };
+
+        Connection Connect(IActivity source, IActivity target) => new(source, target);
+
+        Connection ConnectBranch(IActivity source, string sourcePort, IActivity target) => new(
+            new FlowEndpoint(source, sourcePort),
+            new FlowEndpoint(target));
 
         var initializeProcessInstance = new SetVariable<CreditProcessInstance?>(
             processInstance,
@@ -82,35 +90,24 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
             Name = "Initialize Process Instance"
         };
 
-        //
-        // =========================================================
-        // OUTER PROCESS RACE
-        //
-        // Main process
-        // External close
-        // Timeout
-        // =========================================================
-        //
-        var processFork = new FlowFork
+        // Process and cancellation watchers.
+        // The process runs alongside two terminal watchers. The first branch to
+        // reach Process Finished completes the workflow.
+        var startProcessAndCancellationWatchers = new FlowFork
         {
             Name = "Process",
-
             Branches = new(new[]
             {
                 "Main",
-                "ExternalClose",
+                "Cancellation",
                 "Timeout"
             })
         };
 
-        //
-        // =========================================================
-        // MAIN PROCESS
-        // =========================================================
-        //
-        var checksFork = new FlowFork
+        // Main process
+        var startVerifications = new FlowFork
         {
-            Name = "Start Checks",
+            Name = "Start Verifications",
             Branches = new Input<ICollection<string>>([
                 "Simulation",
                 "Verification"
@@ -124,7 +121,7 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
             ProcessInstance = ProcessInput()
         };
 
-        var simulationFinished = new Event(CreditApplicationEventNames.SimulationFinished)
+        var waitForSimulationResult = new Event(CreditApplicationEventNames.SimulationFinished)
         {
             Name = "Simulation Finished",
             Result = new Output<object?>(simulationResult)
@@ -137,393 +134,208 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
             ProcessInstance = ProcessInput()
         };
 
-        var customerVerified = new Event(CreditApplicationEventNames.CustomerVerified)
+        var waitForCustomerVerificationResult = new Event(CreditApplicationEventNames.CustomerVerified)
         {
             Name = "Customer Verified",
             Result = new Output<object?>(customerVerificationResult)
         };
 
-        //
-        // Wait for BOTH checks.
-        //
-        var checksJoin = new FlowJoin
+        // Wait for both checks.
+        var waitForVerifications = new FlowJoin
         {
-            Name = "Checks Completed",
+            Name = "Verifications Completed",
             Mode = new(FlowJoinMode.WaitAll)
         };
 
-        //
         // Decision
-        //
         var publishDecision = new PublishDecisionActivity
         {
             Name = "Publish Decision",
-            ApplicationId = new Input<string>(context => processInstance.Get(context)!.ApplicationId),
+            ApplicationId = ApplicationId(),
             SimulationStatus = new Input<DecisionStatus>(context => simulationResult.Get(context)!.SimulationStatus),
-
-            CustomerVerificationStatus =
-                new Input<DecisionStatus>(context =>
-                    customerVerificationResult.Get(context)!
-                        .CustomerVerificationStatus)
+            CustomerVerificationStatus = new Input<DecisionStatus>(context =>
+                customerVerificationResult.Get(context)!.CustomerVerificationStatus)
         };
 
-        var decisionGenerated =
-            new Event(
-                CreditApplicationEventNames.DecisionGenerated)
-            {
-                Name = "Decision Generated",
-
-                Result =
-                    new Output<object?>(
-                        decisionResult)
-            };
-
-        //
-        // Positive / Negative
-        //
-
-        var decision =
-            new FlowDecision(
-                context =>
-                    decisionResult.Get(context)!.Decision == PositiveDecision)
-            {
-                Name = "Positive Decision?"
-            };
-
-        //
-        // Positive
-        //
-
-        var contractSigned =
-            new Event(
-                CreditApplicationEventNames.ContractSigned)
-            {
-                Name = "Contract Signed"
-            };
-
-        //
-        // Negative
-        //
-
-        var closeAfterNegativeDecision =
-            new PublishCloseApplicationActivity
-            {
-                Name = "Close Application",
-
-                ApplicationId =
-                    new Input<string>(
-                        context =>
-                            processInstance.Get(context)!
-                                .ApplicationId)
-            };
-
-        var applicationClosedAfterNegativeDecision =
-            new Event(
-                CreditApplicationEventNames.ApplicationClosed)
-            {
-                Name = "Application Closed"
-            };
-
-        //
-        // End of main process.
-        //
-
-        var mainFinished = new FlowJoin
+        var waitForDecisionResult = new Event(CreditApplicationEventNames.DecisionGenerated)
         {
-            Name = "Main Process Finished",
+            Name = "Decision Generated",
+            Result = new Output<object?>(decisionResult)
+        };
 
-            //
-            // Positive OR negative path.
-            //
+        // Decision result
+
+        var decision = new FlowDecision(
+            context => decisionResult.Get(context)!.Decision == PositiveDecision)
+        {
+            Name = "Positive Decision?"
+        };
+
+        // Positive decision
+
+        var waitForContractSignature = new Event(CreditApplicationEventNames.ContractSigned)
+        {
+            Name = "Contract Signed"
+        };
+
+        // Negative decision
+
+        var closeAfterNegativeDecision = new PublishCloseApplicationActivity
+        {
+            Name = "Close Application",
+            ApplicationId = ApplicationId()
+        };
+
+        var waitForCloseAfterNegativeDecision = WaitForApplicationClosed("Application Closed");
+
+        // Cancellation
+
+        var waitForCancellation = new Event(CreditApplicationEventNames.ApplicationCancelled)
+        {
+            Name = "Application Cancelled"
+        };
+
+        // Timeout
+
+        var waitForTimeout = new Delay(context => processInstance.Get(context)!.Timeout)
+        {
+            Name = "Application Timeout"
+        };
+
+        var closeAfterTimeout = new PublishCloseApplicationActivity
+        {
+            Name = "Close After Timeout",
+            ApplicationId = ApplicationId()
+        };
+
+        var waitForCloseAfterTimeout = WaitForApplicationClosed("Closed After Timeout");
+
+        // Process completion
+
+        var completeProcess = new FlowJoin
+        {
+            Name = "Process Finished",
             Mode = new(FlowJoinMode.WaitAny)
         };
 
-        //
-        // =========================================================
-        // EXTERNAL CLOSE
-        // =========================================================
-        //
+        // Finish
 
-        var externallyClosed =
-            new Event(
-                CreditApplicationEventNames.ApplicationClosed)
-            {
-                Name = "External Application Closed"
-            };
+        var finish = new Finish
+        {
+            Name = "Finish Credit Application"
+        };
 
-        //
-        // =========================================================
-        // TIMEOUT
-        // =========================================================
-        //
-
-        var timeoutDelay =
-            new Delay(
-                context =>
-                    processInstance.Get(context)!
-                        .Timeout)
-            {
-                Name = "Application Timeout"
-            };
-
-        var closeAfterTimeout =
-            new PublishCloseApplicationActivity
-            {
-                Name = "Close After Timeout",
-
-                ApplicationId =
-                    new Input<string>(
-                        context =>
-                            processInstance.Get(context)!
-                                .ApplicationId)
-            };
-
-        var applicationClosedAfterTimeout =
-            new Event(
-                CreditApplicationEventNames.ApplicationClosed)
-            {
-                Name = "Closed After Timeout"
-            };
-
-        //
-        // =========================================================
-        // OUTER WAIT ANY
-        // =========================================================
-        //
-
-        var processFinished =
-            new FlowJoin
-            {
-                Name = "Process Finished",
-
-                Mode = new(FlowJoinMode.WaitAny)
-            };
-
-        //
-        // Finish node.
-        //
-
-        var finish =
-            new Finish
-            {
-                Name = "Finish Credit Application"
-            };
-
-        //
-        // =========================================================
-        // FLOWCHART
-        // =========================================================
-        //
+        // Flowchart
 
         builder.Root = new Flowchart
         {
             Activities =
             {
-                //
-                // Outer race
-                //
+                // Process and cancellation watchers
                 initializeProcessInstance,
-                processFork,
+                startProcessAndCancellationWatchers,
 
-                //
-                // Main
-                //
-                checksFork,
+                // Main process
+                startVerifications,
 
                 publishSimulation,
-                simulationFinished,
+                waitForSimulationResult,
 
                 publishCustomerVerification,
-                customerVerified,
+                waitForCustomerVerificationResult,
 
-                checksJoin,
+                waitForVerifications,
 
                 publishDecision,
-                decisionGenerated,
+                waitForDecisionResult,
                 decision,
 
-                contractSigned,
+                waitForContractSignature,
 
                 closeAfterNegativeDecision,
-                applicationClosedAfterNegativeDecision,
+                waitForCloseAfterNegativeDecision,
 
-                mainFinished,
+                // Cancellation
+                waitForCancellation,
 
-                //
-                // External close
-                //
-                externallyClosed,
-
-                //
                 // Timeout
-                //
-                timeoutDelay,
+                waitForTimeout,
                 closeAfterTimeout,
-                applicationClosedAfterTimeout,
+                waitForCloseAfterTimeout,
 
-                //
-                // Outer join
-                //
-                processFinished,
+                // Process completion
+                completeProcess,
 
                 finish
             },
 
             Connections =
             {
-                //
-                // =================================================
-                // OUTER FORK
-                // =================================================
-                //
+                // Process and cancellation watchers
 
-                new(
-                    initializeProcessInstance,
-                    processFork),
+                Connect(initializeProcessInstance, startProcessAndCancellationWatchers),
 
-                new(
-                    new Endpoint(processFork, "Main"),
-                    new Endpoint(checksFork)),
+                ConnectBranch(startProcessAndCancellationWatchers, "Main", startVerifications),
 
-                new(
-                    new Endpoint(processFork, "ExternalClose"),
-                    new Endpoint(externallyClosed)),
+                ConnectBranch(startProcessAndCancellationWatchers, "Cancellation", waitForCancellation),
 
-                new(
-                    new Endpoint(processFork, "Timeout"),
-                    new Endpoint(timeoutDelay)),
+                ConnectBranch(startProcessAndCancellationWatchers, "Timeout", waitForTimeout),
 
-                //
-                // =================================================
-                // CHECKS FORK
-                // =================================================
-                //
+                // Credit checks
 
-                new(
-                    new Endpoint(checksFork, "Simulation"),
-                    new Endpoint(publishSimulation)),
+                ConnectBranch(startVerifications, "Simulation", publishSimulation),
 
-                new(
-                    new Endpoint(checksFork, "Verification"),
-                    new Endpoint(publishCustomerVerification)),
+                ConnectBranch(startVerifications, "Verification", publishCustomerVerification),
 
-                //
-                // Simulation path
-                //
+                // Simulation
 
-                new(
-                    publishSimulation,
-                    simulationFinished),
+                Connect(publishSimulation, waitForSimulationResult),
 
-                new(
-                    simulationFinished,
-                    checksJoin),
+                Connect(waitForSimulationResult, waitForVerifications),
 
-                //
-                // Verification path
-                //
+                // Customer verification
 
-                new(
-                    publishCustomerVerification,
-                    customerVerified),
+                Connect(publishCustomerVerification, waitForCustomerVerificationResult),
 
-                new(
-                    customerVerified,
-                    checksJoin),
+                Connect(waitForCustomerVerificationResult, waitForVerifications),
 
-                //
-                // =================================================
-                // DECISION
-                // =================================================
-                //
+                // Decision
 
-                new(
-                    checksJoin,
-                    publishDecision),
+                Connect(waitForVerifications, publishDecision),
 
-                new(
-                    publishDecision,
-                    decisionGenerated),
+                Connect(publishDecision, waitForDecisionResult),
 
-                new(
-                    decisionGenerated,
-                    decision),
+                Connect(waitForDecisionResult, decision),
 
-                //
-                // Positive
-                //
+                // Positive decision
 
-                new(
-                    new Endpoint(decision, "True"),
-                    new Endpoint(contractSigned)),
+                ConnectBranch(decision, "True", waitForContractSignature),
 
-                new(
-                    contractSigned,
-                    mainFinished),
+                Connect(waitForContractSignature, completeProcess),
 
-                //
-                // Negative
-                //
+                // Negative decision
 
-                new(
-                    new Endpoint(decision, "False"),
-                    new Endpoint(closeAfterNegativeDecision)),
+                ConnectBranch(decision, "False", closeAfterNegativeDecision),
 
-                new(
-                    closeAfterNegativeDecision,
-                    applicationClosedAfterNegativeDecision),
+                Connect(closeAfterNegativeDecision, waitForCloseAfterNegativeDecision),
 
-                new(
-                    applicationClosedAfterNegativeDecision,
-                    mainFinished),
+                Connect(waitForCloseAfterNegativeDecision, completeProcess),
 
-                //
-                // =================================================
-                // MAIN -> OUTER JOIN
-                // =================================================
-                //
+                // Cancellation
 
-                new(
-                    mainFinished,
-                    processFinished),
+                Connect(waitForCancellation, completeProcess),
 
-                //
-                // =================================================
-                // EXTERNAL CLOSE -> OUTER JOIN
-                // =================================================
-                //
+                // Timeout
 
-                new(
-                    externallyClosed,
-                    processFinished),
+                Connect(waitForTimeout, closeAfterTimeout),
 
-                //
-                // =================================================
-                // TIMEOUT
-                // =================================================
-                //
+                Connect(closeAfterTimeout, waitForCloseAfterTimeout),
 
-                new(
-                    timeoutDelay,
-                    closeAfterTimeout),
+                Connect(waitForCloseAfterTimeout, completeProcess),
 
-                new(
-                    closeAfterTimeout,
-                    applicationClosedAfterTimeout),
+                // Finish
 
-                new(
-                    applicationClosedAfterTimeout,
-                    processFinished),
-
-                //
-                // =================================================
-                // FINISH
-                // =================================================
-                //
-
-                new(
-                    processFinished,
-                    finish)
+                Connect(completeProcess, finish)
             }
         };
     }

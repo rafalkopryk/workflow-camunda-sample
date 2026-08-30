@@ -1,4 +1,5 @@
 ﻿using Applications.Contracts.Events;
+using Common.Application.Dictionary;
 using Elsa.Workflows.Runtime;
 using Wolverine.Attributes;
 
@@ -10,7 +11,9 @@ public class ApplicationClosedEventHandler(IEventPublisher publisher)
     public async Task Handle(ApplicationClosed message)
     {
         await publisher.PublishAsync(
-            CreditApplicationEventNames.ApplicationClosed,
+            message.Reason == ApplicationCloseReason.CancelledByUser
+                ? CreditApplicationEventNames.ApplicationCancelled
+                : CreditApplicationEventNames.ApplicationClosed,
             message.ApplicationId,
             payload: message);
     }
