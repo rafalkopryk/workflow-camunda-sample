@@ -1,3 +1,4 @@
+using Applications.Contracts.Commands;
 using Conductor.Client.Extensions;
 using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
@@ -5,14 +6,10 @@ using Conductor.Client.Worker;
 using Processes.Conductor.WebApi.Domain.CreditApplications;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
 using Wolverine;
-using Wolverine.Attributes;
 using Wolverine.Runtime;
 using ConductorTask = Conductor.Client.Models.Task;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Close;
-
-[MessageIdentity("close", Version = 1)]
-public record CloseApplicationCommand(string ApplicationId);
 
 internal sealed class CloseApplicationTaskWorker(IWolverineRuntime runtime) : IWorkflowTask
 {

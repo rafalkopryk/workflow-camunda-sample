@@ -1,3 +1,4 @@
+using Calculations.Contracts;
 using Conductor.Client.Extensions;
 using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
@@ -5,18 +6,10 @@ using Conductor.Client.Worker;
 using Processes.Conductor.WebApi.Domain.CreditApplications;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
 using Wolverine;
-using Wolverine.Attributes;
 using Wolverine.Runtime;
 using ConductorTask = Conductor.Client.Models.Task;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Simulation;
-
-[MessageIdentity("simulation", Version = 1)]
-public record SimulationCommand(
-    string ApplicationId,
-    decimal Amount,
-    int CreditPeriodInMonths,
-    decimal AverageNetMonthlyIncome);
 
 internal sealed class SimulationTaskWorker(IWolverineRuntime runtime) : IWorkflowTask
 {

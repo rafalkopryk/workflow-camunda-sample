@@ -159,10 +159,7 @@ public sealed class CreditApplicationWorkflow : WorkflowBase
         {
             Name = "Publish Decision",
             ApplicationId = new Input<string>(context => processInstance.Get(context)!.ApplicationId),
-            SimulationStatus = new Input<DecisionStatus>(context =>
-                Enum.Parse<DecisionStatus>(
-                    simulationResult.Get(context)!.SimulationStatus,
-                    ignoreCase: true)),
+            SimulationStatus = new Input<DecisionStatus>(context => simulationResult.Get(context)!.SimulationStatus),
 
             CustomerVerificationStatus =
                 new Input<DecisionStatus>(context =>

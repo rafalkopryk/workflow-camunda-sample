@@ -1,11 +1,10 @@
+using Applications.Contracts.Events;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
 using Wolverine.Attributes;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Contract;
 
-[MessageIdentity("contractSigned", Version = 1)]
-public record ContractSigned(string ApplicationId);
-
+[WolverineHandler]
 public class ContractSignedEventHandler(ConductorWorkflowService workflows)
 {
     public Task Handle(ContractSigned message, CancellationToken cancellationToken)

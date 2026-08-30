@@ -1,3 +1,4 @@
+using Applications.Contracts.Events;
 using Conductor.Api;
 using Conductor.Client.Models;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
@@ -5,14 +6,6 @@ using Wolverine.Attributes;
 using Task = System.Threading.Tasks.Task;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Registration;
-
-[MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(
-    string ApplicationId,
-    decimal Amount,
-    int CreditPeriodInMonths,
-    decimal AverageNetMonthlyIncome,
-    string DocumentId);
 
 [WolverineHandler]
 public class ApplicationRegisteredEventHandler(WorkflowResourceApi workflowApi)

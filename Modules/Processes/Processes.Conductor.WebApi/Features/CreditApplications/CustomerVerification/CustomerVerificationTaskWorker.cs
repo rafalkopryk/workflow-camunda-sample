@@ -1,3 +1,4 @@
+using Calculations.Contracts;
 using Conductor.Client.Extensions;
 using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
@@ -10,9 +11,6 @@ using Wolverine.Runtime;
 using ConductorTask = Conductor.Client.Models.Task;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.CustomerVerification;
-
-[MessageIdentity("customerVerification", Version = 1)]
-public record CustomerVerificationCommand(string ApplicationId, string DocumentId);
 
 internal sealed class CustomerVerificationTaskWorker(IWolverineRuntime runtime) : IWorkflowTask
 {

@@ -31,7 +31,7 @@ public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalcu
 
         await creditCalculationDbContext.SaveChangesAsync(cancellationToken);
 
-        await eventBusProducer.PublishAsync(new SimulationFinished(calculation.ApplicationId, calculation.Decision.ToString()), new DeliveryOptions
+        await eventBusProducer.PublishAsync(new SimulationFinished(calculation.ApplicationId, calculation.Decision), new DeliveryOptions
         {
             PartitionKey = calculation.ApplicationId
         });

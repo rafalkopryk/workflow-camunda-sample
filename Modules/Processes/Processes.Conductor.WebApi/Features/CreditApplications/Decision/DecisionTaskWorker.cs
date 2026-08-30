@@ -1,3 +1,4 @@
+using Applications.Contracts.Commands;
 using Conductor.Client.Extensions;
 using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
@@ -5,14 +6,10 @@ using Conductor.Client.Worker;
 using Processes.Conductor.WebApi.Domain.CreditApplications;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
 using Wolverine;
-using Wolverine.Attributes;
 using Wolverine.Runtime;
 using ConductorTask = Conductor.Client.Models.Task;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Decision;
-
-[MessageIdentity("decision", Version = 1)]
-public record DecisionCommand(string ApplicationId, string CustomerVerificationStatus, string SimulationStatus);
 
 internal sealed class DecisionTaskWorker(IWolverineRuntime runtime) : IWorkflowTask
 {
@@ -33,8 +30,8 @@ internal sealed class DecisionTaskWorker(IWolverineRuntime runtime) : IWorkflowT
 
         await _bus.PublishAsync(new DecisionCommand(
             processInstance.ApplicationId,
-            processInstance.CustomerVerificationStatus!,
-            processInstance.SimulationStatus!));
+            processInstance.CustomerVerificationStatus ?? Common.Application.Dictionary.Decision.NotExists,
+            processInstance.SimulationStatus ?? Common.Application.Dictionary.Decision.NotExists));
 
         return task.Completed();
     }

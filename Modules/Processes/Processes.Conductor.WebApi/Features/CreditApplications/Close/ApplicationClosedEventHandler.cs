@@ -1,12 +1,11 @@
+using Applications.Contracts.Events;
 using Common.Application.Dictionary;
 using Processes.Conductor.WebApi.Features.CreditApplications.Shared;
 using Wolverine.Attributes;
 
 namespace Processes.Conductor.WebApi.Features.CreditApplications.Close;
 
-[MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed(string ApplicationId, ApplicationCloseReason Reason);
-
+[WolverineHandler]
 public class ApplicationClosedEventHandler(ConductorWorkflowService workflows)
 {
     public Task Handle(ApplicationClosed message, CancellationToken cancellationToken)
