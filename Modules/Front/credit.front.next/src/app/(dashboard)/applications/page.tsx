@@ -1,7 +1,7 @@
 "use client"
 
 import { Dispatch, SetStateAction, useState } from 'react';
-import { Card, CardContent, MenuItem } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 
 import Grid from '@mui/material/Grid';
 
@@ -10,9 +10,6 @@ import { v7 as uuidv7 } from "uuid";
 import { WithCreditParams, WithDeclerations, WithCustomerPersonal } from "@/app/(dashboard)/applications/(dto)/creditApplicationDto";
 import { RegisterApplicationButton } from './(components)/buttons';
 import { CreditParamsContent, CustomerDeclarationsContent, CustomerPersonalDataContent } from './(components)/contents';
-
-
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
 type CreditApplication = WithCreditParams & WithDeclerations & WithCustomerPersonal;
@@ -37,8 +34,6 @@ export default function ApplicationPage() {
         }
     });
 
-    const [processCode, setProcessCode] = useState<string>("Standard");
-
     const router = useRouter();
 
     return (
@@ -58,19 +53,6 @@ export default function ApplicationPage() {
                         creditApplication={creditApplication}
                         onChange={setCreditApplication as Dispatch<SetStateAction<WithCustomerPersonal>>} />
 
-
-                    <Grid size={{ xs: 12 }}>
-                        <Select
-                            value={processCode}
-                            label="process"
-                            onChange={(event: SelectChangeEvent) => {
-                                setProcessCode(event.target.value as string);
-                            }}>
-                            <MenuItem value={"Fast"}>Fast</MenuItem>
-                            <MenuItem value={"Standard"}>Standard</MenuItem>
-                        </Select>
-                    </Grid>
-
                     <RegisterApplicationButton onRegisterApplication={register} />
                 </Grid>
             </CardContent>
@@ -81,7 +63,7 @@ export default function ApplicationPage() {
         const command: RegisterCreditApplicationDto = {
             applicationId: uuidv7(),
             creditApplication: creditApplication,
-            processCode: processCode,
+            processCode: "Standard",
         };
 
         const response = await fetch(`${process.env.APPLICATION_URL}/applications`, {
