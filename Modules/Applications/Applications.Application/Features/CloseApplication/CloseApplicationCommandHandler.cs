@@ -1,12 +1,9 @@
 ﻿using Applications.Application.Infrastructure.Database;
+using Applications.Contracts.Events;
 using Common.Application.Dictionary;
 using Wolverine;
-using Wolverine.Attributes;
 
 namespace Applications.Application.Features.CloseApplication;
-
-[MessageIdentity("close", Version = 1)]
-public record CloseApplicationCommand(string ApplicationId);
 
 public class CloseApplicationCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
@@ -28,6 +25,3 @@ public class CloseApplicationCommandHandler(
         });
     }
 }
-
-[MessageIdentity("applicationClosed", Version = 1)]
-public record ApplicationClosed(string ApplicationId, ApplicationCloseReason Reason);

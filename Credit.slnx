@@ -6,6 +6,7 @@
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Applications/">
     <Project Path="Modules/Applications/Applications.Application/Applications.Application.csproj" />
+    <Project Path="Modules/Applications/Applications.Contracts/Applications.Contracts.csproj" />
     <Project Path="Modules/Applications/Applications.WebApi/Applications.WebApi.csproj" />
   </Folder>
   <Folder Name="/Modules/Aspire/">
@@ -15,6 +16,7 @@
   </Folder>
   <Folder Name="/Modules/Calculations/">
     <Project Path="Modules/Calculations/Calculations.Application/Calculations.Application.csproj" />
+    <Project Path="Modules/Calculations/Calculations.Contracts/Calculations.Contracts.csproj" />
     <Project Path="Modules/Calculations/Calculations.WebApi/Calculations.WebApi.csproj" />
   </Folder>
   <Folder Name="/Modules/Frontend/">
@@ -26,6 +28,7 @@
     <Project Path="Modules/Processes/Processes.Camunda.WebApi/Processes.Camunda.WebApi.csproj" />
     <Project Path="Modules/Processes/Processes.Conductor.WebApi/Processes.Conductor.WebApi.csproj" />
     <Project Path="Modules/Processes/Processes.Saga.WebApi/Processes.Saga.WebApi.csproj" />
+    <Project Path="Modules\Processes\Processes.Elsa.WebApiV2\src\Processes.Elsa.WebApi\Processes.Elsa.WebApi.csproj" />
     <Project Path="Modules\Processes\Processes.Temporal.WebApi\Processes.Temporal.WebApi.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">

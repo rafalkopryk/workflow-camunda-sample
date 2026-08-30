@@ -1,5 +1,6 @@
 ﻿using Calculations.Application.Features.CustomerVerificationCommand;
 using Calculations.Application.Features.SimulateCreditCommand;
+using Calculations.Contracts;
 using JasperFx.Resources;
 
 namespace Calculations.Application.Extensions;

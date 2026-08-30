@@ -1,12 +1,10 @@
 ﻿using Applications.Application.Infrastructure.Database;
+using Applications.Contracts.Commands;
+using Applications.Contracts.Events;
 using Common.Application.Dictionary;
 using Wolverine;
-using Wolverine.Attributes;
 
 namespace Applications.Application.Features.SetDecision;
-
-[MessageIdentity("decision", Version = 1)]
-public record SetDecisionCommand(string ApplicationId, Decision CustomerVerificationStatus, Decision SimulationStatus);
 
 public class SetDecisionCommandCommandHandler(
     CreditApplicationDbContext creditApplicationDbContext,
@@ -33,6 +31,3 @@ public class SetDecisionCommandCommandHandler(
         });
     }
 }
-
-[MessageIdentity("decisionGenerated", Version = 1)]
-public record DecisionGenerated(string ApplicationId, Decision Decision);

@@ -46,6 +46,7 @@ public static class ProgramExtensions
         {
             "conductor" => AddProcessesConductorWebApi(),
             "temporal" => AddProcessesTemporalWebApi(),
+            "elsa" => AddProcessesElsaWebApi(),
             "saga" => builder.AddProject<Projects.Processes_Saga_WebApi>("processes-saga-webapi")
                 .WithExternalHttpEndpoints(),
             _ => AddProcessesCamundaWebApi(),
@@ -72,6 +73,14 @@ public static class ProgramExtensions
                 .WithReference(temporal)
                 .WithExternalHttpEndpoints()
                 .WaitFor(temporal);
+        }
+
+        IResourceBuilder<ProjectResource> AddProcessesElsaWebApi()
+        {
+            var elsa = builder.AddProject<Projects.Processes_Elsa_WebApi>("processes-elsa-webapi")
+                .WithExternalHttpEndpoints();
+
+            return elsa;
         }
         
         IResourceBuilder<ProjectResource>  AddProcessesCamundaWebApi()

@@ -1,20 +1,14 @@
 ﻿using Calculations.Application.Domain;
 using Calculations.Application.Infrastructure.Database;
+using Calculations.Contracts;
 using Common.Application.Dictionary;
 using Wolverine;
-using Wolverine.Attributes;
 
 namespace Calculations.Application.Features.SimulateCreditCommand;
 
-[MessageIdentity("simulation", Version = 1)]
-public record SimulateCreditCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
-
-[MessageIdentity("simulationFinished", Version = 1)]
-public record SimulationCreditFinished(string ApplicationId, string SimulationStatus);
-
 public class SimulateCreditCommandHandler(CreditCalculationDbContext creditCalculationDbContext, IMessageBus eventBusProducer)
 {
-    public async Task Handle(SimulateCreditCommand notification, CancellationToken cancellationToken)
+    public async Task Handle(Contracts.SimulateCreditCommand notification, CancellationToken cancellationToken)
     {
         var decsion = notification switch
         {

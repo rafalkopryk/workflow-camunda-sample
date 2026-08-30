@@ -5,6 +5,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
+    <ProjectReference Include="..\Calculations.Contracts\Calculations.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

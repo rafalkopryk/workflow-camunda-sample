@@ -1,19 +1,11 @@
 ﻿using Applications.Application.Domain.Application;
 using Applications.Application.Infrastructure.Database;
+using Applications.Contracts.Events;
 using Common.Application.Cqrs;
 using Wolverine;
-using Wolverine.Attributes;
 using static Applications.Application.Features.RegisterApplication.RegisterApplicationCommandResponse;
 
 namespace Applications.Application.Features.RegisterApplication;
-
-public interface IApplicationRegistered;
-
-[MessageIdentity("applicationRegisteredFast", Version = 1)]
-public record ApplicationRegisteredFast(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
-
-[MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId);
 
 internal class RegisterApplicationCommandHandler(
     IMessageBus bus,
@@ -21,33 +13,23 @@ internal class RegisterApplicationCommandHandler(
     TimeProvider timeProvider
     ) : IRequestHandler<RegisterApplicationCommand, RegisterApplicationCommandResponse>
 {
-    private readonly IMessageBus _bus = bus;
-    private readonly CreditApplicationDbContext _creditApplicationDbContext = creditApplicationDbContext;
-    private readonly TimeProvider _timeProvider = timeProvider;
-
     public async Task<RegisterApplicationCommandResponse> Handle(RegisterApplicationCommand command, CancellationToken cancellationToken)
     {
-        if (await _creditApplicationDbContext.HasCreditApplicationAsync(command.ApplicationId))
+        if (await creditApplicationDbContext.HasCreditApplicationAsync(command.ApplicationId))
         {
             return ResourceExists.Result;
         }
 
         var creditApplication = CreateCreditApplication(command);
 
-        await _creditApplicationDbContext.AddAsync(creditApplication, cancellationToken); ;
+        await creditApplicationDbContext.AddAsync(creditApplication, cancellationToken); ;
 
-        await _creditApplicationDbContext.SaveChangesAsync(cancellationToken);
-
+        await creditApplicationDbContext.SaveChangesAsync(cancellationToken);
 
         var deliveryOptions = new DeliveryOptions{ PartitionKey = creditApplication.Id };
         var task = command.ProcessCode switch
         {
-            //"Fast" => _bus.PublishAsync(new ApplicationRegisteredFast(
-            //    creditApplication.Id,
-            //    creditApplication.Amount,
-            //    creditApplication.CreditPeriodInMonths,
-            //    creditApplication.Declaration.AverageNetMonthlyIncome)),
-            _ => _bus.PublishAsync(new ApplicationRegistered(
+            _ => bus.PublishAsync(new ApplicationRegistered(
                 creditApplication.Id,
                 creditApplication.Amount,
                 creditApplication.CreditPeriodInMonths,
@@ -74,6 +56,6 @@ internal class RegisterApplicationCommandHandler(
             (
               request.CreditApplication.Declaration.AverageNetMonthlyIncome
             ),
-            _timeProvider);
+            timeProvider);
     }
 }

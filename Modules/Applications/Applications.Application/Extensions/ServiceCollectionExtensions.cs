@@ -2,6 +2,7 @@
 using Applications.Application.Features.RegisterApplication;
 using Applications.Application.Features.SetDecision;
 using Applications.Application.Features.SignContract;
+using Applications.Contracts.Events;
 using JasperFx.Resources;
 
 namespace Applications.Application.Extensions;

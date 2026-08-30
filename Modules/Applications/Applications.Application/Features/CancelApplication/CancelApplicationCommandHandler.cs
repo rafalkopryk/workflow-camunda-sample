@@ -1,5 +1,6 @@
 ﻿using Applications.Application.Features.CloseApplication;
 using Applications.Application.Infrastructure.Database;
+using Applications.Contracts.Events;
 using Common.Application.Cqrs;
 using Common.Application.Dictionary;
 using Wolverine;

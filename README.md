@@ -19,7 +19,10 @@ An example of using the camunda platfrom to control the process with kafka
 ![image](./img/Traces.png)
 
 ## to run
-* configure the `Aspire.AppHost` [appsetings.json](Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json) profile. 
+* configure the `Aspire.AppHost` [appsetings.json](Modules/Aspire/Aspire/Aspire.AppHost/appsettings.json) profile.
+  The `processProvider` parameter supports `camunda`, `conductor`, `temporal`, `saga`, and `elsa`.
+* the `elsa` provider hosts Elsa Server, Workflows API, and Elsa Studio in the same application.
+  It is configured without authentication and is intended for local development only.
 * run `Aspire.AppHost`
 
 ## external depedencies
