@@ -1,11 +1,8 @@
-﻿using Temporalio.Activities;
+﻿using Applications.Contracts.Commands;
+using Temporalio.Activities;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Close;
-
-[MessageIdentity("close", Version=1)]
-public record CloseApplicationCommand(string ApplicationId);
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Close;
 
 internal class CloseApplicationService(IMessageBus busProducer)
 {

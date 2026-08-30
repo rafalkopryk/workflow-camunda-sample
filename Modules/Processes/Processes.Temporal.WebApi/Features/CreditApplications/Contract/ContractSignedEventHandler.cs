@@ -1,11 +1,10 @@
-﻿using Temporalio.Client;
+﻿using Applications.Contracts.Events;
+using Temporalio.Client;
 using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Contract;
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Contract;
 
-[MessageIdentity("contractSigned", Version = 1)]
-public record ContractSigned(string ApplicationId);
-
+[WolverineHandler]
 public class ContractSignedEventHandler(ITemporalClient messageClient) 
 {
     public async Task Handle(ContractSigned message)

@@ -1,9 +1,7 @@
-﻿using Common.Application.Extensions;
+﻿using Applications.Contracts.Commands;
+using Calculations.Contracts;
+using Common.Application.Extensions;
 using JasperFx.Resources;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Close;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.CustomerVerification;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Decision;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Simulation;
 using Wolverine;
 using Wolverine.Kafka;
 

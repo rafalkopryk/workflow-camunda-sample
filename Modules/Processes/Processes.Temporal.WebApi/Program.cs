@@ -1,10 +1,10 @@
 using Processes.Temporal.WebApi.Domain.CreditApplications;
 using Processes.Temporal.WebApi.Extensions;
-using Processes.Temporal.WebApi.UseCases.CreditApplications;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Close;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.CustomerVerification;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Decision;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Simulation;
+using Processes.Temporal.WebApi.Features.CreditApplications;
+using Processes.Temporal.WebApi.Features.CreditApplications.Close;
+using Processes.Temporal.WebApi.Features.CreditApplications.CustomerVerification;
+using Processes.Temporal.WebApi.Features.CreditApplications.Decision;
+using Processes.Temporal.WebApi.Features.CreditApplications.Simulation;
 using Temporalio.Extensions.Hosting;
 using Temporalio.Extensions.OpenTelemetry;
 using Wolverine;

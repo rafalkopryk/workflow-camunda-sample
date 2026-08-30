@@ -1,12 +1,9 @@
-﻿using Processes.Temporal.WebApi.Domain.CreditApplications;
+﻿using Calculations.Contracts;
+using Processes.Temporal.WebApi.Domain.CreditApplications;
 using Temporalio.Activities;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Simulation;
-
-[MessageIdentity("simulation", Version = 1)]
-public record SimulationCommand(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome);
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Simulation;
 
 internal class SimulationService(IMessageBus busProducer) 
 {

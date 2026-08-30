@@ -1,12 +1,9 @@
+using Calculations.Contracts;
 using Processes.Temporal.WebApi.Domain.CreditApplications;
 using Temporalio.Activities;
 using Wolverine;
-using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.CustomerVerification;
-
-[MessageIdentity("customerVerification", Version = 1)]
-public record CustomerVerificationCommand(string ApplicationId, string DocumentId);
+namespace Processes.Temporal.WebApi.Features.CreditApplications.CustomerVerification;
 
 internal class CustomerVerificationService(IMessageBus busProducer)
 {

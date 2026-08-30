@@ -1,11 +1,11 @@
 using Processes.Temporal.WebApi.Domain.CreditApplications;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Close;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.CustomerVerification;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Decision;
-using Processes.Temporal.WebApi.UseCases.CreditApplications.Simulation;
+using Processes.Temporal.WebApi.Features.CreditApplications.Close;
+using Processes.Temporal.WebApi.Features.CreditApplications.CustomerVerification;
+using Processes.Temporal.WebApi.Features.CreditApplications.Decision;
+using Processes.Temporal.WebApi.Features.CreditApplications.Simulation;
 using Temporalio.Workflows;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications;
+namespace Processes.Temporal.WebApi.Features.CreditApplications;
 
 [Workflow]
 public class CreditApplicationWorkflow()
@@ -51,7 +51,7 @@ public class CreditApplicationWorkflow()
             return _processInstance;
         }
 
-        if (_processInstance.Decision != "Positive")
+        if (_processInstance.Decision != Common.Application.Dictionary.Decision.Positive)
         {
             await Workflow.ExecuteActivityAsync(
                 (CloseApplicationService service) => service.Handle(_processInstance.ApplicationId),
@@ -69,7 +69,7 @@ public class CreditApplicationWorkflow()
     }
 
     [WorkflowSignal]
-    public Task OnSimulationCompletedAsync(string simulationStatus)
+    public Task OnSimulationCompletedAsync(Common.Application.Dictionary.Decision simulationStatus)
     {
         _processInstance = _processInstance with { SimulationStatus = simulationStatus };
         _simulationCompleted = true;
@@ -77,7 +77,7 @@ public class CreditApplicationWorkflow()
     }
 
     [WorkflowSignal]
-    public Task OnCustomerVerificationCompletedAsync(string customerVerificationStatus)
+    public Task OnCustomerVerificationCompletedAsync(Common.Application.Dictionary.Decision customerVerificationStatus)
     {
         _processInstance = _processInstance with { CustomerVerificationStatus = customerVerificationStatus };
         _customerVerificationCompleted = true;
@@ -85,7 +85,7 @@ public class CreditApplicationWorkflow()
     }
 
     [WorkflowSignal]
-    public Task OnDecisionCompletedAsync(string decision)
+    public Task OnDecisionCompletedAsync(Common.Application.Dictionary.Decision decision)
     {
         _processInstance = _processInstance with { Decision = decision };
         _decisionCompleted = true;

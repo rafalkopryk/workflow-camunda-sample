@@ -1,12 +1,10 @@
-﻿using Processes.Temporal.WebApi.Domain.CreditApplications;
+﻿using Applications.Contracts.Events;
+using Processes.Temporal.WebApi.Domain.CreditApplications;
 using Temporalio.Client;
 using Wolverine.Attributes;
 using Task = System.Threading.Tasks.Task;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Registration;
-
-[MessageIdentity("applicationRegistered", Version = 1)]
-public record ApplicationRegistered(string ApplicationId, decimal Amount, int CreditPeriodInMonths, decimal AverageNetMonthlyIncome, string DocumentId);
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Registration;
 
 [WolverineHandler]
 public class ApplicationRegisteredEventHandler(ITemporalClient client)

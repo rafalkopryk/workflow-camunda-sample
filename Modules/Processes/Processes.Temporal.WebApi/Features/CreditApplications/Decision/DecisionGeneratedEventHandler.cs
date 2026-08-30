@@ -1,10 +1,8 @@
-﻿using Temporalio.Client;
+﻿using Applications.Contracts.Events;
+using Temporalio.Client;
 using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Decision;
-
-[MessageIdentity("decisionGenerated", Version = 1)]
-public record DecisionGenerated(string ApplicationId, string Decision);
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Decision;
 
 [WolverineHandler]
 public class DecisionGeneratedEventHandler(ITemporalClient messageClient)

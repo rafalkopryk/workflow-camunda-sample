@@ -1,11 +1,10 @@
-﻿using Temporalio.Client;
+﻿using Calculations.Contracts;
+using Temporalio.Client;
 using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.Simulation;
+namespace Processes.Temporal.WebApi.Features.CreditApplications.Simulation;
 
-[MessageIdentity("simulationFinished", Version=1)]
-public record SimulationFinished(string ApplicationId, string SimulationStatus);
-
+[WolverineHandler]
 public class SimulationFinishedEventHandler(ITemporalClient messageClient)
 {
     public async Task Handle(SimulationFinished message)

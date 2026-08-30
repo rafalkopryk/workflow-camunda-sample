@@ -1,11 +1,10 @@
+using Calculations.Contracts;
 using Temporalio.Client;
 using Wolverine.Attributes;
 
-namespace Processes.Temporal.WebApi.UseCases.CreditApplications.CustomerVerification;
+namespace Processes.Temporal.WebApi.Features.CreditApplications.CustomerVerification;
 
-[MessageIdentity("customerVerified", Version = 1)]
-public record CustomerVerified(string ApplicationId, string CustomerVerificationStatus);
-
+[WolverineHandler]
 public class CustomerVerificationFinishedHandler(ITemporalClient messageClient)
 {
     public async Task Handle(CustomerVerified message, CancellationToken ct)
