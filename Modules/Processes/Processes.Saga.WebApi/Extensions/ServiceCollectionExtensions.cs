@@ -1,6 +1,8 @@
 ﻿using Common.Application.Extensions;
 using JasperFx.Resources;
-using Processes.Saga.WebApi.UseCases.CreditApplications;
+using Applications.Contracts.Commands;
+using Calculations.Contracts;
+using Processes.Saga.WebApi.Features.CreditApplications;
 using Wolverine;
 using Wolverine.AzureServiceBus;
 using Wolverine.Kafka;
@@ -20,6 +22,7 @@ public static class ServiceCollectionExtensions
     public static void ConfigureWolverine(this WolverineOptions opts, IConfiguration configuration)
     {
         opts.UseRuntimeCompilation();
+        opts.MessagePartitioning.UseInferredMessageGrouping();
 
         //opts.AddSagaType<CreditApplicationFast>();
         opts.AddSagaType<CreditApplication>();
