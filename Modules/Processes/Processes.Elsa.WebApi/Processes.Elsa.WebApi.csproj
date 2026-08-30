@@ -51,9 +51,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\..\Common\Common.Application\Common.Application.csproj" />
-      <ProjectReference Include="..\..\..\..\Applications\Applications.Contracts\Applications.Contracts.csproj" />
-      <ProjectReference Include="..\..\..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
-      <ProjectReference Include="..\..\..\..\Calculations\Calculations.Contracts\Calculations.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
+      <ProjectReference Include="..\..\Applications\Applications.Contracts\Applications.Contracts.csproj" />
+      <ProjectReference Include="..\..\Aspire\Aspire\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\..\Calculations\Calculations.Contracts\Calculations.Contracts.csproj" />
     </ItemGroup>
 </Project>
